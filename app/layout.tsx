@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import { gtFlexaExpanded, gtFlexaMono } from './ui/fonts'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
-import { getMegaNav } from './lib/queries'
+import { getMegaNav, getFooterNav } from './lib/queries'
 import { Header } from './ui/header'
+import { Footer } from './ui/footer'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,6 +27,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const megaNavs = await getMegaNav()
+  const footerNav = await getFooterNav()
 
   return (
     <html
@@ -36,7 +38,8 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Header megaNavs={megaNavs} />
-        {children}
+        <main>{children}</main>
+        <Footer footerNav={footerNav} />
       </body>
     </html>
   )
