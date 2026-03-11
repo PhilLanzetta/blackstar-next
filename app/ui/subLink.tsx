@@ -22,8 +22,8 @@ export function SubLink({ title, slug, subNav }: SubLinkProps) {
   const [expanded, setExpanded] = useState(false)
   const { width } = useWindowSize()
   const isMobile: boolean = width < 601
-  const hoverRef = useRef<HTMLDivElement>(null)
-  const isHovered = useHover(hoverRef)
+  const hoverRef = useRef<HTMLDivElement | null>(null)
+  const isHovered = useHover(hoverRef as React.RefObject<HTMLElement>)
 
   useEffect(() => {
     if (isHovered && !isMobile) {
