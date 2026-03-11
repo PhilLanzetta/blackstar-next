@@ -1,0 +1,61 @@
+.sublinkMain {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  font-family: var(--gt-expanded);
+  font-size: var(--font-heading-lg);
+  text-transform: uppercase;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 1%;
+  transition: all 400ms;
+}
+
+.sublinkMain:hover {
+  background: #a1cfcc;
+  transition: all 400ms;
+}
+
+.activeMain {
+  background: #a1cfcc;
+}
+
+.underLinkContainer {
+  overflow: hidden;
+}
+
+.underLinks {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  font-family: var(--gt-mono);
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.underLink {
+  transition: all 400ms;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 1%;
+}
+
+.underLink:hover {
+  background: #a1cfcc;
+  transition: all 400ms;
+}
+
+@media screen and (max-width: 600px) {
+  .underLinks {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .sublinkMain {
+    padding: 5px;
+  }
+}

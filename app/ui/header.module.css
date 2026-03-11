@@ -1,0 +1,316 @@
+.headerContainer {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content;
+}
+
+.mainHeader {
+  border: 2px solid #000;
+  display: flex;
+}
+
+.festivalMain {
+  border: 2px solid #00d997;
+  display: flex;
+  background: #0704a5;
+}
+
+.logoContainer,
+.logoWithSeenContainer {
+  padding: 10px;
+  width: 28vw;
+  display: flex;
+  align-items: center;
+  transition: all 400ms;
+}
+
+.seenLogoContainer {
+  padding: 10px;
+  width: 12vw;
+  display: flex;
+  align-items: center;
+  border-left: 2px solid #000;
+  transition: all 400ms;
+}
+
+.festivalDateContainer {
+  padding: 10px;
+  width: 12vw;
+  display: flex;
+  align-items: center;
+  border-left: 2px solid #00d997;
+  transition: all 400ms;
+}
+
+.logoContainer svg,
+.logoWithSeenContainer svg,
+.seenLogoContainer svg {
+  width: 100%;
+}
+
+.searchButton {
+  width: 6vw;
+  border-left: 2px solid #000;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 400ms;
+}
+
+.festivalSearch {
+  width: 6vw;
+  border-left: 2px solid #00d997;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 400ms;
+}
+
+.searchButton svg,
+.festivalSearch svg {
+  width: 50%;
+}
+
+.searchButton svg circle,
+.searchButton svg line {
+  stroke: #000;
+}
+
+.festivalSearch svg circle,
+.festivalSearch svg line {
+  stroke: #00d997;
+}
+
+.festivalSearch:hover {
+  background: #00d997;
+}
+
+.festivalSearch:hover svg circle,
+.festivalSearch:hover svg line {
+  stroke: #0704a5;
+}
+
+.logoContainer:hover,
+.logoWithSeenContainer:hover,
+.searchButton:hover,
+.hamburgerContainer:hover,
+.seenLogoContainer:hover,
+.seenSubmenu:hover {
+  background: #a1cfcc;
+  transition: all 400ms;
+}
+
+.secondaryMenu {
+  border: 2px solid #000;
+  border-top: none;
+  border-bottom: 1px solid #000;
+  margin-top: -1px;
+}
+
+.seenSubmenu {
+  padding: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #000;
+  border-top: none;
+  transition: all 400ms;
+}
+
+.hamburgerContainer {
+  width: 6vw;
+  border-right: 2px solid #000;
+  color: #000;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 400ms;
+}
+
+.festivalHamburger {
+  width: 6vw;
+  border-right: 2px solid #00d997;
+  background: #0704a5;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 400ms;
+}
+
+.festivalHamburger:hover {
+  background: #00d997;
+  transition: all 400ms;
+}
+
+.navIcon {
+  width: 100%;
+  height: 100%;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition: 0.5s ease-in-out;
+  -moz-transition: 0.5s ease-in-out;
+  -o-transition: 0.5s ease-in-out;
+  transition: 0.5s ease-in-out;
+  cursor: pointer;
+}
+
+.hamburgerContainer .navIcon span {
+  background: #000;
+}
+
+.festivalHamburger .navIcon span {
+  background: #00d997;
+}
+
+.festivalHamburger:hover .navIcon span {
+  background: #0704a5;
+}
+
+.navIcon span {
+  display: block;
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  opacity: 1;
+  left: 0;
+  top: 0;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition: 0.25s ease-in-out;
+  -moz-transition: 0.25s ease-in-out;
+  -o-transition: 0.25s ease-in-out;
+  transition: 0.25s ease-in-out;
+}
+
+.navIcon span:nth-child(1) {
+  top: 30%;
+}
+
+.navIcon span:nth-child(2),
+.navIcon span:nth-child(3) {
+  top: 50%;
+}
+
+.navIcon span:nth-child(4) {
+  top: 70%;
+}
+
+.navIcon.hamburgerOpen span:nth-child(1) {
+  top: 1rem;
+  width: 0%;
+  left: 50%;
+}
+
+.navIcon.hamburgerOpen span:nth-child(2) {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.navIcon.hamburgerOpen span:nth-child(3) {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.navIcon.hamburgerOpen span:nth-child(4) {
+  top: 1rem;
+  width: 0%;
+  left: 50%;
+}
+
+@media screen and (max-width: 1058px) {
+  .logoContainer {
+    width: 38vw;
+  }
+
+  .hamburgerContainer,
+  .searchButton {
+    width: 8vw;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .hamburgerContainer,
+  .searchButton {
+    width: 12vw;
+  }
+
+  .logoContainer {
+    width: 46vw;
+  }
+
+  .logoWithSeenContainer {
+    width: 40vw;
+  }
+
+  .seenLogoContainer {
+    width: 18vw;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .hamburgerContainer,
+  .searchButton {
+    width: 15vw;
+    padding: 5px;
+  }
+
+  .logoWithSeenContainer {
+    width: 42vw;
+    padding: 5px;
+  }
+
+  .seenLogoContainer {
+    padding: 5px;
+  }
+
+  .logoContainer {
+    width: 60vw;
+    padding: 5px;
+  }
+
+  .seenSubmenu {
+    padding: 0;
+    font-size: 14px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    background: #000;
+    gap: 2px;
+  }
+
+  .seenSubmenu:hover {
+    background: #000;
+  }
+
+  .seenSubmenu a {
+    text-align: center;
+    background: #fff;
+    padding: 5px;
+  }
+
+  .seenSubmenu a:nth-of-type(-n + 3) {
+    grid-column: span 2;
+  }
+
+  .seenSubmenu a:nth-last-of-type(-n + 2) {
+    grid-column: span 3;
+  }
+}
