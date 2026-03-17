@@ -35,6 +35,7 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
                 height: 'auto',
                 maxHeight: '80px',
                 objectFit: 'contain',
+                objectPosition: 'left',
               }}
             />
           </div>
