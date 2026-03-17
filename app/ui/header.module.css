@@ -4,6 +4,8 @@
   left: 50%;
   transform: translateX(-50%);
   width: fit-content;
+  background: #fff;
+  z-index: 15;
 }
 
 .mainHeader {

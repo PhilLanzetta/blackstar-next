@@ -1,0 +1,7 @@
+.btn {
+ font-family: var(--gt-mono);
+ text-transform: uppercase;
+ border: var(--standard-border);
+ padding: 5px 15px;
+ display: inline-block;
+}

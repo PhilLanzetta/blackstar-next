@@ -1,0 +1,56 @@
+.card {
+  width: 25%;
+  border: var(--standard-border);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.customCard {
+  width: 50%;
+  border: var(--standard-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.imageWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.info {
+  padding: 10px;
+  font-family: var(--gt-mono);
+  text-transform: uppercase;
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.textInfo {
+  padding: 10px;
+  border-top: var(--standard-border);
+  border-bottom: var(--standard-border);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.learnMore {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 10px;
+}
+
+.title {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-medium);
+  text-transform: uppercase;
+}
+
+.excerpt {
+  font-family: var(--gt-mono);
+}

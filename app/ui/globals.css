@@ -22,6 +22,9 @@ a {
 
 :root {
   --font-heading-lg: 50px;
+  --standard-border: 1.5px solid #000;
+  --gt-medium: 20px;
+  --gt-large: 40px;
 }
 
 main {
@@ -32,4 +35,8 @@ main {
   :root {
     --font-heading-lg: 20px;
   }
+}
+
+.view-all {
+  font-family: var(--gt-mono);
 }

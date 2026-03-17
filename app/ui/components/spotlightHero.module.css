@@ -1,0 +1,29 @@
+.heroMedia {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.heroInfoBox {
+ position: absolute;
+ z-index: 5;
+ left: 20px;
+ bottom: 20px;
+ background: #fff;
+ border: var(--standard-border);
+ width: 75%;
+}
+
+.heroBoxHeading {
+ padding: 20px;
+ border-bottom: var(--standard-border);
+ font-family: var(--gt-expanded);
+ font-size: var(--gt-medium);
+ text-transform: uppercase;
+}
+
+.heroBoxLinkContainer {
+ display: flex;
+ gap: 20px;
+ padding: 20px;
+}
