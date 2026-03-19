@@ -1,15 +1,27 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { ProgramEvent } from '@/app/lib/types'
+import type { ProgramEvent, WPPost } from '@/app/lib/types'
 import styles from './postCard.module.css'
 import LinkButton from './linkButton'
 
 type PostCardProps = {
-  post: ProgramEvent
+  post: ProgramEvent | WPPost
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  const { title, link, featuredImage, event } = post
+  const isProgramEvent = post.__typename === 'ProgramEvent'
+  const isPost = post.__typename === 'Post'
+
+  // Shared fields
+  const { title, link, featuredImage } = post
+
+  // ProgramEvent specific
+  const event = isProgramEvent ? (post as ProgramEvent).event : null
+
+  // WPPost specific
+  const date = isPost ? (post as WPPost).date : null
+  const categories = isPost ? (post as WPPost).categories : null
+  const pressRelease = isPost ? (post as WPPost).pressRelease : null
 
   function getIANATimezone(tz: string): string {
     const map: Record<string, string> = {
@@ -53,7 +65,9 @@ export default function PostCard({ post }: PostCardProps) {
 
   const { datePart, timePart } = event?.startTime
     ? formatEventDate(event.startTime, event.timezone)
-    : { datePart: null, timePart: null }
+    : date
+      ? formatEventDate(date)
+      : { datePart: null, timePart: null }
 
   let dateInfo
 
@@ -78,6 +92,10 @@ export default function PostCard({ post }: PostCardProps) {
     }
   }
 
+  if (date) {
+    dateInfo = <div className={styles.infoDate}>{datePart}</div>
+  }
+
   return (
     <div className={styles.card}>
       {featuredImage?.node?.sourceUrl && (
@@ -86,6 +104,7 @@ export default function PostCard({ post }: PostCardProps) {
             src={featuredImage.node.sourceUrl}
             alt={featuredImage.node.altText ?? ''}
             fill
+            sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw'
             style={{ objectFit: 'cover', objectPosition: 'center' }}
           />
         </div>
@@ -100,6 +119,11 @@ export default function PostCard({ post }: PostCardProps) {
             ))}
           </div>
         )}
+        {categories?.nodes && (
+          <div className={styles.tags}>
+            <span className={styles.tag}>({categories?.nodes[0].name})</span>
+          </div>
+        )}
         {dateInfo}
       </div>
       <div className={styles.textInfo}>
@@ -107,9 +131,27 @@ export default function PostCard({ post }: PostCardProps) {
         {event?.customExcerpt && (
           <p className={styles.excerpt}>{event.customExcerpt}</p>
         )}
+        {pressRelease?.introduction && (
+          <div
+            className={styles.excerpt}
+            dangerouslySetInnerHTML={{ __html: pressRelease.introduction }}
+          ></div>
+        )}
       </div>
       <div className={styles.learnMore}>
-        {link && <LinkButton href={link} label='Learn More' />}
+        {link && (
+          <LinkButton
+            href={link}
+            label={pressRelease ? 'Read' : 'Learn More'}
+          />
+        )}
+        {pressRelease?.pdf?.node?.mediaItemUrl && (
+          <LinkButton
+            href={pressRelease.pdf.node.mediaItemUrl}
+            label='Download PDF'
+            target='_blank'
+          />
+        )}
       </div>
     </div>
   )

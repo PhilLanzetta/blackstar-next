@@ -1,24 +1,34 @@
 .postCarouselContainer {
- width: 100%;
- padding: 20px;
- margin-bottom: 80px;
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 80px;
 }
 
 .postCarouselHeader {
- display: flex;
- justify-content: space-between;
- text-transform: uppercase;
- align-items: center;
- margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  text-transform: uppercase;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .postCarouselHeading {
- font-family: var(--gt-expanded);
- font-size: var(--gt-large);
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
 }
 
-.cardContainer {
- display: flex;
- gap: 20px;
- align-items: stretch;
+.cardContainer,
+.featuredCardContainer {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.cardContainer > div {
+  width: calc(25% - 15px);
+}
+
+.featuredCardContainer > div {
+  width: calc(50% - 10px);
 }

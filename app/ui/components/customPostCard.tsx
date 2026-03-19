@@ -8,13 +8,14 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
     post
 
   return (
-    <div className={styles.customCard}>
+    <div className={styles.card}>
       {image?.node?.sourceUrl && (
         <div className={styles.imageWrapper}>
           <Image
             src={image.node.sourceUrl}
             alt={image.node.altText ?? ''}
             fill
+            sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw'
             style={{ objectFit: 'cover' }}
           />
         </div>
@@ -24,16 +25,20 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
       </div>
       <div className={styles.textInfo}>
         {programLogo?.node?.sourceUrl && (
-          <div className={styles.logoWrapper}>
+          <div
+            style={{
+              width: '50%',
+              maxWidth: `${((programLogo.node.mediaDetails?.width ?? 500) / (programLogo.node.mediaDetails?.height ?? 80)) * 80}px`,
+            }}
+          >
             <Image
               src={programLogo.node.sourceUrl}
               alt={programLogo.node.altText ?? ''}
               width={programLogo.node.mediaDetails?.width ?? 500}
               height={programLogo.node.mediaDetails?.height ?? 80}
               style={{
-                width: '50%',
+                width: '100%',
                 height: 'auto',
-                maxHeight: '80px',
                 objectFit: 'contain',
                 objectPosition: 'left',
               }}

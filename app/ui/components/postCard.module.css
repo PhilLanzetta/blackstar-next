@@ -1,13 +1,4 @@
 .card {
-  width: 25%;
-  border: var(--standard-border);
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.customCard {
-  width: 50%;
   border: var(--standard-border);
   display: flex;
   flex-direction: column;

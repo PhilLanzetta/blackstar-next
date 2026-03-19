@@ -1,0 +1,42 @@
+.container {
+  margin-bottom: 80px;
+  padding: 20px;
+}
+
+.container h2 {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.contentContainer {
+  border: var(--standard-border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.content {
+  padding: 10px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-large);
+  line-height: var(--lofty-line-height);
+}
+
+.image {
+  order: 2; /* moves image to the right by default */
+}
+
+.flip .image {
+  order: 1; /* moves image to the left when flipped */
+}
+
+.flip .content {
+  order: 2;
+}
+
+.linkContainer {
+  padding: 10px;
+  border: var(--standard-border);
+  border-top: none;
+}

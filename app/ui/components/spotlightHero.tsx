@@ -20,6 +20,7 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
         src={image.node.sourceUrl}
         alt={image.node.altText}
         fill
+        sizes='100vw'
         style={{ objectFit: 'cover', objectPosition: 'center' }}
         className={styles.heroMedia}
       />

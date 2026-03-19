@@ -87,6 +87,16 @@ export type SpotlightHeroLayout = {
   }[];
 };
 
+// Spotlight Hero Text and Image Layout
+export type SpotlightTextImageLayout = {
+  __typename: 'FlexibleLayoutsLayoutsSpotlightTextImageLayout'
+  content?: string
+  flip?: boolean
+  heading?: string
+  link?: WPLink
+  image?: WPImage
+}
+
 // Posts Carousel Layout
 export type ProgramType = {
   name: string;
@@ -114,6 +124,35 @@ export type ProgramEvent = {
   event?: EventFields;
 };
 
+export type WPPost = {
+  __typename: 'Post'
+  id: string
+  title: string
+  link: string
+  date: string
+  contentTypeName: string
+  featuredImage?: {
+    node: {
+      sourceUrl: string
+      altText: string
+    }
+  }
+  categories?: {
+    nodes: {
+      name: string
+    }[]
+  }
+  pressRelease?: {
+    introduction?: string
+    pdf?: {
+      node: {
+        mediaItemUrl: string
+        title: string
+      }
+    }
+  }
+}
+
 export type CustomPost = {
   preTitle?: string
   title?: string
@@ -129,14 +168,55 @@ export type PostsCarouselLayout = {
   __typename: 'FlexibleLayoutsLayoutsPostsCarouselLayout'
   title: string
   link: WPLink
+  type: string
+  featured: boolean
   posts: {
-    nodes: ProgramEvent[]
+    nodes: (ProgramEvent | WPPost)[]
   }
   customPosts?: CustomPost[]
 }
 
+export type SponsorAcf = {
+  logoBlack?: {
+    node: {
+      altText: string
+      sourceUrl: string
+      mediaDetails?: {
+        width: number
+        height: number
+      }
+    }
+  }
+  website?: string
+}
+
+export type Sponsor = {
+  __typename: 'Sponsor'
+  sponsorAcf?: SponsorAcf
+}
+
+export type SponsorCollection = {
+  id: string
+  sponsors?: {
+    nodes: Sponsor[]
+  }
+}
+
+export type SponsorsCarouselLayout = {
+  __typename: 'FlexibleLayoutsLayoutsSponsorsCarouselLayout'
+  title?: string
+  button?: WPLink
+  sponsorCollection?: {
+    nodes: SponsorCollection[]
+  }
+}
+
 // Union type for all layouts
-export type FlexibleLayout = SpotlightHeroLayout | PostsCarouselLayout;
+export type FlexibleLayout =
+  | SpotlightHeroLayout
+  | PostsCarouselLayout
+  | SpotlightTextImageLayout
+  | SponsorsCarouselLayout
 
 // Home page
 export type HomePageData = {

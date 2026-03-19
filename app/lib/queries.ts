@@ -106,6 +106,7 @@ export const GET_HOME_PAGE = gql`
               posts {
                 nodes {
                   ... on ProgramEvent {
+                    __typename
                     id
                     title
                     link
@@ -130,6 +131,34 @@ export const GET_HOME_PAGE = gql`
                       }
                     }
                   }
+                  ... on Post {
+                    __typename
+                    id
+                    contentTypeName
+                    title
+                    featuredImage {
+                      node {
+                        altText
+                        sourceUrl
+                      }
+                    }
+                    date
+                    categories {
+                      nodes {
+                        name
+                      }
+                    }
+                    link
+                    pressRelease {
+                      introduction
+                      pdf {
+                        node {
+                          mediaItemUrl
+                          title
+                        }
+                      }
+                    }
+                  }
                 }
               }
               customPosts {
@@ -143,10 +172,6 @@ export const GET_HOME_PAGE = gql`
                   node {
                     altText
                     sourceUrl
-                    mediaDetails {
-                      width
-                      height
-                    }
                   }
                 }
                 preTitle
@@ -154,10 +179,71 @@ export const GET_HOME_PAGE = gql`
                   node {
                     altText
                     sourceUrl
+                    mediaDetails {
+                      height
+                      width
+                    }
                   }
                 }
                 title
                 shortDescription
+              }
+              type
+              featured
+            }
+            ... on FlexibleLayoutsLayoutsSpotlightTextImageLayout {
+              content
+              flip
+              heading
+              link {
+                title
+                url
+                target
+              }
+              image {
+                node {
+                  altText
+                  sourceUrl
+                  mediaDetails {
+                    height
+                    width
+                  }
+                }
+              }
+            }
+            ... on FlexibleLayoutsLayoutsSponsorsCarouselLayout {
+              __typename
+              title
+              button {
+                title
+                url
+              }
+              sponsorCollection {
+                nodes {
+                  ... on SponsorCollection {
+                    id
+                    sponsors {
+                      nodes {
+                        ... on Sponsor {
+                          __typename
+                          sponsorAcf {
+                            logoBlack {
+                              node {
+                                altText
+                                mediaDetails {
+                                  height
+                                  width
+                                }
+                                sourceUrl
+                              }
+                            }
+                            website
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
