@@ -27,7 +27,11 @@ export function Header({ megaNavs }: { megaNavs: MegaNav[] }) {
               <span></span>
             </button>
           </div>
-          <Link href='/' className={styles.logoContainer}>
+          <Link
+            href='/'
+            className={styles.logoContainer}
+            onClick={() => setMenuOpen(false)}
+          >
             <svg
               viewBox='0 0 232 38'
               fill='none'
@@ -117,7 +121,13 @@ export function Header({ megaNavs }: { megaNavs: MegaNav[] }) {
                 transition={{ ease: 'linear' }}
               >
                 {megaNavs.map((megaNav: MegaNav) => (
-                  <SubLink key={megaNav.id} title={megaNav.title} slug={megaNav.slug} subNav={megaNav.megaNavACF.menuItems}></SubLink>
+                  <SubLink
+                    key={megaNav.id}
+                    title={megaNav.title}
+                    slug={megaNav.slug}
+                    subNav={megaNav.megaNavACF.menuItems}
+                    onClose={() => setMenuOpen(false)}
+                  ></SubLink>
                 ))}
               </motion.div>
             </motion.div>

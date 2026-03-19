@@ -26,7 +26,13 @@ a {
   --gt-medium: 20px;
   --gt-large: 40px;
   --mono-large: 30px;
+  --mono-medium: 20px;
   --lofty-line-height: 1.1;
+  --color-accent: #a1cfcc;
+}
+
+p {
+  margin-bottom: 1em;
 }
 
 main {

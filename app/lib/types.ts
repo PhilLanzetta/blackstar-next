@@ -211,12 +211,43 @@ export type SponsorsCarouselLayout = {
   }
 }
 
+export type TextTab = {
+  title: string
+  content?: string
+  link?: WPLink
+}
+
+export type TextTabsLayout = {
+  __typename: 'FlexibleLayoutsLayoutsTextTabsLayout'
+  tabs: TextTab[]
+}
+
+export type TextListItem = {
+  heading: string
+  detail?: string
+}
+
+export type TextListLayout = {
+  __typename: 'FlexibleLayoutsLayoutsTextListLayout'
+  heading?: string
+  numberOfColumns?: number
+  items: TextListItem[]
+}
+
+export type AnchorLayout = {
+  __typename: 'FlexibleLayoutsLayoutsAnchorLayout'
+  anchorName?: string
+}
+
 // Union type for all layouts
 export type FlexibleLayout =
   | SpotlightHeroLayout
   | PostsCarouselLayout
   | SpotlightTextImageLayout
   | SponsorsCarouselLayout
+  | TextListLayout
+  | TextTabsLayout
+  | AnchorLayout
 
 // Home page
 export type HomePageData = {
@@ -228,3 +259,14 @@ export type HomePageData = {
     }[];
   };
 };
+
+// Home page
+export type AboutPageData = {
+  pages: {
+    nodes: {
+      flexibleLayouts: {
+        layouts: FlexibleLayout[]
+      }
+    }[]
+  }
+}

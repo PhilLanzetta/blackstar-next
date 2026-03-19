@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import styles from './subLink.module.css'
 import Link from 'next/link'
 import { useWindowSize, useHover } from 'usehooks-ts'
+import { formatLink } from '@/app/lib/utils/formatLink'
 
 interface MenuItems {
   menuItem: {
@@ -16,9 +17,10 @@ interface SubLinkProps {
   title: string
   slug: string
   subNav: MenuItems[]
+  onClose: () => void
 }
 
-export function SubLink({ title, slug, subNav }: SubLinkProps) {
+export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
   const [expanded, setExpanded] = useState(false)
   const { width } = useWindowSize()
   const isMobile: boolean = width < 601
@@ -39,6 +41,7 @@ export function SubLink({ title, slug, subNav }: SubLinkProps) {
           className={`${styles.sublinkMain} ${
             expanded ? styles.activeMain : ''
           }`}
+          onClick={onClose}
         >
           {title}
         </Link>
@@ -77,12 +80,26 @@ export function SubLink({ title, slug, subNav }: SubLinkProps) {
             >
               {subNav &&
                 subNav.map((item, index) => {
-                  console.log(item.menuItem)
                   return (
                     <Link
-                      href={item.menuItem.url}
+                      href={formatLink(item.menuItem.url)}
                       className={styles.underLink}
                       key={index}
+                      onClick={() => {
+                        onClose()
+                        const formattedUrl = formatLink(item.menuItem.url)
+                        const currentPath = window.location.pathname
+                        const targetPath = formattedUrl.split('#')[0]
+                        const hasHash = formattedUrl.includes('#')
+
+                        if (
+                          !hasHash &&
+                          (currentPath === targetPath ||
+                            currentPath === targetPath + '/')
+                        ) {
+                          window.scrollTo({ top: 0 })
+                        }
+                      }}
                     >
                       {item.menuItem.title}
                     </Link>

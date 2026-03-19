@@ -6,6 +6,7 @@ import {
   SiteSettingsAcf,
   FlexibleLayout,
   HomePageData,
+  AboutPageData,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -260,6 +261,73 @@ export async function getHomePage(): Promise<FlexibleLayout[]> {
     return layouts
   } catch (error) {
     console.error('Error fetching home page:', error)
+    return []
+  }
+}
+
+export const GET_ABOUT_PAGE = gql`
+  query getAboutPage {
+    pages(where: { id: 1482 }) {
+      nodes {
+        flexibleLayouts {
+          layouts {
+            __typename
+            ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
+              backgroundColour
+              contained
+              heading1
+              links {
+                link {
+                  title
+                  url
+                }
+              }
+              image {
+                node {
+                  altText
+                  sourceUrl
+                  mediaDetails {
+                    height
+                    width
+                  }
+                }
+              }
+            }
+            ... on FlexibleLayoutsLayoutsTextTabsLayout {
+              tabs {
+                title
+                content
+                link {
+                  title
+                  url
+                }
+              }
+            }
+            ... on FlexibleLayoutsLayoutsTextListLayout {
+              heading
+              numberOfColumns
+              items {
+                detail
+                heading
+              }
+            }
+            ... on FlexibleLayoutsLayoutsAnchorLayout {
+              __typename
+              anchorName
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+export async function getAboutPage(): Promise<FlexibleLayout[]> {
+  try {
+    const data = await client.request<AboutPageData>(GET_ABOUT_PAGE)
+    return data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []
+  } catch (error) {
+    console.error('Error fetching about page:', error)
     return []
   }
 }
