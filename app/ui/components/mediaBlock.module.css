@@ -1,0 +1,146 @@
+/* mediaBlock.module.css */
+
+.wrapper {
+  margin: 20px;
+  margin-bottom: 80px;
+}
+
+.wrapper h2 {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.bordered {
+  border: var(--standard-border);
+}
+
+/* Single slide / active slide content */
+.slideInner {
+  width: 100%;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.videoEmbed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.videoEmbed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.videoFile {
+  width: 100%;
+  display: block;
+}
+
+.caption {
+  font-family: var(--gt-mono);
+  padding: 10px;
+}
+
+.caption blockquote {
+ font-style: italic;
+}
+
+/* Slider */
+.slider {
+  position: relative;
+  width: 100%;
+}
+
+.prevButton,
+.nextButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s;
+}
+
+.prevButton:hover,
+.nextButton:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.prevButton {
+  left: 0.75rem;
+}
+
+.nextButton {
+  right: 0.75rem;
+}
+
+/* Dots */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #ccc;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s;
+}
+
+.dotActive {
+  background: #333;
+}
+
+.posterButton {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.posterImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.playButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 20px 0 20px 36px;
+  border-color: transparent transparent transparent #ffffff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}

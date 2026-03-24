@@ -57,13 +57,12 @@ export interface FooterQuery {
   siteSettings: SiteSettings
 }
 
-
 //Home Page
 export type WPLink = {
-  title: string;
-  url: string;
-  target?: string;
-};
+  title: string
+  url: string
+  target?: string
+}
 
 export type WPImage = {
   node: {
@@ -78,14 +77,14 @@ export type WPImage = {
 
 // Spotlight Hero Layout
 export type SpotlightHeroLayout = {
-  __typename: 'FlexibleLayoutsLayoutsSpotlightHeroLayout';
-  contained: boolean;
-  heading1: string;
-  image: WPImage;
+  __typename: 'FlexibleLayoutsLayoutsSpotlightHeroLayout'
+  contained: boolean
+  heading1: string
+  image: WPImage
   links: {
-    link: WPLink;
-  }[];
-};
+    link: WPLink
+  }[]
+}
 
 // Spotlight Hero Text and Image Layout
 export type SpotlightTextImageLayout = {
@@ -99,30 +98,30 @@ export type SpotlightTextImageLayout = {
 
 // Posts Carousel Layout
 export type ProgramType = {
-  name: string;
-};
+  name: string
+}
 
 export type EventFields = {
-  customExcerpt: string;
-  endTime: string;
-  startTime: string;
-  listingDateFormat: string;
-  location: string;
-  timezone: string;
+  customExcerpt: string
+  endTime: string
+  startTime: string
+  listingDateFormat: string
+  location: string
+  timezone: string
   programType: {
-    nodes: ProgramType[];
-  };
-};
+    nodes: ProgramType[]
+  }
+}
 
 export type ProgramEvent = {
-  __typename: 'ProgramEvent';
-  id: string;
-  title: string;
-  link: string;
-  contentTypeName: string;
-  featuredImage?: WPImage;
-  event?: EventFields;
-};
+  __typename: 'ProgramEvent'
+  id: string
+  title: string
+  link: string
+  contentTypeName: string
+  featuredImage?: WPImage
+  event?: EventFields
+}
 
 export type WPPost = {
   __typename: 'Post'
@@ -239,6 +238,56 @@ export type AnchorLayout = {
   anchorName?: string
 }
 
+// Media Layout
+export type MediaSlide = {
+  bordered?: boolean
+  caption?: string
+  image?: WPImage
+  videoEmbed?: string
+  videoFile?: {
+    node: {
+      altText: string
+      sourceUrl: string
+    }
+  }
+  videoType?: string | string[]
+}
+
+export type MediaLayout = {
+  __typename: 'FlexibleLayoutsLayoutsMediaLayout'
+  title: string
+  slides: MediaSlide[]
+}
+
+// Team Listings Layout
+export type BiographyAcf = {
+  emailAddress?: string
+  position?: string
+  pronouns?: string
+}
+
+export type Biography = {
+  title: string
+  biographyAcf?: BiographyAcf
+  content?: string
+  featuredImage?: WPImage
+}
+
+export type BioCollection = {
+  __typename: 'BioCollection'
+  biographies: {
+    nodes: Biography[]
+  }
+}
+
+export type TeamListingsLayout = {
+  __typename: 'FlexibleLayoutsLayoutsTeamListingsLayout'
+  title: string
+  collection: {
+    nodes: BioCollection[]
+  }
+}
+
 // Union type for all layouts
 export type FlexibleLayout =
   | SpotlightHeroLayout
@@ -248,19 +297,21 @@ export type FlexibleLayout =
   | TextListLayout
   | TextTabsLayout
   | AnchorLayout
+  | MediaLayout
+  | TeamListingsLayout
 
 // Home page
 export type HomePageData = {
   pages: {
     nodes: {
       flexibleLayouts: {
-        layouts: FlexibleLayout[];
-      };
-    }[];
-  };
-};
+        layouts: FlexibleLayout[]
+      }
+    }[]
+  }
+}
 
-// Home page
+// About page
 export type AboutPageData = {
   pages: {
     nodes: {

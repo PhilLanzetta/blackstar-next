@@ -312,8 +312,62 @@ export const GET_ABOUT_PAGE = gql`
               }
             }
             ... on FlexibleLayoutsLayoutsAnchorLayout {
-              __typename
               anchorName
+            }
+            ... on FlexibleLayoutsLayoutsMediaLayout {
+              slides {
+                bordered
+                caption
+                image {
+                  node {
+                    altText
+                    mediaDetails {
+                      height
+                      width
+                    }
+                    sourceUrl
+                  }
+                }
+                videoEmbed
+                videoFile {
+                  node {
+                    altText
+                    sourceUrl
+                  }
+                }
+                videoType
+              }
+            }
+            ... on FlexibleLayoutsLayoutsTeamListingsLayout {
+              title
+              collection {
+                nodes {
+                  ... on BioCollection {
+                    __typename
+                    biographies(first: 100) {
+                      nodes {
+                        title
+                        biographyAcf {
+                          emailAddress
+                          position
+                          pronouns
+                        }
+                        content
+                        featuredImage {
+                          node {
+                            altText
+                            mediaDetails {
+                              height
+                              width
+                            }
+                            sourceUrl
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
