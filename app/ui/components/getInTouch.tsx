@@ -1,10 +1,10 @@
-import type { AboutPageSiteSettings } from '@/app/lib/types'
+import type { DefaultPageSiteSettings } from '@/app/lib/types'
 import styles from './getInTouch.module.css'
 import Newsletter from '@/app/ui/components/newsletter'
 
 type Props = {
-  contactDetails?: AboutPageSiteSettings['contactDetails']
-  socialLinks?: AboutPageSiteSettings['socialLinks']
+  contactDetails?: DefaultPageSiteSettings['contactDetails']
+  socialLinks?: DefaultPageSiteSettings['socialLinks']
 }
 
 export default function GetInTouch({ contactDetails, socialLinks }: Props) {

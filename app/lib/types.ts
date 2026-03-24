@@ -304,7 +304,7 @@ export type OpportunityType = {
   }
 }
 
-export type AboutPageSiteSettings = {
+export type DefaultPageSiteSettings = {
   noOpportunitiesMessage?: string
   contactDetails?: {
     address?: string
@@ -343,26 +343,24 @@ export type HomePageData = {
 }
 
 // About page
-export type AboutPageData = {
-  pages: {
-    nodes: {
-      flexibleLayouts: {
-        layouts: FlexibleLayout[]
-      }
-    }[]
+export type DefaultPageData = {
+  page: {
+    flexibleLayouts: {
+      layouts: FlexibleLayout[]
+    }
   }
   opportunityTypes: {
     nodes: OpportunityType[]
   }
   siteSettings: {
-    siteSettingsAcf: AboutPageSiteSettings
+    siteSettingsAcf: DefaultPageSiteSettings
   }
 }
 
-export type AboutPageResult = {
+export type DefaultPageResult = {
   layouts: FlexibleLayout[]
   opportunityTypes: OpportunityType[]
   noOpportunitiesMessage?: string
-  contactDetails?: AboutPageSiteSettings['contactDetails']
-  socialLinks?: AboutPageSiteSettings['socialLinks']
+  contactDetails?: DefaultPageSiteSettings['contactDetails']
+  socialLinks?: DefaultPageSiteSettings['socialLinks']
 }

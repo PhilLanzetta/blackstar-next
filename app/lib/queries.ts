@@ -6,11 +6,13 @@ import {
   SiteSettingsAcf,
   FlexibleLayout,
   HomePageData,
-  AboutPageData,
-  AboutPageResult,
+  DefaultPageData,
+  DefaultPageResult,
 } from './types'
 
-const client = new GraphQLClient(`${baseURL}/graphql`)
+const client = new GraphQLClient(`${baseURL}/graphql`, {
+  errorPolicy: 'all',
+})
 
 export async function getMegaNav(): Promise<MegaNav[]> {
   const query = gql`
@@ -266,106 +268,104 @@ export async function getHomePage(): Promise<FlexibleLayout[]> {
   }
 }
 
-export const GET_ABOUT_PAGE = gql`
-  query getAboutPage {
-    pages(where: { id: 1482 }) {
-      nodes {
-        flexibleLayouts {
-          layouts {
-            __typename
-            ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
-              backgroundColour
-              contained
-              heading1
-              links {
-                link {
-                  title
-                  url
+const GET_DEFAULT_PAGE = gql`
+  query getDefaultPage($slug: ID!) {
+    page(id: $slug, idType: URI) {
+      flexibleLayouts {
+        layouts {
+          __typename
+          ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
+            backgroundColour
+            contained
+            heading1
+            links {
+              link {
+                title
+                url
+              }
+            }
+            image {
+              node {
+                altText
+                sourceUrl
+                mediaDetails {
+                  height
+                  width
                 }
               }
+            }
+          }
+          ... on FlexibleLayoutsLayoutsTextTabsLayout {
+            tabs {
+              title
+              content
+              link {
+                title
+                url
+              }
+            }
+          }
+          ... on FlexibleLayoutsLayoutsTextListLayout {
+            heading
+            numberOfColumns
+            items {
+              detail
+              heading
+            }
+          }
+          ... on FlexibleLayoutsLayoutsAnchorLayout {
+            __typename
+            anchorName
+          }
+          ... on FlexibleLayoutsLayoutsMediaLayout {
+            __typename
+            title
+            slides {
+              bordered
+              caption
               image {
                 node {
                   altText
-                  sourceUrl
                   mediaDetails {
                     height
                     width
                   }
+                  sourceUrl
                 }
               }
-            }
-            ... on FlexibleLayoutsLayoutsTextTabsLayout {
-              tabs {
-                title
-                content
-                link {
-                  title
-                  url
+              videoEmbed
+              videoFile {
+                node {
+                  altText
+                  sourceUrl
                 }
               }
+              videoType
             }
-            ... on FlexibleLayoutsLayoutsTextListLayout {
-              heading
-              numberOfColumns
-              items {
-                detail
-                heading
-              }
-            }
-            ... on FlexibleLayoutsLayoutsAnchorLayout {
-              __typename
-              anchorName
-            }
-            ... on FlexibleLayoutsLayoutsMediaLayout {
-              __typename
-              title
-              slides {
-                bordered
-                caption
-                image {
-                  node {
-                    altText
-                    mediaDetails {
-                      height
-                      width
-                    }
-                    sourceUrl
-                  }
-                }
-                videoEmbed
-                videoFile {
-                  node {
-                    altText
-                    sourceUrl
-                  }
-                }
-                videoType
-              }
-            }
-            ... on FlexibleLayoutsLayoutsTeamListingsLayout {
-              __typename
-              collection {
-                nodes {
-                  __typename
-                  ... on BioCollection {
-                    biographies(first: 100) {
-                      nodes {
-                        title
-                        biographyAcf {
-                          emailAddress
-                          position
-                          pronouns
-                        }
-                        content
-                        featuredImage {
-                          node {
-                            altText
-                            mediaDetails {
-                              height
-                              width
-                            }
-                            sourceUrl
+          }
+          ... on FlexibleLayoutsLayoutsTeamListingsLayout {
+            __typename
+            collection {
+              nodes {
+                __typename
+                ... on BioCollection {
+                  biographies(first: 100) {
+                    nodes {
+                      title
+                      biographyAcf {
+                        emailAddress
+                        position
+                        pronouns
+                      }
+                      content
+                      featuredImage {
+                        node {
+                          altText
+                          mediaDetails {
+                            height
+                            width
                           }
+                          sourceUrl
                         }
                       }
                     }
@@ -410,19 +410,25 @@ export const GET_ABOUT_PAGE = gql`
   }
 `
 
-export async function getAboutPage(): Promise<AboutPageResult> {
+export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
   try {
-    const data = await client.request<AboutPageData>(GET_ABOUT_PAGE)
+    const { data } = await client.rawRequest<DefaultPageData>(
+      GET_DEFAULT_PAGE,
+      { slug },
+    )
+
     const siteSettingsAcf = data.siteSettings?.siteSettingsAcf
+    const layouts = (data.page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
+
     return {
-      layouts: data.pages.nodes[0]?.flexibleLayouts?.layouts ?? [],
+      layouts,
       opportunityTypes: data.opportunityTypes?.nodes ?? [],
       noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
       contactDetails: siteSettingsAcf?.contactDetails,
       socialLinks: siteSettingsAcf?.socialLinks,
     }
   } catch (error) {
-    console.error('Error fetching about page:', error)
+    console.error('Error fetching page:', error)
     return {
       layouts: [],
       opportunityTypes: [],
