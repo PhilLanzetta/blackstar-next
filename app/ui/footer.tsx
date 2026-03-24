@@ -3,6 +3,7 @@ import styles from './footer.module.css'
 import Link from 'next/link'
 import { FooterQuery, SiteSettingsAcf } from '../lib/types'
 import { useWindowSize } from 'usehooks-ts'
+import Newsletter from './components/newsletter'
 
 interface FooterProps {
   footerNav: SiteSettingsAcf
@@ -44,7 +45,7 @@ export function Footer({ footerNav }: FooterProps) {
         {!isMobile && (
           <div>
             SIGN UP FOR BLACKSTAR NEWS,<br></br>OUR MONTHLY NEWSLETTER
-            <div></div>
+            <Newsletter />
           </div>
         )}
       </div>

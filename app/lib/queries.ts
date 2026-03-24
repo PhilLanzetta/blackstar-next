@@ -318,6 +318,7 @@ export const GET_ABOUT_PAGE = gql`
             }
             ... on FlexibleLayoutsLayoutsMediaLayout {
               __typename
+              title
               slides {
                 bordered
                 caption

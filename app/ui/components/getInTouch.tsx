@@ -1,5 +1,6 @@
 import type { AboutPageSiteSettings } from '@/app/lib/types'
 import styles from './getInTouch.module.css'
+import Newsletter from '@/app/ui/components/newsletter'
 
 type Props = {
   contactDetails?: AboutPageSiteSettings['contactDetails']
@@ -90,7 +91,7 @@ export default function GetInTouch({ contactDetails, socialLinks }: Props) {
         )}
         <div>
           SIGN UP FOR BLACKSTAR NEWS,<br></br>OUR MONTHLY NEWSLETTER
-          <div></div>
+          <Newsletter />
         </div>
       </div>
     </section>
