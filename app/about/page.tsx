@@ -13,11 +13,19 @@ import TextList from '@/app/ui/components/textList'
 import AnchorBlock from '@/app/ui/components/anchorBlock'
 import MediaBlock from '@/app/ui/components/mediaBlock'
 import TeamListings from '@/app/ui/components/teamListings'
+import Opportunities from '@/app/ui/components/opportunites'
+import GetInTouch from '@/app/ui/components/getInTouch'
 
 export const revalidate = 60
 
 export default async function AboutPage() {
-  const layouts = await getAboutPage()
+  const {
+    layouts,
+    opportunityTypes,
+    noOpportunitiesMessage,
+    contactDetails,
+    socialLinks,
+  } = await getAboutPage()
 
   if (!layouts.length) return null
 
@@ -45,6 +53,11 @@ export default async function AboutPage() {
             return null
         }
       })}
+      <Opportunities
+        opportunityTypes={opportunityTypes}
+        noOpportunitiesMessage={noOpportunitiesMessage}
+      />
+      <GetInTouch contactDetails={contactDetails} socialLinks={socialLinks} />
     </main>
   )
 }

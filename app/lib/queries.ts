@@ -7,6 +7,7 @@ import {
   FlexibleLayout,
   HomePageData,
   AboutPageData,
+  AboutPageResult,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -312,9 +313,11 @@ export const GET_ABOUT_PAGE = gql`
               }
             }
             ... on FlexibleLayoutsLayoutsAnchorLayout {
+              __typename
               anchorName
             }
             ... on FlexibleLayoutsLayoutsMediaLayout {
+              __typename
               slides {
                 bordered
                 caption
@@ -339,11 +342,11 @@ export const GET_ABOUT_PAGE = gql`
               }
             }
             ... on FlexibleLayoutsLayoutsTeamListingsLayout {
-              title
+              __typename
               collection {
                 nodes {
+                  __typename
                   ... on BioCollection {
-                    __typename
                     biographies(first: 100) {
                       nodes {
                         title
@@ -373,15 +376,58 @@ export const GET_ABOUT_PAGE = gql`
         }
       }
     }
+    opportunityTypes {
+      nodes {
+        name
+        opportunities {
+          nodes {
+            title
+            link
+            opportunityAcf {
+              shortDescription
+            }
+          }
+        }
+      }
+    }
+    siteSettings {
+      siteSettingsAcf {
+        noOpportunitiesMessage
+        contactDetails {
+          address
+          email
+          phone
+        }
+        socialLinks {
+          facebookUrl
+          instagramUrl
+          twitterUrl
+          youtubeUrl
+        }
+      }
+    }
   }
 `
 
-export async function getAboutPage(): Promise<FlexibleLayout[]> {
+export async function getAboutPage(): Promise<AboutPageResult> {
   try {
     const data = await client.request<AboutPageData>(GET_ABOUT_PAGE)
-    return data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []
+    const siteSettingsAcf = data.siteSettings?.siteSettingsAcf
+    return {
+      layouts: data.pages.nodes[0]?.flexibleLayouts?.layouts ?? [],
+      opportunityTypes: data.opportunityTypes?.nodes ?? [],
+      noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
+      contactDetails: siteSettingsAcf?.contactDetails,
+      socialLinks: siteSettingsAcf?.socialLinks,
+    }
   } catch (error) {
     console.error('Error fetching about page:', error)
-    return []
+    return {
+      layouts: [],
+      opportunityTypes: [],
+      noOpportunitiesMessage: undefined,
+      contactDetails: undefined,
+      socialLinks: undefined,
+    }
   }
 }

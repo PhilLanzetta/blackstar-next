@@ -288,6 +288,37 @@ export type TeamListingsLayout = {
   }
 }
 
+// Opportunities
+export type Opportunity = {
+  title: string
+  link: string
+  opportunityAcf?: {
+    shortDescription?: string
+  }
+}
+
+export type OpportunityType = {
+  name: string
+  opportunities: {
+    nodes: Opportunity[]
+  }
+}
+
+export type AboutPageSiteSettings = {
+  noOpportunitiesMessage?: string
+  contactDetails?: {
+    address?: string
+    email?: string
+    phone?: string
+  }
+  socialLinks?: {
+    facebookUrl?: string
+    instagramUrl?: string
+    twitterUrl?: string
+    youtubeUrl?: string
+  }
+}
+
 // Union type for all layouts
 export type FlexibleLayout =
   | SpotlightHeroLayout
@@ -320,4 +351,18 @@ export type AboutPageData = {
       }
     }[]
   }
+  opportunityTypes: {
+    nodes: OpportunityType[]
+  }
+  siteSettings: {
+    siteSettingsAcf: AboutPageSiteSettings
+  }
+}
+
+export type AboutPageResult = {
+  layouts: FlexibleLayout[]
+  opportunityTypes: OpportunityType[]
+  noOpportunitiesMessage?: string
+  contactDetails?: AboutPageSiteSettings['contactDetails']
+  socialLinks?: AboutPageSiteSettings['socialLinks']
 }
