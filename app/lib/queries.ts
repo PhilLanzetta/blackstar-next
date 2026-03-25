@@ -10,9 +10,7 @@ import {
   DefaultPageResult,
 } from './types'
 
-const client = new GraphQLClient(`${baseURL}/graphql`, {
-  errorPolicy: 'all',
-})
+const client = new GraphQLClient(`${baseURL}/graphql`)
 
 export async function getMegaNav(): Promise<MegaNav[]> {
   const query = gql`
@@ -259,9 +257,19 @@ export const GET_HOME_PAGE = gql`
 export async function getHomePage(): Promise<FlexibleLayout[]> {
   try {
     const data = await client.request<HomePageData>(GET_HOME_PAGE)
-    const layouts = data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []
+    if (!data?.pages) return []
+    const layouts = (
+      data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []
+    ).filter(Boolean)
     return layouts
-  } catch (error) {
+  } catch (error: any) {
+    // WPGraphQL returns partial data even when there are errors
+    if (error?.response?.data?.pages) {
+      const layouts = (
+        error.response.data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []
+      ).filter(Boolean)
+      return layouts
+    }
     console.error('Error fetching home page:', error)
     return []
   }
@@ -410,23 +418,23 @@ const GET_DEFAULT_PAGE = gql`
   }
 `
 
+const emptyResult: DefaultPageResult = {
+  layouts: [],
+  opportunityTypes: [],
+  noOpportunitiesMessage: undefined,
+  contactDetails: undefined,
+  socialLinks: undefined,
+}
+
 export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
   try {
-    const { data } = await client.rawRequest<DefaultPageData>(
-      GET_DEFAULT_PAGE,
-      { slug },
-    )
-
-    const page = data.page
+    const data = await client.request<DefaultPageData>(GET_DEFAULT_PAGE, {
+      slug,
+    })
+    const page = data?.page
 
     if (!page || page?.template?.templateName !== 'Default') {
-      return {
-        layouts: [],
-        opportunityTypes: [],
-        noOpportunitiesMessage: undefined,
-        contactDetails: undefined,
-        socialLinks: undefined,
-      }
+      return emptyResult
     }
 
     const siteSettingsAcf = data.siteSettings?.siteSettingsAcf
@@ -439,14 +447,25 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       contactDetails: siteSettingsAcf?.contactDetails,
       socialLinks: siteSettingsAcf?.socialLinks,
     }
-  } catch (error) {
-    console.error('Error fetching page:', error)
-    return {
-      layouts: [],
-      opportunityTypes: [],
-      noOpportunitiesMessage: undefined,
-      contactDetails: undefined,
-      socialLinks: undefined,
+  } catch (error: any) {
+    // WPGraphQL returns partial data alongside errors for unrecognized layout types
+    const data = error?.response?.data as DefaultPageData | undefined
+    const page = data?.page
+
+    if (page && page?.template?.templateName === 'Default') {
+      const siteSettingsAcf = data?.siteSettings?.siteSettingsAcf
+      const layouts = (page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
+
+      return {
+        layouts,
+        opportunityTypes: data?.opportunityTypes?.nodes ?? [],
+        noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
+        contactDetails: siteSettingsAcf?.contactDetails,
+        socialLinks: siteSettingsAcf?.socialLinks,
+      }
     }
+
+    console.error('Error fetching page:', error)
+    return emptyResult
   }
 }
