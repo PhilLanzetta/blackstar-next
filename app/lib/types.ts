@@ -345,6 +345,9 @@ export type HomePageData = {
 // About page
 export type DefaultPageData = {
   page: {
+    template?: {
+      templateName: string
+    }
     flexibleLayouts: {
       layouts: FlexibleLayout[]
     }

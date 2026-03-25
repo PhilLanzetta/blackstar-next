@@ -271,6 +271,9 @@ export async function getHomePage(): Promise<FlexibleLayout[]> {
 const GET_DEFAULT_PAGE = gql`
   query getDefaultPage($slug: ID!) {
     page(id: $slug, idType: URI) {
+      template {
+        templateName
+      }
       flexibleLayouts {
         layouts {
           __typename
@@ -417,8 +420,20 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       { slug },
     )
 
+    const page = data.page
+
+    if (page?.template?.templateName !== 'Default') {
+      return {
+        layouts: [],
+        opportunityTypes: [],
+        noOpportunitiesMessage: undefined,
+        contactDetails: undefined,
+        socialLinks: undefined,
+      }
+    }
+
     const siteSettingsAcf = data.siteSettings?.siteSettingsAcf
-    const layouts = (data.page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
+    const layouts = (page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
 
     return {
       layouts,
