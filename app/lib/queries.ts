@@ -422,7 +422,7 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
 
     const page = data.page
 
-    if (page?.template?.templateName !== 'Default') {
+    if (!page || page?.template?.templateName !== 'Default') {
       return {
         layouts: [],
         opportunityTypes: [],

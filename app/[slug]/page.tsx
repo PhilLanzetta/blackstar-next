@@ -29,22 +29,25 @@ const client = new GraphQLClient(`${baseURL}/graphql`, {
   errorPolicy: 'all',
 })
 
-export async function generateStaticParams() {
-  const data = await client.request<{ pages: { nodes: { slug: string }[] } }>(
-    gql`
-      query getAllPageSlugs {
-        pages(first: 100) {
-          nodes {
-            slug
+export async function getAllPageSlugs(): Promise<{ slug: string }[]> {
+  const data = await client.request<{
+    pages: { nodes: { slug: string; template: { templateName: string } }[] }
+  }>(gql`
+    query getAllPageSlugs {
+      pages(first: 100) {
+        nodes {
+          slug
+          template {
+            templateName
           }
         }
       }
-    `,
-  )
+    }
+  `)
 
-  return data.pages.nodes.map((page) => ({
-    slug: page.slug,
-  }))
+  return data.pages.nodes.filter(
+    (page) => page.template?.templateName === 'Default',
+  )
 }
 
 export default async function DefaultPage({ params }: Props) {
@@ -58,7 +61,7 @@ export default async function DefaultPage({ params }: Props) {
     socialLinks,
   } = await getDefaultPage(slug)
 
-  if (!layouts.length) return notFound()
+  if (!layouts || !layouts.length) return notFound()
 
   return (
     <main>
