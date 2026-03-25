@@ -5,7 +5,7 @@ import styles from './spotlightHero.module.css'
 import LinkButton from '@/app/ui/components/linkButton'
 
 export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
-  const { heading1, image, links, contained } = data
+  const { heading1, image, links, } = data
 
   return (
     <section
@@ -17,8 +17,8 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
       }}
     >
       <Image
-        src={image.node.sourceUrl}
-        alt={image.node.altText}
+        src={image?.node?.sourceUrl}
+        alt={image?.node?.altText}
         fill
         sizes='100vw'
         style={{ objectFit: 'cover', objectPosition: 'center' }}

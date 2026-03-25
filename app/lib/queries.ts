@@ -86,7 +86,6 @@ export const GET_HOME_PAGE = gql`
           layouts {
             __typename
             ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
-              contained
               heading1
               image {
                 node {
@@ -278,8 +277,6 @@ const GET_DEFAULT_PAGE = gql`
         layouts {
           __typename
           ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
-            backgroundColour
-            contained
             heading1
             links {
               link {
