@@ -303,6 +303,120 @@ const GET_DEFAULT_PAGE = gql`
               }
             }
           }
+          ... on FlexibleLayoutsLayoutsPostsCarouselLayout {
+            title
+            link {
+              title
+              url
+            }
+            posts {
+              nodes {
+                ... on ProgramEvent {
+                  __typename
+                  id
+                  title
+                  link
+                  contentTypeName
+                  featuredImage {
+                    node {
+                      altText
+                      sourceUrl
+                    }
+                  }
+                  event {
+                    customExcerpt
+                    endTime
+                    listingDateFormat
+                    location
+                    startTime
+                    timezone
+                    programType {
+                      nodes {
+                        name
+                      }
+                    }
+                  }
+                }
+                ... on Post {
+                  __typename
+                  id
+                  contentTypeName
+                  title
+                  featuredImage {
+                    node {
+                      altText
+                      sourceUrl
+                    }
+                  }
+                  date
+                  categories {
+                    nodes {
+                      name
+                    }
+                  }
+                  link
+                  pressRelease {
+                    introduction
+                    pdf {
+                      node {
+                        mediaItemUrl
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            customPosts {
+              buttons {
+                link {
+                  title
+                  url
+                }
+              }
+              image {
+                node {
+                  altText
+                  sourceUrl
+                }
+              }
+              preTitle
+              programLogo {
+                node {
+                  altText
+                  sourceUrl
+                  mediaDetails {
+                    height
+                    width
+                  }
+                }
+              }
+              title
+              shortDescription
+            }
+            type
+            featured
+          }
+          ... on FlexibleLayoutsLayoutsSpotlightTextImageLayout {
+            content
+            flip
+            heading
+            link {
+              title
+              url
+              target
+            }
+            image {
+              node {
+                altText
+                sourceUrl
+                mediaDetails {
+                  height
+                  width
+                }
+              }
+            }
+          }
           ... on FlexibleLayoutsLayoutsTextTabsLayout {
             tabs {
               title
@@ -313,12 +427,65 @@ const GET_DEFAULT_PAGE = gql`
               }
             }
           }
+          ... on FlexibleLayoutsLayoutsSponsorsCarouselLayout {
+            __typename
+            title
+            button {
+              title
+              url
+            }
+            sponsorCollection {
+              nodes {
+                ... on SponsorCollection {
+                  id
+                  sponsors {
+                    nodes {
+                      ... on Sponsor {
+                        __typename
+                        sponsorAcf {
+                          logoBlack {
+                            node {
+                              altText
+                              mediaDetails {
+                                height
+                                width
+                              }
+                              sourceUrl
+                            }
+                          }
+                          website
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
           ... on FlexibleLayoutsLayoutsTextListLayout {
             heading
             numberOfColumns
             items {
               detail
               heading
+            }
+          }
+          ... on FlexibleLayoutsLayoutsFaqAccordionLayout {
+            __typename
+            collection {
+              nodes {
+                ... on FaqCollection {
+                  __typename
+                  id
+                  name
+                  faqs {
+                    nodes {
+                      title
+                      content
+                    }
+                  }
+                }
+              }
             }
           }
           ... on FlexibleLayoutsLayoutsAnchorLayout {
@@ -353,6 +520,7 @@ const GET_DEFAULT_PAGE = gql`
           }
           ... on FlexibleLayoutsLayoutsTeamListingsLayout {
             __typename
+            title
             collection {
               nodes {
                 __typename

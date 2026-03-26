@@ -20,7 +20,7 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
           />
         </div>
       )}
-      <div className={styles.info}>
+      <div className={preTitle ? styles.info : ''}>
         {preTitle && <p className={styles.preTitle}>({preTitle})</p>}
       </div>
       <div className={styles.textInfo}>

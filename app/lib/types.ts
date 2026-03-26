@@ -259,6 +259,28 @@ export type MediaLayout = {
   slides: MediaSlide[]
 }
 
+// FAQ Accordion Layout
+export type Faq = {
+  title: string
+  content?: string
+}
+
+export type FaqCollection = {
+  __typename: 'FaqCollection'
+  id: string
+  name: string
+  faqs: {
+    nodes: Faq[]
+  }
+}
+
+export type FaqAccordionLayout = {
+  __typename: 'FlexibleLayoutsLayoutsFaqAccordionLayout'
+  collection: {
+    nodes: FaqCollection[]
+  }
+}
+
 // Team Listings Layout
 export type BiographyAcf = {
   emailAddress?: string
@@ -330,6 +352,7 @@ export type FlexibleLayout =
   | AnchorLayout
   | MediaLayout
   | TeamListingsLayout
+  | FaqAccordionLayout
 
 // Home page
 export type HomePageData = {

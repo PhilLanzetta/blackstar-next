@@ -1,0 +1,70 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  border: var(--standard-border);
+  margin: 20px;
+  margin-bottom: 80px;
+}
+
+.faqHeader {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  margin-bottom: 20px;
+  margin-left: 20px;
+  text-transform: uppercase;
+}
+
+.item {
+  border-bottom: var(--standard-border);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  text-transform: uppercase;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-medium);
+}
+
+.active .trigger {
+  background-color: var(--color-accent, #a1cfcc);
+}
+
+.icon {
+  font-family: var(--gt-mono);
+}
+
+.contentInner {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.contentText {
+  font-family: var(--gt-mono);
+  line-height: var(--lofty-line-height);
+  font-size: var(--mono-medium);
+}
+
+.loadMoreContainer {
+  display: flex;
+  padding: 10px;
+}
+
+.btn {
+  font-family: var(--gt-mono);
+  text-transform: uppercase;
+  border: var(--standard-border);
+  padding: 5px 15px;
+  display: inline-block;
+}

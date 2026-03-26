@@ -7,6 +7,10 @@ import type {
   AnchorLayout,
   MediaLayout,
   TeamListingsLayout,
+  PostsCarouselLayout,
+  SpotlightTextImageLayout,
+  FaqAccordionLayout,
+  SponsorsCarouselLayout,
 } from '@/app/lib/types'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
@@ -16,6 +20,10 @@ import MediaBlock from '@/app/ui/components/mediaBlock'
 import TeamListings from '@/app/ui/components/teamListings'
 import Opportunities from '@/app/ui/components/opportunites'
 import GetInTouch from '@/app/ui/components/getInTouch'
+import PostsCarousel from '../ui/components/postsCarousel'
+import SpotlightTextImage from '../ui/components/spotlightTextImage'
+import FaqAccordion from '@/app/ui/components/faqAccordion'
+import SponsorsCarousel from '../ui/components/sponsorsCarousel'
 import { notFound } from 'next/navigation'
 
 export const revalidate = 60
@@ -62,7 +70,6 @@ export default async function DefaultPage({ params }: Props) {
   } = await getDefaultPage(slug)
 
   if (!layouts || !layouts.length) return notFound()
-
   return (
     <main>
       {layouts.map((layout, index) => {
@@ -82,6 +89,29 @@ export default async function DefaultPage({ params }: Props) {
           case 'FlexibleLayoutsLayoutsTeamListingsLayout':
             return (
               <TeamListings key={index} data={layout as TeamListingsLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsPostsCarouselLayout':
+            return (
+              <PostsCarousel key={index} data={layout as PostsCarouselLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsSpotlightTextImageLayout':
+            return (
+              <SpotlightTextImage
+                key={index}
+                data={layout as SpotlightTextImageLayout}
+              />
+            )
+          case 'FlexibleLayoutsLayoutsFaqAccordionLayout':
+            return (
+              <FaqAccordion key={index} data={layout as FaqAccordionLayout} />
+            )
+
+          case 'FlexibleLayoutsLayoutsSponsorsCarouselLayout':
+            return (
+              <SponsorsCarousel
+                key={index}
+                data={layout as SponsorsCarouselLayout}
+              />
             )
           default:
             return null

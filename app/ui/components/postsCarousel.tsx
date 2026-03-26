@@ -13,13 +13,21 @@ export default function PostsCarousel({ data }: { data: PostsCarouselLayout }) {
     <section className={styles.postCarouselContainer}>
       <div className={styles.postCarouselHeader}>
         <h2 className={styles.postCarouselHeading}>{title}</h2>
-        <a href={link.url} className='view-all'>
-          {link.title}
-        </a>
+        {link && (
+          <a href={link.url} className='view-all'>
+            {link.title}
+          </a>
+        )}
       </div>
-      <div className={featured ? styles.featuredCardContainer : styles.cardContainer}>
+      <div
+        className={
+          featured ? styles.featuredCardContainer : styles.cardContainer
+        }
+      >
         {isCustom
-          ? customPosts?.map((post, i) => <CustomPostCard key={i} post={post} />)
+          ? customPosts?.map((post, i) => (
+              <CustomPostCard key={i} post={post} />
+            ))
           : posts?.nodes.map((post, i) => {
               return <PostCard key={post.id ?? i} post={post} />
             })}
