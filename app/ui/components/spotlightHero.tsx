@@ -5,7 +5,7 @@ import styles from './spotlightHero.module.css'
 import LinkButton from '@/app/ui/components/linkButton'
 
 export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
-  const { heading1, image, links, } = data
+  const { heading1, image, links } = data
 
   return (
     <section
@@ -16,21 +16,29 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
         marginBottom: '80px',
       }}
     >
-      <Image
-        src={image?.node?.sourceUrl}
-        alt={image?.node?.altText}
-        fill
-        sizes='100vw'
-        style={{ objectFit: 'cover', objectPosition: 'center' }}
-        className={styles.heroMedia}
-      />
+      {image?.node && (
+        <Image
+          src={image?.node?.sourceUrl}
+          alt={image?.node?.altText}
+          fill
+          sizes='100vw'
+          style={{ objectFit: 'cover', objectPosition: 'center' }}
+          className={styles.heroMedia}
+        />
+      )}
       <div className={styles.heroInfoBox}>
         <p className={styles.heroBoxHeading}>{heading1}</p>
-        <div className={styles.heroBoxLinkContainer}>
-          {links.map((item, i) => (
-            <LinkButton key={i} href={item.link.url} label={item.link.title} />
-          ))}
-        </div>
+        {links && (
+          <div className={styles.heroBoxLinkContainer}>
+            {links.map((item, i) => (
+              <LinkButton
+                key={i}
+                href={item.link.url}
+                label={item.link.title}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

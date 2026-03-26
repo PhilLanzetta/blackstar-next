@@ -492,6 +492,61 @@ const GET_DEFAULT_PAGE = gql`
             __typename
             anchorName
           }
+          ... on FlexibleLayoutsLayoutsSectionHeadingLayout {
+            __typename
+            heading
+            subHeading
+          }
+          ... on FlexibleLayoutsLayoutsTextListAltLayout {
+            collapsable
+            heading
+            column1
+            column2
+            column3
+          }
+          ... on FlexibleLayoutsLayoutsSponsorsRowLayout {
+            __typename
+            heading
+            description
+            descriptionPosition
+            sponsors {
+              manualSponsor {
+                link {
+                  url
+                }
+                logo {
+                  node {
+                    altText
+                    mediaDetails {
+                      height
+                      width
+                    }
+                    sourceUrl
+                  }
+                }
+              }
+              sponsor {
+                nodes {
+                  ... on Sponsor {
+                    id
+                    sponsorAcf {
+                      logoBlack {
+                        node {
+                          altText
+                          mediaDetails {
+                            height
+                            width
+                          }
+                          sourceUrl
+                        }
+                      }
+                      website
+                    }
+                  }
+                }
+              }
+            }
+          }
           ... on FlexibleLayoutsLayoutsMediaLayout {
             __typename
             title

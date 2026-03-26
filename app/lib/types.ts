@@ -238,6 +238,12 @@ export type AnchorLayout = {
   anchorName?: string
 }
 
+export type SectionHeadingLayout = {
+  __typename: 'FlexibleLayoutsLayoutsSectionHeadingLayout'
+  heading?: string
+  subHeading?: string
+}
+
 // Media Layout
 export type MediaSlide = {
   bordered?: boolean
@@ -310,6 +316,43 @@ export type TeamListingsLayout = {
   }
 }
 
+export type TextListAltLayout = {
+  __typename: 'FlexibleLayoutsLayoutsTextListAltLayout'
+  collapsable?: boolean
+  heading?: string
+  column1?: string
+  column2?: string
+  column3?: string
+}
+
+export type ManualSponsor = {
+  link?: {
+    url?: string
+  }
+  logo?: WPImage
+}
+
+export type SponsorsRowSponsor = {
+  manualSponsor?: ManualSponsor
+  sponsor?: {
+    nodes: {
+      id: string
+      sponsorAcf?: {
+        logoBlack?: WPImage
+        website?: string
+      }
+    }[]
+  }
+}
+
+export type SponsorsRowLayout = {
+  __typename: 'FlexibleLayoutsLayoutsSponsorsRowLayout'
+  heading?: string
+  description?: string
+  descriptionPosition?: string
+  sponsors?: SponsorsRowSponsor[]
+}
+
 // Opportunities
 export type Opportunity = {
   title: string
@@ -348,11 +391,14 @@ export type FlexibleLayout =
   | SpotlightTextImageLayout
   | SponsorsCarouselLayout
   | TextListLayout
+  | TextListAltLayout
   | TextTabsLayout
   | AnchorLayout
   | MediaLayout
   | TeamListingsLayout
   | FaqAccordionLayout
+  | SectionHeadingLayout
+  | SponsorsRowLayout
 
 // Home page
 export type HomePageData = {

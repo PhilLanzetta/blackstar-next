@@ -1,0 +1,18 @@
+.wrapper {
+  display: grid;
+  margin: 20px;
+  border: var(--standard-border);
+  padding: 10px;
+  margin-bottom: 80px;
+}
+
+.heading {
+  font-family: var(--gt-mono);
+  font-style: italic;
+  font-size: var(--mono-large);
+  text-transform: uppercase;
+}
+
+.column {
+ font-family: var(--gt-mono);
+}

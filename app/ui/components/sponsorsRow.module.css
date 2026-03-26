@@ -1,0 +1,41 @@
+.wrapper {
+  border: var(--standard-border);
+  margin: 20px;
+  margin-bottom: 80px;
+  padding: 10px;
+}
+
+.headingContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.heading {
+  font-family: var(--gt-mono);
+  font-style: italic;
+  font-size: var(--mono-large);
+  text-transform: uppercase;
+}
+
+.description {
+  font-family: var(--gt-mono);
+  grid-column: span 2;
+}
+
+.logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 15;
+}
+
+.logoLink {
+  width: calc((100% - 75px) / 6);
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}

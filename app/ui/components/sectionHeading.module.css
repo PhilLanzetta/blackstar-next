@@ -1,0 +1,15 @@
+.headingContainer {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.heading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+}
+
+.subHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-medium);
+}

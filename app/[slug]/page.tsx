@@ -11,6 +11,9 @@ import type {
   SpotlightTextImageLayout,
   FaqAccordionLayout,
   SponsorsCarouselLayout,
+  SectionHeadingLayout,
+  TextListAltLayout,
+  SponsorsRowLayout,
 } from '@/app/lib/types'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
@@ -24,7 +27,10 @@ import PostsCarousel from '../ui/components/postsCarousel'
 import SpotlightTextImage from '../ui/components/spotlightTextImage'
 import FaqAccordion from '@/app/ui/components/faqAccordion'
 import SponsorsCarousel from '../ui/components/sponsorsCarousel'
+import SectionHeading from '../ui/components/sectionHeading'
+import TextListAlt from '@/app/ui/components/textListAlt'
 import { notFound } from 'next/navigation'
+import SponsorsRow from '../ui/components/sponsorsRow'
 
 export const revalidate = 60
 
@@ -112,6 +118,21 @@ export default async function DefaultPage({ params }: Props) {
                 key={index}
                 data={layout as SponsorsCarouselLayout}
               />
+            )
+          case 'FlexibleLayoutsLayoutsSectionHeadingLayout':
+            return (
+              <SectionHeading
+                key={index}
+                data={layout as SectionHeadingLayout}
+              />
+            )
+          case 'FlexibleLayoutsLayoutsTextListAltLayout':
+            return (
+              <TextListAlt key={index} data={layout as TextListAltLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsSponsorsRowLayout':
+            return (
+              <SponsorsRow key={index} data={layout as SponsorsRowLayout} />
             )
           default:
             return null
