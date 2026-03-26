@@ -14,6 +14,7 @@ import type {
   SectionHeadingLayout,
   TextListAltLayout,
   SponsorsRowLayout,
+  PostsGridLayout
 } from '@/app/lib/types'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
@@ -31,6 +32,7 @@ import SectionHeading from '../ui/components/sectionHeading'
 import TextListAlt from '@/app/ui/components/textListAlt'
 import { notFound } from 'next/navigation'
 import SponsorsRow from '../ui/components/sponsorsRow'
+import PostsGrid from '../ui/components/postsGrid'
 
 export const revalidate = 60
 
@@ -134,6 +136,8 @@ export default async function DefaultPage({ params }: Props) {
             return (
               <SponsorsRow key={index} data={layout as SponsorsRowLayout} />
             )
+          case 'FlexibleLayoutsLayoutsPostsGridLayout':
+            return <PostsGrid key={index} data={layout as PostsGridLayout} />
           default:
             return null
         }

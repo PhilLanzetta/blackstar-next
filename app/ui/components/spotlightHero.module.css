@@ -20,6 +20,7 @@
  font-family: var(--gt-expanded);
  font-size: var(--gt-medium);
  text-transform: uppercase;
+ margin-bottom: 0;
 }
 
 .heroBoxLinkContainer {

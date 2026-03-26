@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import type { ProgramEvent, WPPost } from '@/app/lib/types'
 import styles from './postCard.module.css'
 import LinkButton from './linkButton'

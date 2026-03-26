@@ -504,6 +504,41 @@ const GET_DEFAULT_PAGE = gql`
             column2
             column3
           }
+          ... on FlexibleLayoutsLayoutsPostsGridLayout {
+            __typename
+            gridColumns
+            customPosts {
+              buttons {
+                link {
+                  title
+                  url
+                }
+              }
+              image {
+                node {
+                  altText
+                  mediaDetails {
+                    height
+                    width
+                  }
+                  sourceUrl
+                }
+              }
+              preTitle
+              shortDescription
+              title
+              programLogo {
+                node {
+                  altText
+                  mediaDetails {
+                    height
+                    width
+                  }
+                  sourceUrl
+                }
+              }
+            }
+          }
           ... on FlexibleLayoutsLayoutsSponsorsRowLayout {
             __typename
             heading

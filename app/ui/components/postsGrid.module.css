@@ -1,0 +1,10 @@
+.wrapper {
+ margin: 20px;
+ margin-bottom: 80px;
+}
+
+.grid {
+ display: grid;
+ gap: 10px;
+ row-gap: 40px;
+}

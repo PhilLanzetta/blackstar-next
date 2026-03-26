@@ -175,6 +175,12 @@ export type PostsCarouselLayout = {
   customPosts?: CustomPost[]
 }
 
+export type PostsGridLayout = {
+  __typename: 'FlexibleLayoutsLayoutsPostsGridLayout'
+  gridColumns?: number
+  customPosts?: CustomPost[]
+}
+
 export type SponsorAcf = {
   logoBlack?: {
     node: {
@@ -388,6 +394,7 @@ export type DefaultPageSiteSettings = {
 export type FlexibleLayout =
   | SpotlightHeroLayout
   | PostsCarouselLayout
+  | PostsGridLayout
   | SpotlightTextImageLayout
   | SponsorsCarouselLayout
   | TextListLayout
