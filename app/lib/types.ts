@@ -177,6 +177,7 @@ export type PostsCarouselLayout = {
 
 export type PostsGridLayout = {
   __typename: 'FlexibleLayoutsLayoutsPostsGridLayout'
+  heading?: string
   gridColumns?: number
   customPosts?: CustomPost[]
 }

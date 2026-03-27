@@ -1,10 +1,17 @@
 .wrapper {
- margin: 20px;
- margin-bottom: 80px;
+  margin: 20px;
+  margin-bottom: 80px;
 }
 
 .grid {
- display: grid;
- gap: 10px;
- row-gap: 40px;
+  display: grid;
+  gap: 10px;
+  row-gap: 40px;
+}
+
+.heading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  margin-bottom: 20px;
+  text-transform: uppercase;
 }

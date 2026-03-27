@@ -506,6 +506,7 @@ const GET_DEFAULT_PAGE = gql`
           }
           ... on FlexibleLayoutsLayoutsPostsGridLayout {
             __typename
+            heading
             gridColumns
             customPosts {
               buttons {
