@@ -45,7 +45,7 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
             />
           </div>
         )}
-        {title && <h3 className={styles.title}>{title}</h3>}
+        {title && !programLogo?.node && <h3 className={styles.title}>{title}</h3>}
         {shortDescription && (
           <p className={styles.excerpt}>{shortDescription}</p>
         )}
