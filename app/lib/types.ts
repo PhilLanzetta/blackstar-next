@@ -152,6 +152,16 @@ export type WPPost = {
   }
 }
 
+export type WPPage = {
+  __typename: 'Page'
+  id: string
+  title: string
+  link: string
+  contentTypeName?: string
+  date?: string
+  featuredImage?: WPImage
+}
+
 export type CustomPost = {
   preTitle?: string
   title?: string
@@ -170,7 +180,7 @@ export type PostsCarouselLayout = {
   type: string
   featured: boolean
   posts: {
-    nodes: (ProgramEvent | WPPost)[]
+    nodes: (ProgramEvent | WPPost | WPPage)[]
   }
   customPosts?: CustomPost[]
 }
@@ -180,6 +190,9 @@ export type PostsGridLayout = {
   heading?: string
   gridColumns?: number
   customPosts?: CustomPost[]
+  posts?: {
+    nodes: (ProgramEvent | WPPost)[]
+  }
 }
 
 export type SponsorAcf = {

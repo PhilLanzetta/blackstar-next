@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { formatLink } from '@/app/lib/utils/formatLink'
 import styles from './linkButton.module.css'
 
 type LinkButtonProps = {
@@ -16,7 +17,7 @@ export default function LinkButton({
 }: LinkButtonProps) {
   return (
     <Link
-      href={href}
+      href={formatLink(href)}
       target={target}
       className={`${styles.btn} ${styles[variant]}`}
     >

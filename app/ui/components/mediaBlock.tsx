@@ -9,20 +9,41 @@ type Props = {
   data: MediaLayout
 }
 
-function cleanVideoUrl(url: string): string {
-  const decoded = decodeURIComponent(url)
+function getEmbedUrl(
+  raw: string,
+): { url: string; type: 'iframe' | 'video' } | null {
+  // If it's an iframe, extract the src
+  const iframeSrcMatch = raw.match(/src="([^"]+)"/)
+  if (iframeSrcMatch) {
+    const src = iframeSrcMatch[1]
+    const url = src.includes('?') ? `${src}&autoplay=1` : `${src}?autoplay=1`
+    return { url, type: 'iframe' }
+  }
+
+  const decoded = decodeURIComponent(raw)
+
+  // mp4 or other video file
+  if (decoded.match(/\.(mp4|webm|ogg)(\?.*)?$/i)) {
+    return { url: decoded, type: 'video' }
+  }
 
   const youtubeMatch = decoded.match(
     /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
   )
   if (youtubeMatch)
-    return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1`
+    return {
+      url: `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1`,
+      type: 'iframe',
+    }
 
   const vimeoMatch = decoded.match(/vimeo\.com\/(\d+)/)
   if (vimeoMatch)
-    return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`
+    return {
+      url: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`,
+      type: 'iframe',
+    }
 
-  return decoded
+  return null
 }
 
 function Slide({ slide }: { slide: MediaSlide }) {
@@ -33,19 +54,29 @@ function Slide({ slide }: { slide: MediaSlide }) {
     : slide.videoType
   const rawUrl =
     videoType === 'embed' ? slide.videoEmbed : slide.videoFile?.node.sourceUrl
-  const videoUrl = rawUrl ? cleanVideoUrl(rawUrl) : null
+  const embedResult = rawUrl ? getEmbedUrl(rawUrl) : null
 
   return (
     <div className={styles.slideInner}>
-      {videoUrl ? (
+      {embedResult ? (
         <div className={styles.videoEmbed}>
           {playing ? (
-            <iframe
-              src={videoUrl}
-              title={slide.caption ?? 'Video'}
-              allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-              allowFullScreen
-            />
+            embedResult.type === 'video' ? (
+              <video
+                className={styles.videoFile}
+                src={embedResult.url}
+                poster={posterUrl}
+                controls
+                autoPlay
+              />
+            ) : (
+              <iframe
+                src={embedResult.url}
+                title={slide.caption ?? 'Video'}
+                allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                allowFullScreen
+              />
+            )
           ) : (
             <button
               className={styles.posterButton}

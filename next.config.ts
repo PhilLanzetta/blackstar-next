@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
@@ -10,6 +10,35 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    try {
+      const credentials = Buffer.from(
+        `${process.env.REDIRECTION_API_USER}:${process.env.REDIRECTION_API_PASSWORD}`,
+      ).toString('base64')
+
+      const res = await fetch(
+        `${process.env.REDIRECTION_API_URL}?per_page=100`,
+        {
+          headers: {
+            Authorization: `Basic ${credentials}`,
+          },
+        },
+      )
+
+      const data = await res.json()
+
+      return data.items
+        .filter((r: any) => r.enabled && r.action_type === 'url')
+        .map((r: any) => ({
+          source: r.url,
+          destination: r.action_data.url,
+          permanent: r.action_code === 301,
+        }))
+    } catch (e) {
+      console.error('Failed to fetch redirects:', e)
+      return []
+    }
+  },
 }
 
-export default nextConfig;
+export default nextConfig

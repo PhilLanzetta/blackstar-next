@@ -365,6 +365,18 @@ const GET_DEFAULT_PAGE = gql`
                     }
                   }
                 }
+                ... on Page {
+                  __typename
+                  id
+                  title
+                  link
+                  featuredImage {
+                    node {
+                      altText
+                      sourceUrl
+                    }
+                  }
+                }
               }
             }
             customPosts {
@@ -539,6 +551,64 @@ const GET_DEFAULT_PAGE = gql`
                 }
               }
             }
+            posts {
+              nodes {
+                ... on ProgramEvent {
+                  __typename
+                  id
+                  title
+                  link
+                  contentTypeName
+                  featuredImage {
+                    node {
+                      altText
+                      sourceUrl
+                    }
+                  }
+                  event {
+                    customExcerpt
+                    endTime
+                    listingDateFormat
+                    location
+                    startTime
+                    timezone
+                    programType {
+                      nodes {
+                        name
+                      }
+                    }
+                  }
+                }
+                ... on Post {
+                  __typename
+                  id
+                  contentTypeName
+                  title
+                  featuredImage {
+                    node {
+                      altText
+                      sourceUrl
+                    }
+                  }
+                  date
+                  categories {
+                    nodes {
+                      name
+                    }
+                  }
+                  link
+                  pressRelease {
+                    introduction
+                    pdf {
+                      node {
+                        mediaItemUrl
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
           ... on FlexibleLayoutsLayoutsSponsorsRowLayout {
             __typename
@@ -698,6 +768,7 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
 
     const siteSettingsAcf = data.siteSettings?.siteSettingsAcf
     const layouts = (page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
+
 
     return {
       layouts,

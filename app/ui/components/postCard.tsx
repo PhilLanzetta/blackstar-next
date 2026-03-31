@@ -1,10 +1,11 @@
 import Image from 'next/image'
-import type { ProgramEvent, WPPost } from '@/app/lib/types'
+import type { ProgramEvent, WPPost, WPPage } from '@/app/lib/types'
 import styles from './postCard.module.css'
 import LinkButton from './linkButton'
+import { formatEventLink } from '@/app/lib/utils/formatLink'
 
 type PostCardProps = {
-  post: ProgramEvent | WPPost
+  post: ProgramEvent | WPPost | WPPage
 }
 
 export default function PostCard({ post }: PostCardProps) {
@@ -16,6 +17,9 @@ export default function PostCard({ post }: PostCardProps) {
 
   // ProgramEvent specific
   const event = isProgramEvent ? (post as ProgramEvent).event : null
+  const programTypeSlug = event?.programType?.nodes?.[0]?.name
+
+  const isPage = post.__typename === 'Page'
 
   // WPPost specific
   const date = isPost ? (post as WPPost).date : null
@@ -108,23 +112,25 @@ export default function PostCard({ post }: PostCardProps) {
           />
         </div>
       )}
-      <div className={styles.info}>
-        {event?.programType?.nodes?.length && (
-          <div className={styles.tags}>
-            {event.programType.nodes.map((type, i) => (
-              <span key={i} className={styles.tag}>
-                ({type.name})
-              </span>
-            ))}
-          </div>
-        )}
-        {categories?.nodes && (
-          <div className={styles.tags}>
-            <span className={styles.tag}>({categories?.nodes[0].name})</span>
-          </div>
-        )}
-        {dateInfo}
-      </div>
+      {!isPage && (
+        <div className={styles.info}>
+          {event?.programType?.nodes?.length && (
+            <div className={styles.tags}>
+              {event.programType.nodes.map((type, i) => (
+                <span key={i} className={styles.tag}>
+                  ({type.name})
+                </span>
+              ))}
+            </div>
+          )}
+          {categories?.nodes && (
+            <div className={styles.tags}>
+              <span className={styles.tag}>({categories?.nodes[0].name})</span>
+            </div>
+          )}
+          {dateInfo}
+        </div>
+      )}
       <div className={styles.textInfo}>
         <h3 className={styles.title}>{title}</h3>
         {event?.customExcerpt && (
@@ -140,7 +146,7 @@ export default function PostCard({ post }: PostCardProps) {
       <div className={styles.learnMore}>
         {link && (
           <LinkButton
-            href={link}
+            href={formatEventLink(link, programTypeSlug)}
             label={pressRelease ? 'Read' : 'Learn More'}
           />
         )}

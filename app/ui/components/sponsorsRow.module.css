@@ -27,7 +27,7 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 15;
+  gap: 15px;
 }
 
 .logoLink {

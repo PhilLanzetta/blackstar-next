@@ -1,5 +1,11 @@
-import type { PostsGridLayout, CustomPost } from '@/app/lib/types'
+import type {
+  PostsGridLayout,
+  CustomPost,
+  ProgramEvent,
+  WPPost,
+} from '@/app/lib/types'
 import CustomPostCard from '@/app/ui/components/customPostCard'
+import PostCard from '@/app/ui/components/postCard'
 import styles from './postsGrid.module.css'
 
 type Props = {
@@ -7,9 +13,12 @@ type Props = {
 }
 
 export default function PostsGrid({ data }: Props) {
-  const { customPosts, gridColumns, heading } = data
+  const { customPosts, posts, gridColumns, heading } = data
 
-  if (!customPosts?.length) return null
+  const hasCustomPosts = customPosts && customPosts.length > 0
+  const hasPosts = posts?.nodes && posts.nodes.length > 0
+
+  if (!hasCustomPosts && !hasPosts) return null
 
   return (
     <section className={styles.wrapper}>
@@ -18,9 +27,14 @@ export default function PostsGrid({ data }: Props) {
         className={styles.grid}
         style={{ gridTemplateColumns: `repeat(${gridColumns ?? 3}, 1fr)` }}
       >
-        {(customPosts as CustomPost[]).map((post, index) => (
-          <CustomPostCard key={index} post={post} />
-        ))}
+        {hasCustomPosts &&
+          (customPosts as CustomPost[]).map((post, index) => (
+            <CustomPostCard key={index} post={post} />
+          ))}
+        {hasPosts &&
+          posts!.nodes.map((post, index) => (
+            <PostCard key={index} post={post as ProgramEvent | WPPost} />
+          ))}
       </div>
     </section>
   )

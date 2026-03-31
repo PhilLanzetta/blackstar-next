@@ -14,7 +14,7 @@ import type {
   SectionHeadingLayout,
   TextListAltLayout,
   SponsorsRowLayout,
-  PostsGridLayout
+  PostsGridLayout,
 } from '@/app/lib/types'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
@@ -37,7 +37,7 @@ import PostsGrid from '../ui/components/postsGrid'
 export const revalidate = 60
 
 type Props = {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string[] }>
 }
 
 const baseURL = process.env.WORDPRESS_URL
@@ -45,14 +45,19 @@ const client = new GraphQLClient(`${baseURL}/graphql`, {
   errorPolicy: 'all',
 })
 
-export async function getAllPageSlugs(): Promise<{ slug: string }[]> {
+export async function getAllPageSlugs(): Promise<{ slug: string[] }[]> {
   const data = await client.request<{
-    pages: { nodes: { slug: string; template: { templateName: string } }[] }
+    pages: {
+      nodes: {
+        uri: string
+        template: { templateName: string }
+      }[]
+    }
   }>(gql`
     query getAllPageSlugs {
       pages(first: 100) {
         nodes {
-          slug
+          uri
           template {
             templateName
           }
@@ -61,13 +66,20 @@ export async function getAllPageSlugs(): Promise<{ slug: string }[]> {
     }
   `)
 
-  return data.pages.nodes.filter(
-    (page) => page.template?.templateName === 'Default',
-  )
+  return data.pages.nodes
+    .filter((page) => page.template?.templateName === 'Default')
+    .map((page) => ({
+      slug: page.uri.split('/').filter(Boolean),
+    }))
+}
+
+export async function generateStaticParams() {
+  return getAllPageSlugs()
 }
 
 export default async function DefaultPage({ params }: Props) {
   const { slug } = await params
+  const path = slug.join('/')
 
   const {
     layouts,
@@ -75,9 +87,10 @@ export default async function DefaultPage({ params }: Props) {
     noOpportunitiesMessage,
     contactDetails,
     socialLinks,
-  } = await getDefaultPage(slug)
+  } = await getDefaultPage(path)
 
   if (!layouts || !layouts.length) return notFound()
+
   return (
     <main>
       {layouts.map((layout, index) => {
@@ -113,7 +126,6 @@ export default async function DefaultPage({ params }: Props) {
             return (
               <FaqAccordion key={index} data={layout as FaqAccordionLayout} />
             )
-
           case 'FlexibleLayoutsLayoutsSponsorsCarouselLayout':
             return (
               <SponsorsCarousel
@@ -142,7 +154,7 @@ export default async function DefaultPage({ params }: Props) {
             return null
         }
       })}
-      {slug === 'about' && (
+      {path === 'about' && (
         <>
           <Opportunities
             opportunityTypes={opportunityTypes}
