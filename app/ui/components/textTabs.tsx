@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import LinkButton from '@/app/ui/components/linkButton'
 import type { TextTabsLayout } from '@/app/lib/types'
 import styles from './textTabs.module.css'
+import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 
 export default function TextTabs({ data }: { data: TextTabsLayout }) {
   const { tabs } = data
@@ -14,6 +15,7 @@ export default function TextTabs({ data }: { data: TextTabsLayout }) {
     <section className={styles.container}>
       {tabs.map((tab, i) => {
         const isActive = i === activeTab
+        
         return (
           <div
             key={i}
@@ -38,7 +40,12 @@ export default function TextTabs({ data }: { data: TextTabsLayout }) {
                 >
                   <div className={styles.contentInner}>
                     {tab.content && (
-                      <div className={styles.contentText} dangerouslySetInnerHTML={{ __html: tab.content }} />
+                      <div
+                        className={styles.contentText}
+                        dangerouslySetInnerHTML={{
+                          __html: cleanHtml(tab.content),
+                        }}
+                      />
                     )}
                     {tab.link?.url && (
                       <LinkButton href={tab.link.url} label={tab.link.title} />

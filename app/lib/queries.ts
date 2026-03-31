@@ -769,7 +769,6 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
     const siteSettingsAcf = data.siteSettings?.siteSettingsAcf
     const layouts = (page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
 
-
     return {
       layouts,
       opportunityTypes: data.opportunityTypes?.nodes ?? [],
@@ -797,5 +796,32 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
 
     console.error('Error fetching page:', error)
     return emptyResult
+  }
+}
+
+export async function getPageBrand(slug: string): Promise<string | null> {
+  try {
+    const data = await client.request<{
+      page: { pageBrands: { nodes: { slug: string }[] } } | null
+    }>(
+      gql`
+        query getPageBrand($slug: ID!) {
+          page(id: $slug, idType: URI) {
+            pageBrands {
+              nodes {
+                slug
+              }
+            }
+          }
+        }
+      `,
+      { slug },
+    )
+
+    return data.page?.pageBrands?.nodes?.[0]?.slug ?? null
+  } catch (error: any) {
+    // handle partial responses
+    const data = error?.response?.data
+    return data?.page?.pageBrands?.nodes?.[0]?.slug ?? null
   }
 }

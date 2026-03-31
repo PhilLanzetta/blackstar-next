@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { FaqAccordionLayout } from '@/app/lib/types'
 import styles from './faqAccordion.module.css'
+import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 
 export default function FaqAccordion({ data }: { data: FaqAccordionLayout }) {
   const [activeTab, setActiveTab] = useState(-1)
@@ -48,7 +49,7 @@ export default function FaqAccordion({ data }: { data: FaqAccordionLayout }) {
                       {faq.content && (
                         <div
                           className={styles.contentText}
-                          dangerouslySetInnerHTML={{ __html: faq.content }}
+                          dangerouslySetInnerHTML={{ __html: cleanHtml(faq.content) }}
                         />
                       )}
                     </div>

@@ -37,7 +37,7 @@ export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
     <div ref={hoverRef} className={styles.sublinkContainer}>
       {expanded ? (
         <Link
-          href={slug}
+          href={formatLink(slug)}
           className={`${styles.sublinkMain} ${
             expanded ? styles.activeMain : ''
           }`}

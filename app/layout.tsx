@@ -2,9 +2,10 @@ import type { Metadata } from 'next'
 import { gtFlexaExpanded, gtFlexaMono } from './ui/fonts'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
-import { getMegaNav, getFooterNav } from './lib/queries'
-import { Header } from './ui/header'
+import { getMegaNav, getFooterNav, getPageBrand } from './lib/queries'
+import { HeaderWrapper } from './ui/headerWrapper'
 import { Footer } from './ui/footer'
+import { headers } from 'next/headers'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,6 +31,11 @@ export default async function RootLayout({
   const megaNavs = await getMegaNav()
   const footerNav = await getFooterNav()
 
+  const headersList = await headers()
+  const pathname = headersList.get('x-pathname') ?? ''
+  const slug = pathname.split('/').filter(Boolean).join('/')
+  const pageBrand = slug ? await getPageBrand(slug) : null
+
   return (
     <html
       lang='en'
@@ -38,7 +44,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header megaNavs={megaNavs} />
+        <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
         <main>{children}</main>
         <Footer footerNav={footerNav} />
       </body>

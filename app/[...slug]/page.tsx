@@ -35,6 +35,7 @@ import SponsorsRow from '../ui/components/sponsorsRow'
 import PostsGrid from '../ui/components/postsGrid'
 
 export const revalidate = 60
+export const dynamicParams = false
 
 type Props = {
   params: Promise<{ slug: string[] }>
@@ -45,29 +46,52 @@ const client = new GraphQLClient(`${baseURL}/graphql`, {
   errorPolicy: 'all',
 })
 
+type PageSlugNode = {
+  uri: string
+  template: { templateName: string }
+}
+
+type PageSlugResponse = {
+  pages: {
+    pageInfo: { hasNextPage: boolean; endCursor: string }
+    nodes: PageSlugNode[]
+  }
+}
+
 export async function getAllPageSlugs(): Promise<{ slug: string[] }[]> {
-  const data = await client.request<{
-    pages: {
-      nodes: {
-        uri: string
-        template: { templateName: string }
-      }[]
-    }
-  }>(gql`
-    query getAllPageSlugs {
-      pages(first: 100) {
-        nodes {
-          uri
-          template {
-            templateName
+  const allPages: PageSlugNode[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    const variables: { after: string | null } = { after }
+    const data = await client.request<PageSlugResponse>(
+      gql`
+        query getAllPageSlugs($after: String) {
+          pages(first: 100, after: $after) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            nodes {
+              uri
+              template {
+                templateName
+              }
+            }
           }
         }
-      }
-    }
-  `)
+      `,
+      variables,
+    )
 
-  return data.pages.nodes
-    .filter((page) => page.template?.templateName === 'Default')
+    allPages.push(...data.pages.nodes)
+    hasNextPage = data.pages.pageInfo.hasNextPage
+    after = data.pages.pageInfo.endCursor
+  }
+
+  return allPages
+    .filter((page) => page.template?.templateName === 'Default' && page.uri)
     .map((page) => ({
       slug: page.uri.split('/').filter(Boolean),
     }))
