@@ -6,6 +6,7 @@ import { getMegaNav, getFooterNav, getPageBrand } from './lib/queries'
 import { HeaderWrapper } from './ui/headerWrapper'
 import { Footer } from './ui/footer'
 import { headers } from 'next/headers'
+import Breadcrumb from './ui/components/breadcrumb'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -44,6 +45,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Breadcrumb></Breadcrumb>
         <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
         <main>{children}</main>
         <Footer footerNav={footerNav} />

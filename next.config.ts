@@ -25,8 +25,14 @@ const nextConfig: NextConfig = {
         },
       )
 
-      const data = await res.json()
+      const text = await res.text()
 
+      if (!res.ok || text.startsWith('<')) {
+        console.error('Redirects API returned non-JSON:', text.slice(0, 200))
+        return []
+      }
+
+      const data = JSON.parse(text)
       return data.items
         .filter((r: any) => r.enabled && r.action_type === 'url')
         .map((r: any) => ({

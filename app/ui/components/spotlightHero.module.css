@@ -2,29 +2,65 @@
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+}
+
+.overlayImageContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 5;
+}
+
+.overlayImage {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .heroInfoBox {
- position: absolute;
- z-index: 5;
- left: 20px;
- bottom: 20px;
- background: #fff;
- border: var(--standard-border);
- width: 75%;
+  position: absolute;
+  z-index: 5;
+  left: 20px;
+  bottom: 20px;
+  background: #fff;
+  border: var(--standard-border);
+  width: 75%;
 }
 
 .heroBoxHeading {
- padding: 20px;
- border-bottom: var(--standard-border);
- font-family: var(--gt-expanded);
- font-size: var(--gt-medium);
- text-transform: uppercase;
- margin-bottom: 0;
+  padding: 20px;
+  border-bottom: var(--standard-border);
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-medium);
+  text-transform: uppercase;
+  margin-bottom: 0;
 }
 
 .heroBoxLinkContainer {
- display: flex;
- gap: 20px;
- padding: 20px;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
 }

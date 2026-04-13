@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState, useRef, useEffect } from 'react'
 import styles from './subLink.module.css'
 import Link from 'next/link'
+import BrandLink from './components/brandLink'
 import { useWindowSize, useHover } from 'usehooks-ts'
 import { formatLink } from '@/app/lib/utils/formatLink'
 
@@ -36,7 +37,7 @@ export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
   return (
     <div ref={hoverRef} className={styles.sublinkContainer}>
       {expanded ? (
-        <Link
+        <BrandLink
           href={formatLink(slug)}
           className={`${styles.sublinkMain} ${
             expanded ? styles.activeMain : ''
@@ -44,7 +45,7 @@ export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
           onClick={onClose}
         >
           {title}
-        </Link>
+        </BrandLink>
       ) : (
         <button
           className={`${styles.sublinkMain} ${
@@ -81,7 +82,7 @@ export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
               {subNav &&
                 subNav.map((item, index) => {
                   return (
-                    <Link
+                    <BrandLink
                       href={formatLink(item.menuItem.url)}
                       className={styles.underLink}
                       key={index}
@@ -102,7 +103,7 @@ export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
                       }}
                     >
                       {item.menuItem.title}
-                    </Link>
+                    </BrandLink>
                   )
                 })}
             </motion.div>

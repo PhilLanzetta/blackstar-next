@@ -15,6 +15,8 @@ import type {
   TextListAltLayout,
   SponsorsRowLayout,
   PostsGridLayout,
+  FeatureTextLayout,
+  PressClippingsLayout,
 } from '@/app/lib/types'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
@@ -33,6 +35,8 @@ import TextListAlt from '@/app/ui/components/textListAlt'
 import { notFound } from 'next/navigation'
 import SponsorsRow from '../ui/components/sponsorsRow'
 import PostsGrid from '../ui/components/postsGrid'
+import FeatureText from '../ui/components/featureText'
+import PressClippings from '../ui/components/pressClippings'
 
 export const revalidate = 60
 export const dynamicParams = false
@@ -111,6 +115,8 @@ export default async function DefaultPage({ params }: Props) {
     noOpportunitiesMessage,
     contactDetails,
     socialLinks,
+    pressClippings,
+    pressReleasePosts,
   } = await getDefaultPage(path)
 
   if (!layouts || !layouts.length) return notFound()
@@ -172,8 +178,26 @@ export default async function DefaultPage({ params }: Props) {
             return (
               <SponsorsRow key={index} data={layout as SponsorsRowLayout} />
             )
+          case 'FlexibleLayoutsLayoutsFeatureTextLayout':
+            return (
+              <FeatureText key={index} data={layout as FeatureTextLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsPressClippingsLayout':
+            return (
+              <PressClippings
+                key={index}
+                data={layout as PressClippingsLayout}
+                clippings={pressClippings ?? []}
+              />
+            )
           case 'FlexibleLayoutsLayoutsPostsGridLayout':
-            return <PostsGrid key={index} data={layout as PostsGridLayout} />
+            return (
+              <PostsGrid
+                key={index}
+                data={layout as PostsGridLayout}
+                pressReleasePosts={pressReleasePosts ?? []}
+              />
+            )
           default:
             return null
         }

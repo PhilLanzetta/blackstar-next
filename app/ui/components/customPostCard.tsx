@@ -23,7 +23,13 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
       <div className={preTitle ? styles.info : ''}>
         {preTitle && <p className={styles.preTitle}>({preTitle})</p>}
       </div>
-      <div className={styles.textInfo}>
+      <div
+        className={styles.textInfo}
+        style={{
+          borderBottom:
+            buttons && buttons.length > 0 ? 'var(--standard-border)' : 'none',
+        }}
+      >
         {programLogo?.node?.sourceUrl && (
           <div
             style={{
@@ -45,7 +51,12 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
             />
           </div>
         )}
-        {title && !programLogo?.node && <h3 className={styles.title}>{title}</h3>}
+        {title && !programLogo?.node && (
+          <div
+            className={styles.title}
+            dangerouslySetInnerHTML={{ __html: title }}
+          ></div>
+        )}
         {shortDescription && (
           <p className={styles.excerpt}>{shortDescription}</p>
         )}

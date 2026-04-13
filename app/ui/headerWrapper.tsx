@@ -11,7 +11,7 @@ type Props = {
   initialPageBrand?: string | null
 }
 
-const brandCache = new Map<string, string | null>()
+export const brandCache = new Map<string, string | null>()
 
 export function HeaderWrapper({ megaNavs, initialPageBrand }: Props) {
   const pathname = usePathname()

@@ -75,15 +75,31 @@ export type WPImage = {
   }
 }
 
-// Spotlight Hero Layout
+export type SpotlightHeroVideo = {
+  file?: {
+    node: {
+      altText?: string
+      mediaItemUrl: string
+    }
+  }
+  type?: string[]
+}
+
+// Spotlight Hero
 export type SpotlightHeroLayout = {
   __typename: 'FlexibleLayoutsLayoutsSpotlightHeroLayout'
-  contained: boolean
-  heading1: string
-  image: WPImage
-  links: {
+  backgroundColour?: string
+  contained?: boolean
+  heading1?: string
+  links?: {
     link: WPLink
   }[]
+  image?: WPImage
+  mobileImage?: WPImage
+  overlayImage?: WPImage
+  mobileOverlayImage?: WPImage
+  video?: SpotlightHeroVideo[]
+  mobileVideo?: SpotlightHeroVideo[]
 }
 
 // Spotlight Hero Text and Image Layout
@@ -189,6 +205,8 @@ export type PostsGridLayout = {
   __typename: 'FlexibleLayoutsLayoutsPostsGridLayout'
   heading?: string
   gridColumns?: number
+  showFilters?: boolean
+  type?: string[]
   customPosts?: CustomPost[]
   posts?: {
     nodes: (ProgramEvent | WPPost)[]
@@ -404,6 +422,20 @@ export type DefaultPageSiteSettings = {
   }
 }
 
+export type FeatureTextLayout = {
+  __typename: 'FlexibleLayoutsLayoutsFeatureTextLayout'
+  additionalContent?: string
+  content?: string
+  buttons?: {
+    link: WPLink
+  }[]
+}
+
+export type PressClippingsLayout = {
+  __typename: 'FlexibleLayoutsLayoutsPressClippingsLayout'
+  heading?: string
+}
+
 // Union type for all layouts
 export type FlexibleLayout =
   | SpotlightHeroLayout
@@ -420,6 +452,8 @@ export type FlexibleLayout =
   | FaqAccordionLayout
   | SectionHeadingLayout
   | SponsorsRowLayout
+  | FeatureTextLayout
+  | PressClippingsLayout
 
 // Home page
 export type HomePageData = {
@@ -456,4 +490,15 @@ export type DefaultPageResult = {
   noOpportunitiesMessage?: string
   contactDetails?: DefaultPageSiteSettings['contactDetails']
   socialLinks?: DefaultPageSiteSettings['socialLinks']
+  pressClippings?: PressClipping[]
+  pressReleasePosts?: WPPost[]
+}
+
+export type PressClipping = {
+  title: string
+  date: string
+  pressClippingsAcf: {
+    link: WPLink
+    newspaperSource?: string
+  }
 }

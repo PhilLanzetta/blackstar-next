@@ -131,10 +131,21 @@ export default function PostCard({ post }: PostCardProps) {
           {dateInfo}
         </div>
       )}
-      <div className={styles.textInfo}>
-        <h3 className={styles.title}>{title}</h3>
+      <div
+        className={styles.textInfo}
+        style={{
+          borderBottom: link ? 'var(--standard-border)' : 'none',
+        }}
+      >
+        <div
+          className={styles.title}
+          dangerouslySetInnerHTML={{ __html: title }}
+        ></div>
         {event?.customExcerpt && (
-          <p className={styles.excerpt}>{event.customExcerpt}</p>
+          <div
+            className={styles.excerpt}
+            dangerouslySetInnerHTML={{ __html: event.customExcerpt }}
+          ></div>
         )}
         {pressRelease?.introduction && (
           <div

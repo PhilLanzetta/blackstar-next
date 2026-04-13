@@ -8,6 +8,7 @@ import {
   HomePageData,
   DefaultPageData,
   DefaultPageResult,
+  PressClipping, WPPost
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -85,14 +86,78 @@ export const GET_HOME_PAGE = gql`
             __typename
             ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
               heading1
-              image {
-                node {
-                  sourceUrl
-                  altText
-                }
-              }
               links {
                 link {
+                  title
+                  url
+                  target
+                }
+              }
+              image {
+                node {
+                  altText
+                  sourceUrl
+                  mediaDetails {
+                    height
+                    width
+                  }
+                }
+              }
+              mobileImage {
+                node {
+                  altText
+                  sourceUrl
+                  mediaDetails {
+                    height
+                    width
+                  }
+                }
+              }
+              overlayImage {
+                node {
+                  altText
+                  sourceUrl
+                  mediaDetails {
+                    height
+                    width
+                  }
+                }
+              }
+              mobileOverlayImage {
+                node {
+                  altText
+                  sourceUrl
+                  mediaDetails {
+                    height
+                    width
+                  }
+                }
+              }
+              video {
+                file {
+                  node {
+                    mediaItemUrl
+                    altText
+                  }
+                }
+                type
+              }
+              mobileVideo {
+                file {
+                  node {
+                    mediaItemUrl
+                    altText
+                  }
+                }
+                type
+              }
+            }
+            ... on FlexibleLayoutsLayoutsFeatureTextLayout {
+              additionalContent
+              content
+              buttons {
+                link {
+                  target
                   title
                   url
                 }
@@ -290,6 +355,7 @@ const GET_DEFAULT_PAGE = gql`
               link {
                 title
                 url
+                target
               }
             }
             image {
@@ -300,6 +366,65 @@ const GET_DEFAULT_PAGE = gql`
                   height
                   width
                 }
+              }
+            }
+            mobileImage {
+              node {
+                altText
+                sourceUrl
+                mediaDetails {
+                  height
+                  width
+                }
+              }
+            }
+            overlayImage {
+              node {
+                altText
+                sourceUrl
+                mediaDetails {
+                  height
+                  width
+                }
+              }
+            }
+            mobileOverlayImage {
+              node {
+                altText
+                sourceUrl
+                mediaDetails {
+                  height
+                  width
+                }
+              }
+            }
+            video {
+              file {
+                node {
+                  mediaItemUrl
+                  altText
+                }
+              }
+              type
+            }
+            mobileVideo {
+              file {
+                node {
+                  mediaItemUrl
+                  altText
+                }
+              }
+              type
+            }
+          }
+          ... on FlexibleLayoutsLayoutsFeatureTextLayout {
+            additionalContent
+            content
+            buttons {
+              link {
+                target
+                title
+                url
               }
             }
           }
@@ -439,6 +564,9 @@ const GET_DEFAULT_PAGE = gql`
               }
             }
           }
+          ... on FlexibleLayoutsLayoutsPressClippingsLayout {
+            heading
+          }
           ... on FlexibleLayoutsLayoutsSponsorsCarouselLayout {
             __typename
             title
@@ -520,6 +648,8 @@ const GET_DEFAULT_PAGE = gql`
             __typename
             heading
             gridColumns
+            showFilters
+            type
             customPosts {
               buttons {
                 link {
@@ -769,15 +899,29 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
     const siteSettingsAcf = data.siteSettings?.siteSettingsAcf
     const layouts = (page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
 
+    const hasPressClippings = layouts.some(
+      (l: any) =>
+        l?.__typename === 'FlexibleLayoutsLayoutsPressClippingsLayout',
+    )
+    const pressClippings = hasPressClippings ? await getAllPressClippings() : []
+
+    const hasPressGrid = layouts.some(
+      (l: any) =>
+        l?.__typename === 'FlexibleLayoutsLayoutsPostsGridLayout' &&
+        l?.type?.includes('press'),
+    )
+    const pressReleasePosts = hasPressGrid ? await getPressReleasePosts() : []
+
     return {
       layouts,
+      pressClippings,
+      pressReleasePosts,
       opportunityTypes: data.opportunityTypes?.nodes ?? [],
       noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
       contactDetails: siteSettingsAcf?.contactDetails,
       socialLinks: siteSettingsAcf?.socialLinks,
     }
   } catch (error: any) {
-    // WPGraphQL returns partial data alongside errors for unrecognized layout types
     const data = error?.response?.data as DefaultPageData | undefined
     const page = data?.page
 
@@ -785,8 +929,25 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       const siteSettingsAcf = data?.siteSettings?.siteSettingsAcf
       const layouts = (page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
 
+      const hasPressClippings = layouts.some(
+        (l: any) =>
+          l?.__typename === 'FlexibleLayoutsLayoutsPressClippingsLayout',
+      )
+      const pressClippings = hasPressClippings
+        ? await getAllPressClippings()
+        : []
+
+      const hasPressGrid = layouts.some(
+        (l: any) =>
+          l?.__typename === 'FlexibleLayoutsLayoutsPostsGridLayout' &&
+          l?.type?.includes('press'),
+      )
+      const pressReleasePosts = hasPressGrid ? await getPressReleasePosts() : []
+
       return {
         layouts,
+        pressClippings,
+        pressReleasePosts,
         opportunityTypes: data?.opportunityTypes?.nodes ?? [],
         noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
         contactDetails: siteSettingsAcf?.contactDetails,
@@ -824,4 +985,135 @@ export async function getPageBrand(slug: string): Promise<string | null> {
     const data = error?.response?.data
     return data?.page?.pageBrands?.nodes?.[0]?.slug ?? null
   }
+}
+
+export async function getAllPressClippings(): Promise<PressClipping[]> {
+  const all: PressClipping[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        pressClippings: {
+          nodes: PressClipping[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllPressClippings($after: String) {
+            pressClippings(
+              first: 100
+              after: $after
+              where: { orderby: { field: DATE, order: DESC } }
+            ) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                title
+                date
+                pressClippingsAcf {
+                  link {
+                    target
+                    title
+                    url
+                  }
+                  newspaperSource
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.pressClippings.nodes)
+      hasNextPage = data.pressClippings.pageInfo.hasNextPage
+      after = data.pressClippings.pageInfo.endCursor
+    } catch (error: any) {
+      const data = error?.response?.data
+      if (data?.pressClippings?.nodes) {
+        all.push(...data.pressClippings.nodes)
+      }
+      break
+    }
+  }
+  return all
+}
+
+export async function getPressReleasePosts(): Promise<WPPost[]> {
+  const all: WPPost[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        posts: {
+          nodes: WPPost[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getPressReleasePosts($after: String) {
+            posts(
+              first: 100
+              after: $after
+              where: {
+                orderby: { field: DATE, order: DESC }
+                categoryName: "press"
+              }
+            ) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                __typename
+                id
+                contentTypeName
+                title
+                date
+                link
+                featuredImage {
+                  node {
+                    altText
+                    sourceUrl
+                  }
+                }
+                categories {
+                  nodes {
+                    name
+                  }
+                }
+                pressRelease {
+                  introduction
+                  pdf {
+                    node {
+                      mediaItemUrl
+                      title
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.posts.nodes)
+      hasNextPage = data.posts.pageInfo.hasNextPage
+      after = data.posts.pageInfo.endCursor
+    } catch (error: any) {
+      const data = error?.response?.data
+      if (data?.posts?.nodes) {
+        all.push(...data.posts.nodes)
+      }
+      break
+    }
+  }
+  return all
 }

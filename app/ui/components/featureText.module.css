@@ -1,0 +1,42 @@
+/* featureText.module.css */
+.container {
+  margin-bottom: 80px;
+  padding: 20px;
+}
+
+.heading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.heading p {
+  margin-bottom: 0;
+}
+
+.contentContainer {
+  border: var(--standard-border);
+}
+
+.content {
+  padding: 10px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-medium);
+  line-height: var(--lofty-line-height);
+}
+
+.content a {
+  text-decoration: underline;
+}
+
+.content li {
+  list-style: none;
+}
+
+.linkContainer {
+  padding: 20px;
+  border-top: var(--standard-border);
+  display: flex;
+  gap: 20px;
+}

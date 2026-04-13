@@ -1,28 +1,27 @@
-.wrapper {
-  margin: 20px;
+.section {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: auto auto;
+  padding: 20px;
   margin-bottom: 80px;
+  gap: 0 40px;
 }
 
-.grid {
-  display: grid;
-  gap: 10px;
-  row-gap: 40px;
+.sidebar {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .heading {
   font-family: var(--gt-expanded);
   font-size: var(--gt-large);
-  margin-bottom: 20px;
   text-transform: uppercase;
-}
-
-.filters {
   margin-bottom: 20px;
 }
 
 .dropdown {
   position: relative;
-  width: 200px;
+  width: 100%;
 }
 
 .dropdownToggle {
@@ -72,7 +71,36 @@
   background: #f0f0f0;
 }
 
+.grid {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px 40px;
+  align-content: start;
+}
+
+.card {
+  text-decoration: none;
+  color: inherit;
+}
+
+.title {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-medium);
+  font-style: italic;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.meta {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
 .loadMoreContainer {
+  grid-column: 1 / -1;
   display: flex;
   justify-content: center;
   padding-top: 40px;
