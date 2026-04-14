@@ -117,6 +117,7 @@ export default async function DefaultPage({ params }: Props) {
     socialLinks,
     pressClippings,
     pressReleasePosts,
+    allPosts,
   } = await getDefaultPage(path)
 
   if (!layouts || !layouts.length) return notFound()
@@ -196,6 +197,7 @@ export default async function DefaultPage({ params }: Props) {
                 key={index}
                 data={layout as PostsGridLayout}
                 pressReleasePosts={pressReleasePosts ?? []}
+                allPosts={allPosts ?? []}
               />
             )
           default:

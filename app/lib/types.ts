@@ -144,6 +144,7 @@ export type WPPost = {
   id: string
   title: string
   link: string
+  slug: string
   date: string
   contentTypeName: string
   featuredImage?: {
@@ -492,6 +493,7 @@ export type DefaultPageResult = {
   socialLinks?: DefaultPageSiteSettings['socialLinks']
   pressClippings?: PressClipping[]
   pressReleasePosts?: WPPost[]
+  allPosts?: WPPost[]
 }
 
 export type PressClipping = {

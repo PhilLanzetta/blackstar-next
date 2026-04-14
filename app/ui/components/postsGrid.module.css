@@ -9,6 +9,10 @@
   row-gap: 40px;
 }
 
+.grid > * {
+  min-width: 0;
+}
+
 .heading {
   font-family: var(--gt-expanded);
   font-size: var(--gt-large);
@@ -90,4 +94,26 @@
 
 .loadMore:hover {
   background: #f0f0f0;
+}
+
+.categoryFilters {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.categoryFilter {
+  background: none;
+  border: none;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.4;
+}
+
+.categoryFilter.active {
+  opacity: 1;
+  text-decoration: underline;
 }

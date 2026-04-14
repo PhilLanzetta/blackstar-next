@@ -15,6 +15,8 @@ export default function PostCard({ post }: PostCardProps) {
   // Shared fields
   const { title, link, featuredImage } = post
 
+  console.log('postCard data:', post.__typename, post.title, post.featuredImage)
+
   // ProgramEvent specific
   const event = isProgramEvent ? (post as ProgramEvent).event : null
   const programTypeSlug = event?.programType?.nodes?.[0]?.name
@@ -25,6 +27,12 @@ export default function PostCard({ post }: PostCardProps) {
   const date = isPost ? (post as WPPost).date : null
   const categories = isPost ? (post as WPPost).categories : null
   const pressRelease = isPost ? (post as WPPost).pressRelease : null
+
+  const isPressRelease = isPost && !!(post as WPPost).pressRelease?.introduction
+
+  const cardLink = isPressRelease
+    ? `/press/${(post as WPPost).slug}`
+    : formatEventLink(link ?? '', programTypeSlug)
 
   function getIANATimezone(tz: string): string {
     const map: Record<string, string> = {
@@ -157,7 +165,7 @@ export default function PostCard({ post }: PostCardProps) {
       <div className={styles.learnMore}>
         {link && (
           <LinkButton
-            href={formatEventLink(link, programTypeSlug)}
+            href={cardLink}
             label={pressRelease ? 'Read' : 'Learn More'}
           />
         )}

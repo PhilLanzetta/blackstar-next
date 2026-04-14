@@ -8,7 +8,8 @@ import {
   HomePageData,
   DefaultPageData,
   DefaultPageResult,
-  PressClipping, WPPost
+  PressClipping,
+  WPPost,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -200,6 +201,7 @@ export const GET_HOME_PAGE = gql`
                   ... on Post {
                     __typename
                     id
+                    slug
                     contentTypeName
                     title
                     featuredImage {
@@ -465,6 +467,7 @@ const GET_DEFAULT_PAGE = gql`
                 ... on Post {
                   __typename
                   id
+                  slug
                   contentTypeName
                   title
                   featuredImage {
@@ -712,6 +715,7 @@ const GET_DEFAULT_PAGE = gql`
                 ... on Post {
                   __typename
                   id
+                  slug
                   contentTypeName
                   title
                   featuredImage {
@@ -912,10 +916,18 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
     )
     const pressReleasePosts = hasPressGrid ? await getPressReleasePosts() : []
 
+    const hasPostsGrid = layouts.some(
+      (l: any) =>
+        l?.__typename === 'FlexibleLayoutsLayoutsPostsGridLayout' &&
+        l?.type?.includes('posts'),
+    )
+    const allPosts = hasPostsGrid ? await getAllPosts() : []
+
     return {
       layouts,
       pressClippings,
       pressReleasePosts,
+      allPosts,
       opportunityTypes: data.opportunityTypes?.nodes ?? [],
       noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
       contactDetails: siteSettingsAcf?.contactDetails,
@@ -944,10 +956,18 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       )
       const pressReleasePosts = hasPressGrid ? await getPressReleasePosts() : []
 
+      const hasPostsGrid = layouts.some(
+        (l: any) =>
+          l?.__typename === 'FlexibleLayoutsLayoutsPostsGridLayout' &&
+          l?.type?.includes('posts'),
+      )
+      const allPosts = hasPostsGrid ? await getAllPosts() : []
+
       return {
         layouts,
         pressClippings,
         pressReleasePosts,
+        allPosts,
         opportunityTypes: data?.opportunityTypes?.nodes ?? [],
         noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
         contactDetails: siteSettingsAcf?.contactDetails,
@@ -1075,6 +1095,7 @@ export async function getPressReleasePosts(): Promise<WPPost[]> {
                 __typename
                 id
                 contentTypeName
+                slug
                 title
                 date
                 link
@@ -1110,6 +1131,339 @@ export async function getPressReleasePosts(): Promise<WPPost[]> {
     } catch (error: any) {
       const data = error?.response?.data
       if (data?.posts?.nodes) {
+        all.push(...data.posts.nodes)
+      }
+      break
+    }
+  }
+  return all
+}
+
+export async function getPressReleasePost(slug: string) {
+  try {
+    const data = await client.request<{
+      post: {
+        title: string
+        date: string
+        content: string
+        featuredImage?: { node: { sourceUrl: string; altText: string } }
+        pressRelease?: {
+          introduction?: string
+          location?: string
+          pdf?: { node: { mediaItemUrl: string } } | null
+        }
+        blogSettings?: {
+          coverImage?: { node: { sourceUrl: string; altText: string } } | null
+          mobileCoverImage?: {
+            node: { sourceUrl: string; altText: string }
+          } | null
+          coverVideo?: { node: { mediaItemUrl: string } } | null
+          guestAuthor?: string | null
+        }
+        blogRelated?: {
+          relatedPosts?: {
+            nodes: {
+              __typename: string
+              title: string
+              slug: string
+              date: string
+              featuredImage?: { node: { sourceUrl: string; altText: string } }
+              pressRelease?: {
+                introduction?: string
+                pdf?: { node: { mediaItemUrl: string } } | null
+              }
+              categories?: { nodes: { name: string; slug: string }[] }
+              tags?: { nodes: { name: string; slug: string }[] }
+            }[]
+          } | null
+        }
+        categories?: { nodes: { name: string; slug: string }[] }
+        tags?: { nodes: { name: string; slug: string }[] }
+      } | null
+    }>(
+      gql`
+        query getPressReleasePost($slug: ID!) {
+          post(id: $slug, idType: SLUG) {
+            title
+            date
+            content
+            featuredImage {
+              node {
+                sourceUrl
+                altText
+              }
+            }
+            pressRelease {
+              introduction
+              location
+              pdf {
+                node {
+                  mediaItemUrl
+                }
+              }
+            }
+            blogSettings {
+              coverImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              mobileCoverImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              coverVideo {
+                node {
+                  mediaItemUrl
+                }
+              }
+              guestAuthor
+            }
+            blogRelated {
+              relatedPosts {
+                nodes {
+                  ... on Post {
+                    __typename
+                    title
+                    slug
+                    date
+                    featuredImage {
+                      node {
+                        sourceUrl
+                        altText
+                      }
+                    }
+                    pressRelease {
+                      introduction
+                      pdf {
+                        node {
+                          mediaItemUrl
+                        }
+                      }
+                    }
+                    categories {
+                      nodes {
+                        name
+                        slug
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            categories {
+              nodes {
+                name
+                slug
+              }
+            }
+            tags {
+              nodes {
+                name
+                slug
+              }
+            }
+          }
+        }
+      `,
+      { slug },
+    )
+    return data.post
+  } catch (error: any) {
+    return error?.response?.data?.post ?? null
+  }
+}
+
+export async function getAllPressReleaseSlugs(): Promise<string[]> {
+  const all: string[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        posts: {
+          nodes: { slug: string }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllPressReleaseSlugs($after: String) {
+            posts(first: 100, after: $after, where: { categoryName: "press" }) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                slug
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.posts.nodes.map((p) => p.slug))
+      hasNextPage = data.posts.pageInfo.hasNextPage
+      after = data.posts.pageInfo.endCursor
+    } catch {
+      break
+    }
+  }
+  return all
+}
+
+export async function getRelatedPosts(
+  categorySlug: string,
+  excludeSlug: string,
+  postDate: string,
+) {
+  try {
+    const data = await client.request<{
+      posts: {
+        nodes: WPPost[]
+      }
+    }>(
+      gql`
+        query getRelatedPosts($categorySlug: String) {
+          posts(
+            first: 100
+            where: {
+              categoryName: $categorySlug
+              orderby: { field: DATE, order: DESC }
+            }
+          ) {
+            nodes {
+              __typename
+              id
+              slug
+              contentTypeName
+              title
+              date
+              link
+              featuredImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              categories {
+                nodes {
+                  name
+                }
+              }
+              pressRelease {
+                introduction
+                pdf {
+                  node {
+                    mediaItemUrl
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { categorySlug },
+    )
+
+    const targetDate = new Date(postDate).getTime()
+
+    return data.posts.nodes
+      .filter((p) => p.slug !== excludeSlug)
+      .sort((a, b) => {
+        const diffA = Math.abs(new Date(a.date).getTime() - targetDate)
+        const diffB = Math.abs(new Date(b.date).getTime() - targetDate)
+        return diffA - diffB
+      })
+      .slice(0, 4)
+  } catch (error: any) {
+    return (
+      error?.response?.data?.posts?.nodes
+        ?.filter((p: any) => p.slug !== excludeSlug)
+        ?.sort((a: any, b: any) => {
+          const targetDate = new Date(postDate).getTime()
+          return (
+            Math.abs(new Date(a.date).getTime() - targetDate) -
+            Math.abs(new Date(b.date).getTime() - targetDate)
+          )
+        })
+        ?.slice(0, 4) ?? []
+    )
+  }
+}
+
+export async function getAllPosts(): Promise<WPPost[]> {
+  const all: WPPost[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        posts: {
+          nodes: WPPost[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllPosts($after: String) {
+            posts(
+              first: 100
+              after: $after
+              where: { orderby: { field: DATE, order: DESC } }
+            ) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                __typename
+                id
+                slug
+                contentTypeName
+                title
+                date
+                link
+                featuredImage {
+                  node {
+                    altText
+                    sourceUrl
+                  }
+                }
+                categories {
+                  nodes {
+                    name
+                  }
+                }
+                pressRelease {
+                  introduction
+                  pdf {
+                    node {
+                      mediaItemUrl
+                      title
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.posts.nodes)
+      hasNextPage = data.posts.pageInfo.hasNextPage
+      after = data.posts.pageInfo.endCursor
+    } catch (error: any) {
+      const data = error?.response?.data
+      console.log('getAllPosts catch error:', error?.response?.errors)
+      if (data?.posts?.nodes) {
+        console.log('first node in catch:', JSON.stringify(data.posts.nodes[0]))
         all.push(...data.posts.nodes)
       }
       break
