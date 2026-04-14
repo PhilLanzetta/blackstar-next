@@ -1227,13 +1227,21 @@ export async function getPressReleasePost(slug: string) {
                 nodes {
                   ... on Post {
                     __typename
-                    title
+                    id
                     slug
+                    contentTypeName
+                    title
                     date
+                    link
                     featuredImage {
                       node {
                         sourceUrl
                         altText
+                      }
+                    }
+                    categories {
+                      nodes {
+                        name
                       }
                     }
                     pressRelease {
@@ -1241,13 +1249,8 @@ export async function getPressReleasePost(slug: string) {
                       pdf {
                         node {
                           mediaItemUrl
+                          title
                         }
-                      }
-                    }
-                    categories {
-                      nodes {
-                        name
-                        slug
                       }
                     }
                   }
@@ -1466,6 +1469,45 @@ export async function getAllPosts(): Promise<WPPost[]> {
         console.log('first node in catch:', JSON.stringify(data.posts.nodes[0]))
         all.push(...data.posts.nodes)
       }
+      break
+    }
+  }
+  return all
+}
+
+export async function getAllBlogSlugs(): Promise<string[]> {
+  const all: string[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        posts: {
+          nodes: { slug: string }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllBlogSlugs($after: String) {
+            posts(first: 100, after: $after, where: { categoryName: "blog" }) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                slug
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.posts.nodes.map((p) => p.slug))
+      hasNextPage = data.posts.pageInfo.hasNextPage
+      after = data.posts.pageInfo.endCursor
+    } catch {
       break
     }
   }
