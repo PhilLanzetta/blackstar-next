@@ -10,6 +10,7 @@ import {
   DefaultPageResult,
   PressClipping,
   WPPost,
+  LumenEpisode,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -505,6 +506,26 @@ const GET_DEFAULT_PAGE = gql`
                     }
                   }
                 }
+                ... on LumenEpisode {
+                  __typename
+                  id
+                  title
+                  link
+                  slug
+                  contentTypeName
+                  featuredImage {
+                    node {
+                      altText
+                      sourceUrl
+                    }
+                  }
+                  lumenSeasons {
+                    nodes {
+                      name
+                      slug
+                    }
+                  }
+                }
               }
             }
             customPosts {
@@ -569,6 +590,23 @@ const GET_DEFAULT_PAGE = gql`
           }
           ... on FlexibleLayoutsLayoutsPressClippingsLayout {
             heading
+          }
+          ... on FlexibleLayoutsLayoutsContentLayout {
+            content
+          }
+          ... on FlexibleLayoutsLayoutsEventDetailsLayout {
+            columnOne {
+              title
+              content
+            }
+            columnTwo {
+              title
+              content
+            }
+            columnThree {
+              title
+              content
+            }
           }
           ... on FlexibleLayoutsLayoutsSponsorsCarouselLayout {
             __typename
@@ -923,6 +961,14 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
     )
     const allPosts = hasPostsGrid ? await getAllPosts() : []
 
+    const hasLumenCarousel = layouts.some(
+      (l: any) =>
+        l?.__typename === 'FlexibleLayoutsLayoutsPostsCarouselLayout' &&
+        l?.type?.includes('lumen-episode'),
+    )
+
+    const lumenEpisodes = hasLumenCarousel ? await getAllLumenEpisodes() : []
+
     return {
       layouts,
       pressClippings,
@@ -932,6 +978,7 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
       contactDetails: siteSettingsAcf?.contactDetails,
       socialLinks: siteSettingsAcf?.socialLinks,
+      lumenEpisodes,
     }
   } catch (error: any) {
     const data = error?.response?.data as DefaultPageData | undefined
@@ -963,6 +1010,13 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       )
       const allPosts = hasPostsGrid ? await getAllPosts() : []
 
+      const hasLumenCarousel = layouts.some(
+        (l: any) =>
+          l?.__typename === 'FlexibleLayoutsLayoutsPostsCarouselLayout' &&
+          l?.type?.includes('lumen-episode'),
+      )
+      const lumenEpisodes = hasLumenCarousel ? await getAllLumenEpisodes() : []
+
       return {
         layouts,
         pressClippings,
@@ -972,6 +1026,7 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
         noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
         contactDetails: siteSettingsAcf?.contactDetails,
         socialLinks: siteSettingsAcf?.socialLinks,
+        lumenEpisodes,
       }
     }
 
@@ -1512,4 +1567,953 @@ export async function getAllBlogSlugs(): Promise<string[]> {
     }
   }
   return all
+}
+
+export async function getOpportunity(slug: string) {
+  try {
+    const data = await client.request<{
+      opportunity: {
+        title: string
+        content: string
+        slug: string
+        opportunityTypes: {
+          nodes: { name: string }[]
+        }
+        opportunityAcf?: {
+          downloadPdf?: { node: { mediaItemUrl: string } } | null
+        }
+      } | null
+    }>(
+      gql`
+        query getOpportunity($slug: ID!) {
+          opportunity(id: $slug, idType: SLUG) {
+            title
+            content
+            slug
+            opportunityTypes {
+              nodes {
+                name
+              }
+            }
+            opportunityAcf {
+              downloadPdf {
+                node {
+                  mediaItemUrl
+                }
+              }
+            }
+          }
+        }
+      `,
+      { slug },
+    )
+    return data.opportunity
+  } catch (error: any) {
+    return error?.response?.data?.opportunity ?? null
+  }
+}
+
+export async function getAllOpportunitySlugs(): Promise<string[]> {
+  try {
+    const data = await client.request<{
+      opportunities: { nodes: { slug: string }[] }
+    }>(gql`
+      query getAllOpportunitySlugs {
+        opportunities(first: 100) {
+          nodes {
+            slug
+          }
+        }
+      }
+    `)
+    return data.opportunities.nodes.map((o) => o.slug)
+  } catch {
+    return []
+  }
+}
+
+export async function getProgramEvent(slug: string) {
+  try {
+    const data = await client.request<{
+      programEvents: {
+        nodes: {
+          title: string
+          slug: string
+          event: {
+            redirect?: { url: string } | null
+            startTime?: string
+            endTime?: string
+            timezone?: string
+            location?: string
+          }
+          programTypes: {
+            nodes: { name: string; slug: string }[]
+          }
+          flexibleLayouts: {
+            layouts: FlexibleLayout[]
+          }
+        }[]
+      }
+    }>(
+      gql`
+        query getProgramEvent($slug: String) {
+          programEvents(first: 1, where: { nameIn: [$slug] }) {
+            nodes {
+              title
+              slug
+              event {
+                redirect {
+                  url
+                }
+                startTime
+                endTime
+                timezone
+                location
+              }
+              programTypes {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              flexibleLayouts {
+                layouts {
+                  __typename
+                  ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
+                    heading1
+                    links {
+                      link {
+                        title
+                        url
+                        target
+                      }
+                    }
+                    image {
+                      node {
+                        altText
+                        sourceUrl
+                        mediaDetails {
+                          height
+                          width
+                        }
+                      }
+                    }
+                    mobileImage {
+                      node {
+                        altText
+                        sourceUrl
+                        mediaDetails {
+                          height
+                          width
+                        }
+                      }
+                    }
+                    overlayImage {
+                      node {
+                        altText
+                        sourceUrl
+                        mediaDetails {
+                          height
+                          width
+                        }
+                      }
+                    }
+                    mobileOverlayImage {
+                      node {
+                        altText
+                        sourceUrl
+                        mediaDetails {
+                          height
+                          width
+                        }
+                      }
+                    }
+                    video {
+                      file {
+                        node {
+                          mediaItemUrl
+                          altText
+                        }
+                      }
+                      type
+                    }
+                    mobileVideo {
+                      file {
+                        node {
+                          mediaItemUrl
+                          altText
+                        }
+                      }
+                      type
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsFeatureTextLayout {
+                    additionalContent
+                    content
+                    buttons {
+                      link {
+                        target
+                        title
+                        url
+                      }
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsPostsCarouselLayout {
+                    title
+                    link {
+                      title
+                      url
+                    }
+                    posts {
+                      nodes {
+                        ... on ProgramEvent {
+                          __typename
+                          id
+                          title
+                          link
+                          contentTypeName
+                          featuredImage {
+                            node {
+                              altText
+                              sourceUrl
+                            }
+                          }
+                          event {
+                            customExcerpt
+                            endTime
+                            listingDateFormat
+                            location
+                            startTime
+                            timezone
+                            programType {
+                              nodes {
+                                name
+                              }
+                            }
+                          }
+                        }
+                        ... on Post {
+                          __typename
+                          id
+                          slug
+                          contentTypeName
+                          title
+                          featuredImage {
+                            node {
+                              altText
+                              sourceUrl
+                            }
+                          }
+                          date
+                          categories {
+                            nodes {
+                              name
+                            }
+                          }
+                          link
+                          pressRelease {
+                            introduction
+                            pdf {
+                              node {
+                                mediaItemUrl
+                                title
+                              }
+                            }
+                          }
+                        }
+                        ... on Page {
+                          __typename
+                          id
+                          title
+                          link
+                          featuredImage {
+                            node {
+                              altText
+                              sourceUrl
+                            }
+                          }
+                        }
+                      }
+                    }
+                    customPosts {
+                      buttons {
+                        link {
+                          title
+                          url
+                        }
+                      }
+                      image {
+                        node {
+                          altText
+                          sourceUrl
+                        }
+                      }
+                      preTitle
+                      programLogo {
+                        node {
+                          altText
+                          sourceUrl
+                          mediaDetails {
+                            height
+                            width
+                          }
+                        }
+                      }
+                      title
+                      shortDescription
+                    }
+                    type
+                    featured
+                  }
+                  ... on FlexibleLayoutsLayoutsSpotlightTextImageLayout {
+                    content
+                    flip
+                    heading
+                    link {
+                      title
+                      url
+                      target
+                    }
+                    image {
+                      node {
+                        altText
+                        sourceUrl
+                        mediaDetails {
+                          height
+                          width
+                        }
+                      }
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsTextTabsLayout {
+                    tabs {
+                      title
+                      content
+                      link {
+                        title
+                        url
+                      }
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsPressClippingsLayout {
+                    heading
+                  }
+                  ... on FlexibleLayoutsLayoutsContentLayout {
+                    content
+                  }
+                  ... on FlexibleLayoutsLayoutsEventDetailsLayout {
+                    columnOne {
+                      title
+                      content
+                    }
+                    columnTwo {
+                      title
+                      content
+                    }
+                    columnThree {
+                      title
+                      content
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsSponsorsCarouselLayout {
+                    __typename
+                    title
+                    button {
+                      title
+                      url
+                    }
+                    sponsorCollection {
+                      nodes {
+                        ... on SponsorCollection {
+                          id
+                          sponsors {
+                            nodes {
+                              ... on Sponsor {
+                                __typename
+                                sponsorAcf {
+                                  logoBlack {
+                                    node {
+                                      altText
+                                      mediaDetails {
+                                        height
+                                        width
+                                      }
+                                      sourceUrl
+                                    }
+                                  }
+                                  website
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsTextListLayout {
+                    heading
+                    numberOfColumns
+                    items {
+                      detail
+                      heading
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsFaqAccordionLayout {
+                    __typename
+                    collection {
+                      nodes {
+                        ... on FaqCollection {
+                          __typename
+                          id
+                          name
+                          faqs {
+                            nodes {
+                              title
+                              content
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsAnchorLayout {
+                    __typename
+                    anchorName
+                  }
+                  ... on FlexibleLayoutsLayoutsSectionHeadingLayout {
+                    __typename
+                    heading
+                    subHeading
+                  }
+                  ... on FlexibleLayoutsLayoutsTextListAltLayout {
+                    collapsable
+                    heading
+                    column1
+                    column2
+                    column3
+                  }
+                  ... on FlexibleLayoutsLayoutsPostsGridLayout {
+                    __typename
+                    heading
+                    gridColumns
+                    showFilters
+                    type
+                    customPosts {
+                      buttons {
+                        link {
+                          title
+                          url
+                        }
+                      }
+                      image {
+                        node {
+                          altText
+                          mediaDetails {
+                            height
+                            width
+                          }
+                          sourceUrl
+                        }
+                      }
+                      preTitle
+                      shortDescription
+                      title
+                      programLogo {
+                        node {
+                          altText
+                          mediaDetails {
+                            height
+                            width
+                          }
+                          sourceUrl
+                        }
+                      }
+                    }
+                    posts {
+                      nodes {
+                        ... on ProgramEvent {
+                          __typename
+                          id
+                          title
+                          link
+                          contentTypeName
+                          featuredImage {
+                            node {
+                              altText
+                              sourceUrl
+                            }
+                          }
+                          event {
+                            customExcerpt
+                            endTime
+                            listingDateFormat
+                            location
+                            startTime
+                            timezone
+                            programType {
+                              nodes {
+                                name
+                              }
+                            }
+                          }
+                        }
+                        ... on Post {
+                          __typename
+                          id
+                          slug
+                          contentTypeName
+                          title
+                          featuredImage {
+                            node {
+                              altText
+                              sourceUrl
+                            }
+                          }
+                          date
+                          categories {
+                            nodes {
+                              name
+                            }
+                          }
+                          link
+                          pressRelease {
+                            introduction
+                            pdf {
+                              node {
+                                mediaItemUrl
+                                title
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsSponsorsRowLayout {
+                    __typename
+                    heading
+                    description
+                    descriptionPosition
+                    sponsors {
+                      manualSponsor {
+                        link {
+                          url
+                        }
+                        logo {
+                          node {
+                            altText
+                            mediaDetails {
+                              height
+                              width
+                            }
+                            sourceUrl
+                          }
+                        }
+                      }
+                      sponsor {
+                        nodes {
+                          ... on Sponsor {
+                            id
+                            sponsorAcf {
+                              logoBlack {
+                                node {
+                                  altText
+                                  mediaDetails {
+                                    height
+                                    width
+                                  }
+                                  sourceUrl
+                                }
+                              }
+                              website
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsMediaLayout {
+                    __typename
+                    title
+                    slides {
+                      bordered
+                      caption
+                      image {
+                        node {
+                          altText
+                          mediaDetails {
+                            height
+                            width
+                          }
+                          sourceUrl
+                        }
+                      }
+                      videoEmbed
+                      videoFile {
+                        node {
+                          altText
+                          sourceUrl
+                        }
+                      }
+                      videoType
+                    }
+                  }
+                  ... on FlexibleLayoutsLayoutsTeamListingsLayout {
+                    __typename
+                    title
+                    collection {
+                      nodes {
+                        __typename
+                        ... on BioCollection {
+                          biographies(first: 100) {
+                            nodes {
+                              title
+                              biographyAcf {
+                                emailAddress
+                                position
+                                pronouns
+                              }
+                              content
+                              featuredImage {
+                                node {
+                                  altText
+                                  mediaDetails {
+                                    height
+                                    width
+                                  }
+                                  sourceUrl
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { slug },
+    )
+    return data.programEvents.nodes[0] ?? null
+  } catch (error: any) {
+    return error?.response?.data?.programEvents?.nodes?.[0] ?? null
+  }
+}
+
+export async function getAllProgramEventSlugs(): Promise<
+  { programType: string; slug: string }[]
+> {
+  const all: { programType: string; slug: string }[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        programEvents: {
+          nodes: {
+            slug: string
+            programType: { nodes: { slug: string }[] }
+            event: { redirect?: { url: string } | null }
+          }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllProgramEventSlugs($after: String) {
+            programEvents(first: 100, after: $after) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                slug
+                event {
+                  redirect {
+                    url
+                  }
+                }
+                programType {
+                  nodes {
+                    slug
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+
+      const validEvents = data.programEvents.nodes
+        .filter(
+          (e) => !e.event?.redirect?.url && e.programType?.nodes?.[0]?.slug,
+        )
+        .map((e) => ({
+          programType: e.programType.nodes[0].slug,
+          slug: e.slug,
+        }))
+
+      all.push(...validEvents)
+      hasNextPage = data.programEvents.pageInfo.hasNextPage
+      after = data.programEvents.pageInfo.endCursor
+    } catch {
+      break
+    }
+  }
+  return all
+}
+
+export async function getAllLumenEpisodes(): Promise<LumenEpisode[]> {
+  const all: LumenEpisode[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        lumenEpisodes: {
+          nodes: LumenEpisode[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllLumenEpisodes($after: String) {
+            lumenEpisodes(
+              first: 100
+              after: $after
+              where: { orderby: { field: DATE, order: DESC } }
+            ) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                __typename
+                id
+                title
+                link
+                slug
+                contentTypeName
+                date
+                featuredImage {
+                  node {
+                    altText
+                    sourceUrl
+                  }
+                }
+                lumenSeasons {
+                  nodes {
+                    name
+                    slug
+                  }
+                }
+                manyLumensEpisodesAcf {
+                  introduction
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.lumenEpisodes.nodes)
+      hasNextPage = data.lumenEpisodes.pageInfo.hasNextPage
+      after = data.lumenEpisodes.pageInfo.endCursor
+    } catch (error: any) {
+      const data = error?.response?.data
+      if (data?.lumenEpisodes?.nodes) {
+        all.push(...data.lumenEpisodes.nodes)
+      }
+      break
+    }
+  }
+  return all
+}
+
+export async function getLumenEpisode(
+  slug: string,
+): Promise<LumenEpisode | null> {
+  try {
+    const data = await client.request<{
+      lumenEpisode: LumenEpisode | null
+    }>(
+      gql`
+        query getLumenEpisode($slug: ID!) {
+          lumenEpisode(id: $slug, idType: SLUG) {
+            title
+            slug
+            date
+            featuredImage {
+              node {
+                sourceUrl
+                altText
+              }
+            }
+            lumenSeasons {
+              nodes {
+                name
+                slug
+              }
+            }
+            blogSettings {
+              coverImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              mobileCoverImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              coverVideo {
+                node {
+                  mediaItemUrl
+                }
+              }
+            }
+            manyLumensEpisodesAcf {
+              introduction
+              subtitleHost
+              episodeName
+              credits
+              showNotes
+              transcript
+              colour
+              buzzSprout {
+                embedCode
+                mp3Url
+              }
+              relatedEpisodes {
+                nodes {
+                  ... on LumenEpisode {
+                    __typename
+                    id
+                    title
+                    slug
+                    date
+                    link
+                    featuredImage {
+                      node {
+                        sourceUrl
+                        altText
+                      }
+                    }
+                    lumenSeasons {
+                      nodes {
+                        name
+                        slug
+                      }
+                    }
+                    manyLumensEpisodesAcf {
+                      introduction
+                    }
+                  }
+                }
+              }
+              guestBios {
+                content
+                link {
+                  url
+                  title
+                }
+                image {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { slug },
+    )
+    return data.lumenEpisode
+  } catch (error: any) {
+    return error?.response?.data?.lumenEpisode ?? null
+  }
+}
+
+export async function getAllLumenEpisodeSlugs(): Promise<
+  { season: string; slug: string }[]
+> {
+  const all: { season: string; slug: string }[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        lumenEpisodes: {
+          nodes: {
+            slug: string
+            lumenSeasons: { nodes: { slug: string }[] }
+          }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllLumenEpisodeSlugs($after: String) {
+            lumenEpisodes(first: 100, after: $after) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                slug
+                lumenSeasons {
+                  nodes {
+                    slug
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+
+      const valid = data.lumenEpisodes.nodes
+        .filter((e) => e.lumenSeasons?.nodes?.[0]?.slug)
+        .map((e) => ({
+          season: e.lumenSeasons.nodes[0].slug,
+          slug: e.slug,
+        }))
+
+      all.push(...valid)
+      hasNextPage = data.lumenEpisodes.pageInfo.hasNextPage
+      after = data.lumenEpisodes.pageInfo.endCursor
+    } catch {
+      break
+    }
+  }
+  return all
+}
+
+export async function getRelatedLumenEpisodes(
+  excludeSlug: string,
+  episodeDate: string,
+): Promise<LumenEpisode[]> {
+  const all = await getAllLumenEpisodes()
+  const targetDate = new Date(episodeDate).getTime()
+  return all
+    .filter((ep) => ep.slug !== excludeSlug)
+    .sort((a, b) => {
+      const diffA = Math.abs(new Date(a.date ?? '').getTime() - targetDate)
+      const diffB = Math.abs(new Date(b.date ?? '').getTime() - targetDate)
+      return diffA - diffB
+    })
+    .slice(0, 4)
 }

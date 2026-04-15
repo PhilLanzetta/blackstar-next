@@ -144,12 +144,7 @@ export default function PostCard({ post }: PostCardProps) {
           {dateInfo}
         </div>
       )}
-      <div
-        className={styles.textInfo}
-        style={{
-          borderBottom: link ? 'var(--standard-border)' : 'none',
-        }}
-      >
+      <div className={styles.textInfo}>
         <div
           className={styles.title}
           dangerouslySetInnerHTML={{ __html: title }}

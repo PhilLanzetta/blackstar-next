@@ -1,0 +1,46 @@
+.dropdown {
+  border-top: var(--standard-border);
+}
+
+.dropdown:last-child {
+  border-bottom: var(--standard-border);
+}
+
+.toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: none;
+  border: none;
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: left;
+}
+
+.toggle:hover {
+  background: #f0f0f0;
+}
+
+.icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.content {
+  padding: 0 20px 20px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.content a {
+  color: inherit;
+}
+
+.content p {
+  margin-bottom: 0.75em;
+}

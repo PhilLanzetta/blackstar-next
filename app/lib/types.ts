@@ -190,14 +190,62 @@ export type CustomPost = {
   programLogo?: WPImage
 }
 
+export type GuestBio = {
+  content?: string
+  link?: { url?: string; title?: string } | null
+  image?: {
+    node: {
+      sourceUrl?: string
+      altText?: string
+    }
+  } | null
+}
+
+export type LumenEpisode = {
+  __typename: 'LumenEpisode'
+  id: string
+  title: string
+  link: string
+  slug: string
+  contentTypeName?: string
+  date?: string
+  featuredImage?: WPImage
+  lumenSeasons?: {
+    nodes: { name: string; slug: string }[]
+  }
+  blogSettings?: {
+    coverImage?: { node: { sourceUrl?: string; altText?: string } } | null
+    mobileCoverImage?: { node: { sourceUrl?: string; altText?: string } } | null
+    coverVideo?: { node: { mediaItemUrl?: string } } | null
+    guestAuthor?: string | null
+  }
+  manyLumensEpisodesAcf?: {
+    introduction?: string
+    subtitleHost?: string
+    episodeName?: string
+    credits?: string
+    showNotes?: string
+    transcript?: string
+    colour?: string[]
+    buzzSprout?: {
+      embedCode?: string
+      mp3Url?: string
+    } | null
+    relatedEpisodes?: {
+      nodes: LumenEpisode[]
+    } | null
+    guestBios?: GuestBio[] | null
+  }
+}
+
 export type PostsCarouselLayout = {
   __typename: 'FlexibleLayoutsLayoutsPostsCarouselLayout'
   title: string
   link: WPLink
-  type: string
+  type: string[]
   featured: boolean
-  posts: {
-    nodes: (ProgramEvent | WPPost | WPPage)[]
+  posts?: {
+    nodes: (ProgramEvent | WPPost | WPPage | LumenEpisode)[]
   }
   customPosts?: CustomPost[]
 }
@@ -437,6 +485,18 @@ export type PressClippingsLayout = {
   heading?: string
 }
 
+export type EventDetailsLayout = {
+  __typename: 'FlexibleLayoutsLayoutsEventDetailsLayout'
+  columnOne?: { title?: string; content?: string }
+  columnTwo?: { title?: string; content?: string }
+  columnThree?: { title?: string; content?: string }
+}
+
+export type ContentLayout = {
+  __typename: 'FlexibleLayoutsLayoutsContentLayout'
+  content?: string
+}
+
 // Union type for all layouts
 export type FlexibleLayout =
   | SpotlightHeroLayout
@@ -455,6 +515,8 @@ export type FlexibleLayout =
   | SponsorsRowLayout
   | FeatureTextLayout
   | PressClippingsLayout
+  | EventDetailsLayout
+  | ContentLayout
 
 // Home page
 export type HomePageData = {
@@ -494,6 +556,7 @@ export type DefaultPageResult = {
   pressClippings?: PressClipping[]
   pressReleasePosts?: WPPost[]
   allPosts?: WPPost[]
+  lumenEpisodes?: LumenEpisode[]
 }
 
 export type PressClipping = {

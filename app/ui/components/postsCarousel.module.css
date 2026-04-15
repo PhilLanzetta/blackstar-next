@@ -1,13 +1,12 @@
 .postCarouselContainer {
-  width: 100%;
   padding: 20px;
   margin-bottom: 80px;
+  overflow: hidden;
 }
 
 .postCarouselHeader {
   display: flex;
   justify-content: space-between;
-  text-transform: uppercase;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -15,20 +14,122 @@
 .postCarouselHeading {
   font-family: var(--gt-expanded);
   font-size: var(--gt-large);
+  text-transform: uppercase;
 }
 
-.cardContainer,
-.featuredCardContainer {
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.viewAll {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+}
+
+.viewAll:hover {
+  text-decoration: underline;
+}
+
+.arrows {
+  display: flex;
+  gap: 10px;
+}
+
+.arrow {
+  background: none;
+  border: var(--standard-border);
+  padding: 8px 14px;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.arrow:not(:disabled):hover {
+  background: #f0f0f0;
+}
+
+.seasonFilters {
   display: flex;
   gap: 20px;
-  align-items: stretch;
   flex-wrap: wrap;
 }
 
-.cardContainer > div {
-  width: calc(25% - 15px);
+.seasonFilter {
+  background: none;
+  border: none;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.4;
 }
 
-.featuredCardContainer > div {
-  width: calc(50% - 10px);
+.seasonFilter.active {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.carouselViewport {
+  overflow: hidden;
+  --carousel-gap: 20px;
+}
+
+.carouselTrack {
+  display: flex;
+  gap: var(--carousel-gap);
+  transition: transform 0.4s ease;
+  cursor: grab;
+  user-select: none;
+}
+
+.carouselTrack:active {
+  cursor: grabbing;
+}
+
+.carouselItem {
+  flex: 0 0 var(--item-width, 25%);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .arrows {
+    display: none;
+  }
+
+  .carouselItem {
+    flex: 0 0 75% !important;
+  }
+
+  .carouselTrack {
+    transform: none !important;
+  }
+
+  .carouselViewport {
+    width: 100vw;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .carouselViewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carouselItem {
+    scroll-snap-align: start;
+  }
 }

@@ -37,7 +37,7 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
     mobileVideo[0]?.file?.node?.mediaItemUrl
   const hasMobileImage = mobileImage?.node?.sourceUrl
   const mobileUsesDesktop = !hasMobileVideo && !hasMobileImage
-  const showInfoBox = heading1 && !overlayImage
+  const showInfoBox = heading1 || (links && !overlayImage)
 
   return (
     <section
@@ -125,7 +125,7 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
       {/* Info box - only show if heading1 exists and no overlay image */}
       {showInfoBox && (
         <div className={styles.heroInfoBox}>
-          <p className={styles.heroBoxHeading}>{heading1}</p>
+          {heading1 && <p className={styles.heroBoxHeading}>{heading1}</p>}
           {links && links.length > 0 && (
             <div className={styles.heroBoxLinkContainer}>
               {links.map((item, i) => (

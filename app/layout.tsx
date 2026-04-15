@@ -7,6 +7,7 @@ import { HeaderWrapper } from './ui/headerWrapper'
 import { Footer } from './ui/footer'
 import { headers } from 'next/headers'
 import Breadcrumb from './ui/components/breadcrumb'
+import NextTopLoader from 'nextjs-toploader'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -45,6 +46,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NextTopLoader color='#000' height={3} showSpinner={false} />
         <Breadcrumb></Breadcrumb>
         <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
         <main>{children}</main>

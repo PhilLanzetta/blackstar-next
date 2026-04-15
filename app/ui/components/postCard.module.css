@@ -1,14 +1,27 @@
+
 .card {
   border: var(--standard-border);
   display: flex;
   flex-direction: column;
+  height: 100%;
   overflow: hidden;
   word-break: break-word;
+}
+
+.textInfo {
+  flex: 1;
 }
 
 .imageWrapper {
   width: 100%;
   aspect-ratio: 16 / 9;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.imageWrapperLumen {
+  width: 100%;
+  aspect-ratio: 1 / 1;
   position: relative;
   flex-shrink: 0;
 }
@@ -32,6 +45,7 @@
 }
 
 .learnMore {
+  border-top: var(--standard-border);
   flex-shrink: 0;
   margin-top: auto;
   padding: 10px;

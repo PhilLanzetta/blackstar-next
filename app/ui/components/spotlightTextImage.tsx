@@ -37,15 +37,15 @@ export default function SpotlightTextImage({
           </div>
         )}
       </div>
-      <div className={styles.linkContainer}>
-        {link?.url && (
+      {link?.url && (
+        <div className={styles.linkContainer}>
           <LinkButton
             href={link.url}
             label={link.title}
             target={link.target as '_blank' | '_self'}
           />
-        )}
-      </div>
+        </div>
+      )}
     </section>
   )
 }

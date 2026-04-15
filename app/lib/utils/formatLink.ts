@@ -8,8 +8,24 @@ export function formatLink(url: string): string {
   }
 }
 
-export function formatEventLink(link: string, programType?: string): string {
+export function formatEventLink(link: string, termSlug?: string): string {
   if (!link) return link
-  const slug = programType?.toLowerCase().replace(/\s+/g, '-') ?? 'events'
-  return formatLink(link.replace('%program-type%', slug))
+  const slug = termSlug?.toLowerCase().replace(/\s+/g, '-') ?? 'events'
+  return formatLink(
+    link.replace('%program-type%', slug).replace('%lumen-season%', slug),
+  )
+}
+
+export function isExternalLink(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    return ![
+      'violet-chimpanzee-234778.hostingersite.com',
+      'blackstarfest.org',
+      'www.blackstarfest.org',
+      'blackstar-next.vercel.app',
+    ].includes(parsed.hostname)
+  } catch {
+    return false
+  }
 }

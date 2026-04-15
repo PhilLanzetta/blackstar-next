@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { OpportunityType } from '@/app/lib/types'
 import styles from './opportunities.module.css'
 import Link from 'next/link'
+import { formatLink } from '@/app/lib/utils/formatLink'
 
 type Props = {
   opportunityTypes: OpportunityType[]
@@ -60,7 +61,10 @@ export default function Opportunities({
                     }}
                   ></div>
                 )}
-                <Link href={opportunity.link} className={styles.readMore}>
+                <Link
+                  href={formatLink(opportunity.link)}
+                  className={styles.readMore}
+                >
                   Read More
                 </Link>
               </li>

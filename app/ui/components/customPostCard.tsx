@@ -25,10 +25,6 @@ export default function CustomPostCard({ post }: { post: CustomPost }) {
       </div>
       <div
         className={styles.textInfo}
-        style={{
-          borderBottom:
-            buttons && buttons.length > 0 ? 'var(--standard-border)' : 'none',
-        }}
       >
         {programLogo?.node?.sourceUrl && (
           <div

@@ -81,7 +81,12 @@ export default function PostsGrid({
   if (isPosts) {
     return (
       <section className={styles.wrapper}>
-        {heading && <h2 className={styles.heading}>{heading}</h2>}
+        {heading && (
+          <div
+            className={styles.heading}
+            dangerouslySetInnerHTML={{ __html: heading }}
+          ></div>
+        )}
         {showFilters && (
           <div className={styles.categoryFilters}>
             <button
@@ -138,7 +143,12 @@ export default function PostsGrid({
   if (isPress) {
     return (
       <section className={styles.wrapper}>
-        {heading && <h2 className={styles.heading}>{heading}</h2>}
+        {heading && (
+          <div
+            className={styles.heading}
+            dangerouslySetInnerHTML={{ __html: heading }}
+          ></div>
+        )}
         {showFilters && (
           <div className={styles.filters}>
             <div className={styles.dropdown}>
@@ -205,7 +215,12 @@ export default function PostsGrid({
 
   return (
     <section className={styles.wrapper}>
-      {heading && <h2 className={styles.heading}>{heading}</h2>}
+      {heading && (
+        <div
+          className={styles.heading}
+          dangerouslySetInnerHTML={{ __html: heading }}
+        ></div>
+      )}
       <div
         className={styles.grid}
         style={{ gridTemplateColumns: `repeat(${gridColumns ?? 3}, 1fr)` }}

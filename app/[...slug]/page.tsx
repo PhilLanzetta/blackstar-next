@@ -17,6 +17,8 @@ import type {
   PostsGridLayout,
   FeatureTextLayout,
   PressClippingsLayout,
+  EventDetailsLayout,
+  ContentLayout as ContentLayoutType,
 } from '@/app/lib/types'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
@@ -37,6 +39,8 @@ import SponsorsRow from '../ui/components/sponsorsRow'
 import PostsGrid from '../ui/components/postsGrid'
 import FeatureText from '../ui/components/featureText'
 import PressClippings from '../ui/components/pressClippings'
+import EventDetails from '../ui/components/eventDetails'
+import ContentLayout from '../ui/components/contentLayout'
 
 export const revalidate = 60
 export const dynamicParams = false
@@ -117,7 +121,7 @@ export default async function DefaultPage({ params }: Props) {
     socialLinks,
     pressClippings,
     pressReleasePosts,
-    allPosts,
+    allPosts, lumenEpisodes
   } = await getDefaultPage(path)
 
   if (!layouts || !layouts.length) return notFound()
@@ -144,7 +148,11 @@ export default async function DefaultPage({ params }: Props) {
             )
           case 'FlexibleLayoutsLayoutsPostsCarouselLayout':
             return (
-              <PostsCarousel key={index} data={layout as PostsCarouselLayout} />
+              <PostsCarousel
+                key={index}
+                data={layout as PostsCarouselLayout}
+                lumenEpisodes={lumenEpisodes ?? []}
+              />
             )
           case 'FlexibleLayoutsLayoutsSpotlightTextImageLayout':
             return (
@@ -199,6 +207,14 @@ export default async function DefaultPage({ params }: Props) {
                 pressReleasePosts={pressReleasePosts ?? []}
                 allPosts={allPosts ?? []}
               />
+            )
+          case 'FlexibleLayoutsLayoutsEventDetailsLayout':
+            return (
+              <EventDetails key={index} data={layout as EventDetailsLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsContentLayout':
+            return (
+              <ContentLayout key={index} data={layout as ContentLayoutType} />
             )
           default:
             return null
