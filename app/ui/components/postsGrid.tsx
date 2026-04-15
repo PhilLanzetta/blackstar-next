@@ -16,17 +16,20 @@ type Props = {
   data: PostsGridLayout
   pressReleasePosts?: WPPost[]
   allPosts?: WPPost[]
+  programEvents?: ProgramEvent[]
 }
 
 export default function PostsGrid({
   data,
   pressReleasePosts,
   allPosts,
+  programEvents,
 }: Props) {
   const { customPosts, posts, gridColumns, heading, type, showFilters } = data
 
   const isPress = type?.includes('press')
   const isPosts = type?.includes('posts')
+  const isProgramEvent = type?.includes('program-event')
 
   const [selectedYear, setSelectedYear] = useState<string>('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
@@ -75,8 +78,52 @@ export default function PostsGrid({
   const visiblePosts = filteredPosts.slice(0, page * PAGE_SIZE)
   const hasMorePosts = visiblePosts.length < filteredPosts.length
 
+  // Program events
+  const filteredEvents = useMemo(() => {
+    if (!isProgramEvent || !programEvents) return []
+    const filterSlugs = data.programEventType?.nodes?.map((n) => n.slug) ?? []
+    if (filterSlugs.length === 0) return programEvents
+    return programEvents.filter((e) =>
+      e.event?.programType?.nodes?.some((pt) => filterSlugs.includes(pt.slug)),
+    )
+  }, [isProgramEvent, programEvents, data.programEventType])
+
+  const visibleEvents = filteredEvents.slice(0, page * PAGE_SIZE)
+  const hasMoreEvents = visibleEvents.length < filteredEvents.length
+
   const hasCustomPosts = customPosts && customPosts.length > 0
   const hasPosts = posts?.nodes && posts.nodes.length > 0
+
+  if (isProgramEvent) {
+    return (
+      <section className={styles.wrapper}>
+        {heading && (
+          <div
+            className={styles.heading}
+            dangerouslySetInnerHTML={{ __html: heading }}
+          />
+        )}
+        <div
+          className={styles.grid}
+          style={{ gridTemplateColumns: `repeat(${gridColumns ?? 3}, 1fr)` }}
+        >
+          {visibleEvents.map((event, index) => (
+            <PostCard key={index} post={event} />
+          ))}
+        </div>
+        {hasMoreEvents && (
+          <div className={styles.loadMoreContainer}>
+            <button
+              className={styles.loadMore}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              LOAD MORE
+            </button>
+          </div>
+        )}
+      </section>
+    )
+  }
 
   if (isPosts) {
     return (
@@ -85,7 +132,7 @@ export default function PostsGrid({
           <div
             className={styles.heading}
             dangerouslySetInnerHTML={{ __html: heading }}
-          ></div>
+          />
         )}
         {showFilters && (
           <div className={styles.categoryFilters}>
@@ -147,7 +194,7 @@ export default function PostsGrid({
           <div
             className={styles.heading}
             dangerouslySetInnerHTML={{ __html: heading }}
-          ></div>
+          />
         )}
         {showFilters && (
           <div className={styles.filters}>
@@ -219,7 +266,7 @@ export default function PostsGrid({
         <div
           className={styles.heading}
           dangerouslySetInnerHTML={{ __html: heading }}
-        ></div>
+        />
       )}
       <div
         className={styles.grid}

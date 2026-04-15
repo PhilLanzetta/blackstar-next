@@ -121,7 +121,9 @@ export default async function DefaultPage({ params }: Props) {
     socialLinks,
     pressClippings,
     pressReleasePosts,
-    allPosts, lumenEpisodes
+    allPosts,
+    lumenEpisodes,
+    programEvents,
   } = await getDefaultPage(path)
 
   if (!layouts || !layouts.length) return notFound()
@@ -200,12 +202,14 @@ export default async function DefaultPage({ params }: Props) {
               />
             )
           case 'FlexibleLayoutsLayoutsPostsGridLayout':
+            console.log('postsGrid layout data:', JSON.stringify(layout))
             return (
               <PostsGrid
                 key={index}
                 data={layout as PostsGridLayout}
                 pressReleasePosts={pressReleasePosts ?? []}
                 allPosts={allPosts ?? []}
+                programEvents={programEvents ?? []}
               />
             )
           case 'FlexibleLayoutsLayoutsEventDetailsLayout':

@@ -11,6 +11,7 @@ import {
   PressClipping,
   WPPost,
   LumenEpisode,
+  ProgramEvent,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -691,6 +692,12 @@ const GET_DEFAULT_PAGE = gql`
             gridColumns
             showFilters
             type
+            programEventType {
+              nodes {
+                name
+                slug
+              }
+            }
             customPosts {
               buttons {
                 link {
@@ -969,6 +976,16 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
 
     const lumenEpisodes = hasLumenCarousel ? await getAllLumenEpisodes() : []
 
+    const hasProgramEventsGrid = layouts.some(
+      (l: any) =>
+        l?.__typename === 'FlexibleLayoutsLayoutsPostsGridLayout' &&
+        l?.type?.includes('program-event'),
+    )
+
+    const programEvents = hasProgramEventsGrid
+      ? await getAllProgramEvents()
+      : []
+
     return {
       layouts,
       pressClippings,
@@ -978,7 +995,7 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
       contactDetails: siteSettingsAcf?.contactDetails,
       socialLinks: siteSettingsAcf?.socialLinks,
-      lumenEpisodes,
+      lumenEpisodes, programEvents
     }
   } catch (error: any) {
     const data = error?.response?.data as DefaultPageData | undefined
@@ -1017,6 +1034,16 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       )
       const lumenEpisodes = hasLumenCarousel ? await getAllLumenEpisodes() : []
 
+      const hasProgramEventsGrid = layouts.some(
+        (l: any) =>
+          l?.__typename === 'FlexibleLayoutsLayoutsPostsGridLayout' &&
+          l?.type?.includes('program-event'),
+      )
+
+      const programEvents = hasProgramEventsGrid
+        ? await getAllProgramEvents()
+        : []
+
       return {
         layouts,
         pressClippings,
@@ -1027,10 +1054,9 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
         contactDetails: siteSettingsAcf?.contactDetails,
         socialLinks: siteSettingsAcf?.socialLinks,
         lumenEpisodes,
+        programEvents,
       }
     }
-
-    console.error('Error fetching page:', error)
     return emptyResult
   }
 }
@@ -1646,7 +1672,7 @@ export async function getProgramEvent(slug: string) {
             timezone?: string
             location?: string
           }
-          programTypes: {
+          programType: {
             nodes: { name: string; slug: string }[]
           }
           flexibleLayouts: {
@@ -1670,7 +1696,7 @@ export async function getProgramEvent(slug: string) {
                 timezone
                 location
               }
-              programTypes {
+              programType {
                 nodes {
                   name
                   slug
@@ -2516,4 +2542,75 @@ export async function getRelatedLumenEpisodes(
       return diffA - diffB
     })
     .slice(0, 4)
+}
+
+export async function getAllProgramEvents(): Promise<ProgramEvent[]> {
+  const all: ProgramEvent[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        programEvents: {
+          nodes: ProgramEvent[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllProgramEvents($after: String) {
+            programEvents(
+              first: 100
+              after: $after
+              where: { orderby: { field: DATE, order: DESC } }
+            ) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                __typename
+                id
+                title
+                link
+                contentTypeName
+                featuredImage {
+                  node {
+                    altText
+                    sourceUrl
+                  }
+                }
+                event {
+                  customExcerpt
+                  endTime
+                  listingDateFormat
+                  location
+                  startTime
+                  timezone
+                  programType {
+                    nodes {
+                      name
+                      slug
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.programEvents.nodes)
+      hasNextPage = data.programEvents.pageInfo.hasNextPage
+      after = data.programEvents.pageInfo.endCursor
+    } catch (error: any) {
+      const data = error?.response?.data
+      if (data?.programEvents?.nodes) {
+        all.push(...data.programEvents.nodes)
+      }
+      break
+    }
+  }
+  return all
 }

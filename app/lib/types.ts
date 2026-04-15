@@ -115,6 +115,7 @@ export type SpotlightTextImageLayout = {
 // Posts Carousel Layout
 export type ProgramType = {
   name: string
+  slug: string
 }
 
 export type EventFields = {
@@ -256,6 +257,9 @@ export type PostsGridLayout = {
   gridColumns?: number
   showFilters?: boolean
   type?: string[]
+  programEventType?: {
+    nodes: { name: string; slug: string }[]
+  }
   customPosts?: CustomPost[]
   posts?: {
     nodes: (ProgramEvent | WPPost)[]
@@ -557,6 +561,7 @@ export type DefaultPageResult = {
   pressReleasePosts?: WPPost[]
   allPosts?: WPPost[]
   lumenEpisodes?: LumenEpisode[]
+  programEvents?: ProgramEvent[]
 }
 
 export type PressClipping = {
