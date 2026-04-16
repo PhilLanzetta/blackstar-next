@@ -219,11 +219,12 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
                 className={styles.underLinks}
                 transition={{ ease: 'linear' }}
               >
-                {megaNavs.map((megaNav: MegaNav) => (
+                {megaNavs.map((megaNav: MegaNav, index: number) => (
                   <SubLink
                     key={megaNav.id}
                     title={megaNav.title}
                     slug={megaNav.slug}
+                    isLast={index === megaNavs.length - 1}
                     subNav={megaNav.megaNavACF.menuItems}
                     onClose={() => setMenuOpen(false)}
                   />

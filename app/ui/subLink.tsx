@@ -2,9 +2,8 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useState, useRef, useEffect } from 'react'
 import styles from './subLink.module.css'
-import Link from 'next/link'
 import BrandLink from './components/brandLink'
-import { useWindowSize, useHover } from 'usehooks-ts'
+import { useWindowSize } from 'usehooks-ts'
 import { formatLink } from '@/app/lib/utils/formatLink'
 
 interface MenuItems {
@@ -17,45 +16,22 @@ interface MenuItems {
 interface SubLinkProps {
   title: string
   slug: string
+  isLast: boolean
   subNav: MenuItems[]
   onClose: () => void
 }
 
-export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
+export function SubLink({ title, isLast, subNav, onClose }: SubLinkProps) {
   const [expanded, setExpanded] = useState(false)
-  const { width } = useWindowSize()
-  const isMobile: boolean = width < 601
-  const hoverRef = useRef<HTMLDivElement | null>(null)
-  const isHovered = useHover(hoverRef as React.RefObject<HTMLElement>)
-
-  useEffect(() => {
-    if (isHovered && !isMobile) {
-      setExpanded(true)
-    } else setExpanded(false)
-  }, [isHovered])
 
   return (
-    <div ref={hoverRef} className={styles.sublinkContainer}>
-      {expanded ? (
-        <BrandLink
-          href={formatLink(slug)}
-          className={`${styles.sublinkMain} ${
-            expanded ? styles.activeMain : ''
-          }`}
-          onClick={onClose}
-        >
-          {title}
-        </BrandLink>
-      ) : (
-        <button
-          className={`${styles.sublinkMain} ${
-            expanded ? styles.activeMain : ''
-          }`}
-          onClick={() => setExpanded(true)}
-        >
-          {title}
-        </button>
-      )}
+    <div className={styles.sublinkContainer}>
+      <button
+        className={`${styles.sublinkMain} ${expanded ? styles.activeMain : ''} ${isLast ? styles.sublinkMainLast : ''}`}
+        onClick={() => setExpanded(!expanded)}
+      >
+        {title} <span className={styles.navArrow}>{expanded ? <span>&#8593;</span> : <span>&#x2193;</span>}</span>
+      </button>
       <AnimatePresence>
         {expanded && (
           <motion.div
@@ -76,7 +52,7 @@ export function SubLink({ title, slug, subNav, onClose }: SubLinkProps) {
               initial={{ transform: 'scaleY(0)', transformOrigin: 'top' }}
               animate={{ transform: 'scaleY(100%)', transformOrigin: 'top' }}
               exit={{ transform: 'scaleY(0)', transformOrigin: 'top' }}
-              className={styles.underLinks}
+              className={`${styles.underLinks} ${isLast ? styles.underLinksLast : ''}`}
               transition={{ ease: 'linear' }}
             >
               {subNav &&
