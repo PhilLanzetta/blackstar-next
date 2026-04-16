@@ -8,6 +8,7 @@ import { Footer } from './ui/footer'
 import { headers } from 'next/headers'
 import Breadcrumb from './ui/components/breadcrumb'
 import NextTopLoader from 'nextjs-toploader'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -50,6 +51,7 @@ export default async function RootLayout({
         <Breadcrumb></Breadcrumb>
         <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
         <main>{children}</main>
+        <SpeedInsights />
         <Footer footerNav={footerNav} />
       </body>
     </html>
