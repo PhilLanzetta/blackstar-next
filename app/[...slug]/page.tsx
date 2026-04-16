@@ -202,7 +202,6 @@ export default async function DefaultPage({ params }: Props) {
               />
             )
           case 'FlexibleLayoutsLayoutsPostsGridLayout':
-            console.log('postsGrid layout data:', JSON.stringify(layout))
             return (
               <PostsGrid
                 key={index}

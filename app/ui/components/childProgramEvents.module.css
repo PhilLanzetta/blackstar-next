@@ -1,0 +1,22 @@
+.section {
+  padding: 0 20px 80px;
+}
+
+.heading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

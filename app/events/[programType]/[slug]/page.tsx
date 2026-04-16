@@ -1,5 +1,5 @@
 import { notFound, redirect } from 'next/navigation'
-import { getProgramEvent, getAllProgramEventSlugs } from '@/app/lib/queries'
+import { getProgramEvent, getAllProgramEventSlugs, getChildProgramEvents } from '@/app/lib/queries'
 import type {
   SpotlightHeroLayout,
   TextTabsLayout,
@@ -16,7 +16,7 @@ import type {
   SponsorsRowLayout,
   PostsGridLayout,
   FeatureTextLayout,
-  PressClippingsLayout,
+  ChildProgramEventsLayout,
   EventDetailsLayout,
   ContentLayout as ContentLayoutType,
   FlexibleLayout
@@ -36,9 +36,9 @@ import TextListAlt from '@/app/ui/components/textListAlt'
 import SponsorsRow from '@/app/ui/components/sponsorsRow'
 import PostsGrid from '@/app/ui/components/postsGrid'
 import FeatureText from '@/app/ui/components/featureText'
-import PressClippings from '@/app/ui/components/pressClippings'
 import EventDetails from '@/app/ui/components/eventDetails'
 import ContentLayout from '@/app/ui/components/contentLayout'
+import ChildProgramEvents from '@/app/ui/components/childProgramEvents'
 
 export const dynamicParams = true
 export const revalidate = 3600
@@ -68,82 +68,90 @@ export default async function EventPage({ params }: Props) {
 
   if (!layouts.length) return notFound()
 
+    const hasChildEvents = layouts.some(
+      (l) => l.__typename === 'FlexibleLayoutsLayoutsChildProgramEventsLayout',
+    )
+    const childEvents = hasChildEvents ? await getChildProgramEvents(slug) : []
+
   return (
     <main>
       {layouts.map((layout, index) => {
         switch (layout.__typename) {
           case 'FlexibleLayoutsLayoutsSpotlightHeroLayout':
-                      return (
-                        <SpotlightHero key={index} data={layout as SpotlightHeroLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsTextTabsLayout':
-                      return <TextTabs key={index} data={layout as TextTabsLayout} />
-                    case 'FlexibleLayoutsLayoutsTextListLayout':
-                      return <TextList key={index} data={layout as TextListLayout} />
-                    case 'FlexibleLayoutsLayoutsAnchorLayout':
-                      return <AnchorBlock key={index} data={layout as AnchorLayout} />
-                    case 'FlexibleLayoutsLayoutsMediaLayout':
-                      return <MediaBlock key={index} data={layout as MediaLayout} />
-                    case 'FlexibleLayoutsLayoutsTeamListingsLayout':
-                      return (
-                        <TeamListings key={index} data={layout as TeamListingsLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsPostsCarouselLayout':
-                      return (
-                        <PostsCarousel key={index} data={layout as PostsCarouselLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsSpotlightTextImageLayout':
-                      return (
-                        <SpotlightTextImage
-                          key={index}
-                          data={layout as SpotlightTextImageLayout}
-                        />
-                      )
-                    case 'FlexibleLayoutsLayoutsFaqAccordionLayout':
-                      return (
-                        <FaqAccordion key={index} data={layout as FaqAccordionLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsSponsorsCarouselLayout':
-                      return (
-                        <SponsorsCarousel
-                          key={index}
-                          data={layout as SponsorsCarouselLayout}
-                        />
-                      )
-                    case 'FlexibleLayoutsLayoutsSectionHeadingLayout':
-                      return (
-                        <SectionHeading
-                          key={index}
-                          data={layout as SectionHeadingLayout}
-                        />
-                      )
-                    case 'FlexibleLayoutsLayoutsTextListAltLayout':
-                      return (
-                        <TextListAlt key={index} data={layout as TextListAltLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsSponsorsRowLayout':
-                      return (
-                        <SponsorsRow key={index} data={layout as SponsorsRowLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsFeatureTextLayout':
-                      return (
-                        <FeatureText key={index} data={layout as FeatureTextLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsPostsGridLayout':
-                      return (
-                        <PostsGrid
-                          key={index}
-                          data={layout as PostsGridLayout}
-                        />
-                      )
-                    case 'FlexibleLayoutsLayoutsEventDetailsLayout':
-                      return (
-                        <EventDetails key={index} data={layout as EventDetailsLayout} />
-                      )
-                    case 'FlexibleLayoutsLayoutsContentLayout':
-                      return (
-                        <ContentLayout key={index} data={layout as ContentLayoutType} />
-                      )
+            return (
+              <SpotlightHero key={index} data={layout as SpotlightHeroLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsTextTabsLayout':
+            return <TextTabs key={index} data={layout as TextTabsLayout} />
+          case 'FlexibleLayoutsLayoutsTextListLayout':
+            return <TextList key={index} data={layout as TextListLayout} />
+          case 'FlexibleLayoutsLayoutsAnchorLayout':
+            return <AnchorBlock key={index} data={layout as AnchorLayout} />
+          case 'FlexibleLayoutsLayoutsMediaLayout':
+            return <MediaBlock key={index} data={layout as MediaLayout} />
+          case 'FlexibleLayoutsLayoutsTeamListingsLayout':
+            return (
+              <TeamListings key={index} data={layout as TeamListingsLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsPostsCarouselLayout':
+            return (
+              <PostsCarousel key={index} data={layout as PostsCarouselLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsSpotlightTextImageLayout':
+            return (
+              <SpotlightTextImage
+                key={index}
+                data={layout as SpotlightTextImageLayout}
+              />
+            )
+          case 'FlexibleLayoutsLayoutsFaqAccordionLayout':
+            return (
+              <FaqAccordion key={index} data={layout as FaqAccordionLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsSponsorsCarouselLayout':
+            return (
+              <SponsorsCarousel
+                key={index}
+                data={layout as SponsorsCarouselLayout}
+              />
+            )
+          case 'FlexibleLayoutsLayoutsSectionHeadingLayout':
+            return (
+              <SectionHeading
+                key={index}
+                data={layout as SectionHeadingLayout}
+              />
+            )
+          case 'FlexibleLayoutsLayoutsTextListAltLayout':
+            return (
+              <TextListAlt key={index} data={layout as TextListAltLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsSponsorsRowLayout':
+            return (
+              <SponsorsRow key={index} data={layout as SponsorsRowLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsFeatureTextLayout':
+            return (
+              <FeatureText key={index} data={layout as FeatureTextLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsPostsGridLayout':
+            return <PostsGrid key={index} data={layout as PostsGridLayout} />
+          case 'FlexibleLayoutsLayoutsEventDetailsLayout':
+            return (
+              <EventDetails key={index} data={layout as EventDetailsLayout} />
+            )
+          case 'FlexibleLayoutsLayoutsContentLayout':
+            return (
+              <ContentLayout key={index} data={layout as ContentLayoutType} />
+            )
+          case 'FlexibleLayoutsLayoutsChildProgramEventsLayout':
+            return (
+              <ChildProgramEvents
+                key={index}
+                data={layout as ChildProgramEventsLayout}
+                childEvents={childEvents}
+              />
+            )
           default:
             return null
         }

@@ -193,6 +193,9 @@ export const GET_HOME_PAGE = gql`
                       location
                       startTime
                       timezone
+                      redirect {
+                        url
+                      }
                       programType {
                         nodes {
                           name
@@ -459,6 +462,9 @@ const GET_DEFAULT_PAGE = gql`
                     location
                     startTime
                     timezone
+                    redirect {
+                      url
+                    }
                     programType {
                       nodes {
                         name
@@ -750,6 +756,9 @@ const GET_DEFAULT_PAGE = gql`
                     location
                     startTime
                     timezone
+                    redirect {
+                      url
+                    }
                     programType {
                       nodes {
                         name
@@ -995,7 +1004,8 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
       noOpportunitiesMessage: siteSettingsAcf?.noOpportunitiesMessage,
       contactDetails: siteSettingsAcf?.contactDetails,
       socialLinks: siteSettingsAcf?.socialLinks,
-      lumenEpisodes, programEvents
+      lumenEpisodes,
+      programEvents,
     }
   } catch (error: any) {
     const data = error?.response?.data as DefaultPageData | undefined
@@ -1545,9 +1555,7 @@ export async function getAllPosts(): Promise<WPPost[]> {
       after = data.posts.pageInfo.endCursor
     } catch (error: any) {
       const data = error?.response?.data
-      console.log('getAllPosts catch error:', error?.response?.errors)
       if (data?.posts?.nodes) {
-        console.log('first node in catch:', JSON.stringify(data.posts.nodes[0]))
         all.push(...data.posts.nodes)
       }
       break
@@ -1695,16 +1703,19 @@ export async function getProgramEvent(slug: string) {
                 endTime
                 timezone
                 location
-              }
-              programType {
-                nodes {
-                  name
-                  slug
+                programType {
+                  nodes {
+                    name
+                    slug
+                  }
                 }
               }
               flexibleLayouts {
                 layouts {
                   __typename
+                  ... on FlexibleLayoutsLayoutsChildProgramEventsLayout {
+                    title
+                  }
                   ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
                     heading1
                     links {
@@ -1811,6 +1822,9 @@ export async function getProgramEvent(slug: string) {
                             location
                             startTime
                             timezone
+                            redirect {
+                              url
+                            }
                             programType {
                               nodes {
                                 name
@@ -2076,6 +2090,9 @@ export async function getProgramEvent(slug: string) {
                             location
                             startTime
                             timezone
+                            redirect {
+                              url
+                            }
                             programType {
                               nodes {
                                 name
@@ -2244,8 +2261,15 @@ export async function getAllProgramEventSlugs(): Promise<
         programEvents: {
           nodes: {
             slug: string
-            programType: { nodes: { slug: string }[] }
-            event: { redirect?: { url: string } | null }
+            parent: {
+              node: {
+                id: string
+              }
+            }
+            event: {
+              redirect?: { url: string } | null
+              programType: { nodes: { slug: string }[] }
+            }
           }[]
           pageInfo: { hasNextPage: boolean; endCursor: string }
         }
@@ -2259,14 +2283,19 @@ export async function getAllProgramEventSlugs(): Promise<
               }
               nodes {
                 slug
+                parent {
+                  node {
+                    id
+                  }
+                }
                 event {
                   redirect {
                     url
                   }
-                }
-                programType {
-                  nodes {
-                    slug
+                  programType {
+                    nodes {
+                      slug
+                    }
                   }
                 }
               }
@@ -2278,17 +2307,24 @@ export async function getAllProgramEventSlugs(): Promise<
 
       const validEvents = data.programEvents.nodes
         .filter(
-          (e) => !e.event?.redirect?.url && e.programType?.nodes?.[0]?.slug,
+          (e) =>
+            !e.parent?.node?.id &&
+            !e.event?.redirect?.url &&
+            e.event?.programType?.nodes?.[0]?.slug,
         )
         .map((e) => ({
-          programType: e.programType.nodes[0].slug,
+          programType: e.event.programType.nodes[0].slug,
           slug: e.slug,
         }))
 
       all.push(...validEvents)
       hasNextPage = data.programEvents.pageInfo.hasNextPage
       after = data.programEvents.pageInfo.endCursor
-    } catch {
+    } catch (error: any) {
+      console.log(
+        'getAllProgramEventSlugs error:',
+        error?.response?.errors?.[0]?.message,
+      )
       break
     }
   }
@@ -2575,6 +2611,11 @@ export async function getAllProgramEvents(): Promise<ProgramEvent[]> {
                 title
                 link
                 contentTypeName
+                parent {
+                  node {
+                    id
+                  }
+                }
                 featuredImage {
                   node {
                     altText
@@ -2588,6 +2629,9 @@ export async function getAllProgramEvents(): Promise<ProgramEvent[]> {
                   location
                   startTime
                   timezone
+                  redirect {
+                    url
+                  }
                   programType {
                     nodes {
                       name
@@ -2601,16 +2645,82 @@ export async function getAllProgramEvents(): Promise<ProgramEvent[]> {
         `,
         variables,
       )
-      all.push(...data.programEvents.nodes)
+      all.push(
+        ...data.programEvents.nodes.filter((e: any) => !e.parent?.node?.id),
+      )
       hasNextPage = data.programEvents.pageInfo.hasNextPage
       after = data.programEvents.pageInfo.endCursor
     } catch (error: any) {
       const data = error?.response?.data
       if (data?.programEvents?.nodes) {
-        all.push(...data.programEvents.nodes)
+        all.push(
+          ...data.programEvents.nodes.filter((e: any) => !e.parent?.node?.id),
+        )
       }
       break
     }
   }
   return all
+}
+
+export async function getChildProgramEvents(
+  parentSlug: string,
+): Promise<ProgramEvent[]> {
+  try {
+    const data = await client.request<{
+      programEvents: {
+        nodes: ProgramEvent[]
+      }
+    }>(
+      gql`
+        query getChildProgramEvents($parentSlug: String) {
+          programEvents(first: 100, where: { nameIn: [$parentSlug] }) {
+            nodes {
+              children {
+                nodes {
+                  ... on ProgramEvent {
+                    __typename
+                    id
+                    title
+                    link
+                    contentTypeName
+                    featuredImage {
+                      node {
+                        altText
+                        sourceUrl
+                      }
+                    }
+                    event {
+                      customExcerpt
+                      startTime
+                      endTime
+                      timezone
+                      location
+                      listingDateFormat
+                      redirect {
+                        url
+                      }
+                      programType {
+                        nodes {
+                          name
+                          slug
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { parentSlug },
+    )
+    return (data.programEvents.nodes[0] as any)?.children?.nodes ?? []
+  } catch (error: any) {
+    return (
+      (error?.response?.data?.programEvents?.nodes?.[0] as any)?.children
+        ?.nodes ?? []
+    )
+  }
 }

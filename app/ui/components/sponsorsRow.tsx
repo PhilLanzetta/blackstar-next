@@ -38,7 +38,11 @@ export default function SponsorsRow({ data }: Props) {
       <div className={styles.headingContainer}>
         {heading && <h2 className={styles.heading}>{heading}</h2>}
         {description && descriptionAbove && (
-          <p className={styles.description}>{description}</p>
+          <p
+            className={styles.description}
+            dangerouslySetInnerHTML={{ __html: description }}
+          >
+          </p>
         )}
       </div>
       <div className={styles.logos}>
@@ -72,7 +76,10 @@ export default function SponsorsRow({ data }: Props) {
         })}
       </div>
       {description && !descriptionAbove && (
-        <p className={styles.description}>{description}</p>
+        <p
+          className={styles.description}
+          dangerouslySetInnerHTML={{ __html: description }}
+        ></p>
       )}
     </section>
   )

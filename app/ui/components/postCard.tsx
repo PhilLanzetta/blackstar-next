@@ -32,8 +32,13 @@ export default function PostCard({ post }: PostCardProps) {
     isPost &&
     post.categories?.nodes?.some((c) => c.name.toLowerCase().includes('blog'))
 
-  const cardLink =
-    isPressRelease && !isBlogPost
+  const redirectUrl = isProgramEvent
+    ? (post as ProgramEvent).event?.redirect?.url
+    : null
+
+  const cardLink = redirectUrl
+    ? redirectUrl
+    : isPressRelease && !isBlogPost
       ? `/press/${(post as WPPost).slug}`
       : isBlogPost
         ? `/news/${(post as WPPost).slug}`

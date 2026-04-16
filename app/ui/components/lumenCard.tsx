@@ -11,8 +11,6 @@ export default function LumenCard({ episode }: { episode: LumenEpisode }) {
   const seasonSlug = lumenSeasons?.nodes?.[0]?.slug
   const formattedLink = link ? formatEventLink(link, seasonSlug ?? '') : null
 
-  console.log('formattedLink:', formattedLink)
-
   return (
     <div className={styles.card}>
       {featuredImage?.node?.sourceUrl && (

@@ -122,6 +122,7 @@ export type EventFields = {
   customExcerpt: string
   endTime: string
   startTime: string
+  redirect?: { url: string }
   listingDateFormat: string
   location: string
   timezone: string
@@ -501,6 +502,11 @@ export type ContentLayout = {
   content?: string
 }
 
+export type ChildProgramEventsLayout = {
+  __typename: 'FlexibleLayoutsLayoutsChildProgramEventsLayout'
+  title?: string
+}
+
 // Union type for all layouts
 export type FlexibleLayout =
   | SpotlightHeroLayout
@@ -521,6 +527,7 @@ export type FlexibleLayout =
   | PressClippingsLayout
   | EventDetailsLayout
   | ContentLayout
+  | ChildProgramEventsLayout
 
 // Home page
 export type HomePageData = {
