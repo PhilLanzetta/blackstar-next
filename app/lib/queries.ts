@@ -12,6 +12,8 @@ import {
   WPPost,
   LumenEpisode,
   ProgramEvent,
+  SeenFlexibleLayout,
+  SeenArticle,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -2821,6 +2823,292 @@ export async function getAllChildProgramEventSlugs(): Promise<
         'getAllChildProgramEventSlugs error:',
         error?.response?.errors?.[0]?.message,
       )
+      break
+    }
+  }
+  return all
+}
+
+export async function getSeenPage() {
+  try {
+    const data = await client.request<{
+      page: {
+        template: {
+          seenFlexibleLayouts: {
+            layouts: SeenFlexibleLayout[]
+          }
+        }
+      }
+    }>(gql`
+      query getSeenPage {
+        page(id: "/seen/", idType: URI) {
+          template {
+            ... on Template_SeenFlexibleLayouts {
+              seenFlexibleLayouts {
+                layouts {
+                  __typename
+                  ... on SeenFlexibleLayoutsLayoutsArticlesLayout {
+                    articles {
+                      title
+                      preTitle
+                      subTitle
+                      type
+                      image {
+                        node {
+                          sourceUrl
+                          altText
+                        }
+                      }
+                      link {
+                        url
+                        title
+                      }
+                      article {
+                        nodes {
+                          ... on SeenArticle {
+                            __typename
+                            title
+                            slug
+                            uri
+                            featuredImage {
+                              node {
+                                sourceUrl
+                                altText
+                              }
+                            }
+                            seenIssues {
+                              nodes {
+                                name
+                                slug
+                              }
+                            }
+                            seenAuthors {
+                              nodes {
+                                name
+                                slug
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  ... on SeenFlexibleLayoutsLayoutsSpotlightContainedLayout {
+                    title1
+                    title2
+                    title3
+                    link {
+                      url
+                      title
+                    }
+                    image {
+                      node {
+                        sourceUrl
+                        altText
+                      }
+                    }
+                  }
+                  ... on SeenFlexibleLayoutsLayoutsAnchorLayout {
+                    anchorName
+                  }
+                  ... on SeenFlexibleLayoutsLayoutsSpaceLayout {
+                    size
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `)
+    return data.page?.template?.seenFlexibleLayouts?.layouts ?? []
+  } catch (error: any) {
+    return (
+      error?.response?.data?.page?.template?.seenFlexibleLayouts?.layouts ?? []
+    )
+  }
+}
+
+export async function getSeenArticle(
+  slug: string,
+): Promise<SeenArticle | null> {
+  try {
+    const data = await client.request<{ seenArticle: SeenArticle | null }>(
+      gql`
+        query getSeenArticle($slug: ID!) {
+          seenArticle(id: $slug, idType: SLUG) {
+            title
+            slug
+            date
+            featuredImage {
+              node {
+                sourceUrl
+                altText
+              }
+            }
+            seenIssues {
+              nodes {
+                name
+                slug
+              }
+            }
+            seenAuthors {
+              nodes {
+                name
+                slug
+              }
+            }
+            seenCategories {
+              nodes {
+                name
+                slug
+              }
+            }
+            seenArticleLayouts {
+              introduction
+              cover {
+                image {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+                mobileImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+                video {
+                  node {
+                    mediaItemUrl
+                  }
+                }
+                overrideTitle
+                subtitle
+                backgroundColour
+                foregroundColour
+                style
+              }
+              layouts {
+                __typename
+                ... on SeenArticleLayoutsLayoutsContentLayout {
+                  content
+                }
+                ... on SeenArticleLayoutsLayoutsContainedMediaLayout {
+                  image {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  videoEmbed
+                  reducedContainer
+                }
+                ... on SeenArticleLayoutsLayoutsFullWidthMediaLayout {
+                  image {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  videoEmbed
+                }
+                ... on SeenArticleLayoutsLayoutsFootnotesLayout {
+                  footnotes
+                }
+              }
+              relatedArticles {
+                nodes {
+                  ... on SeenArticle {
+                    __typename
+                    title
+                    slug
+                    uri
+                    featuredImage {
+                      node {
+                        sourceUrl
+                        altText
+                      }
+                    }
+                    seenIssues {
+                      nodes {
+                        name
+                        slug
+                      }
+                    }
+                    seenAuthors {
+                      nodes {
+                        name
+                        slug
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { slug },
+    )
+    return data.seenArticle
+  } catch (error: any) {
+    return error?.response?.data?.seenArticle ?? null
+  }
+}
+
+export async function getAllSeenArticleSlugs(): Promise<
+  { issue: string; slug: string }[]
+> {
+  const all: { issue: string; slug: string }[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        seenArticles: {
+          nodes: {
+            slug: string
+            seenIssues: { nodes: { slug: string }[] }
+          }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllSeenArticleSlugs($after: String) {
+            seenArticles(first: 100, after: $after) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                slug
+                seenIssues {
+                  nodes {
+                    slug
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+
+      const valid = data.seenArticles.nodes
+        .filter((a) => a.seenIssues?.nodes?.[0]?.slug)
+        .map((a) => ({
+          issue: a.seenIssues.nodes[0].slug,
+          slug: a.slug,
+        }))
+
+      all.push(...valid)
+      hasNextPage = data.seenArticles.pageInfo.hasNextPage
+      after = data.seenArticles.pageInfo.endCursor
+    } catch {
       break
     }
   }

@@ -594,3 +594,100 @@ export type PressClipping = {
     newspaperSource?: string
   }
 }
+
+export type SeenArticle = {
+  __typename: 'SeenArticle'
+  id?: string
+  title: string
+  slug: string
+  uri?: string
+  date?: string
+  featuredImage?: WPImage
+  seenIssues?: { nodes: { name: string; slug: string }[] }
+  seenAuthors?: { nodes: { name: string; slug: string }[] }
+  seenCategories?: { nodes: { name: string; slug: string }[] }
+  seenArticleLayouts?: {
+    introduction?: string
+    cover?: {
+      image?: { node: { sourceUrl: string; altText: string } } | null
+      mobileImage?: { node: { sourceUrl: string; altText: string } } | null
+      video?: { node: { mediaItemUrl: string } } | null
+      overrideTitle?: string | null
+      subtitle?: string | null
+      backgroundColour?: string | null
+      foregroundColour?: string | null
+      style?: string[] | null
+    }
+    layouts?: SeenArticleLayout[]
+    relatedArticles?: { nodes: SeenArticle[] } | null
+  }
+}
+
+export type SeenArticleContentLayout = {
+  __typename: 'SeenArticleLayoutsLayoutsContentLayout'
+  content?: string
+}
+
+export type SeenArticleContainedMediaLayout = {
+  __typename: 'SeenArticleLayoutsLayoutsContainedMediaLayout'
+  image?: { node: { sourceUrl: string; altText: string } } | null
+  videoEmbed?: string | null
+  reducedContainer?: boolean | null
+}
+
+export type SeenArticleFullWidthMediaLayout = {
+  __typename: 'SeenArticleLayoutsLayoutsFullWidthMediaLayout'
+  image?: { node: { sourceUrl: string; altText: string } } | null
+  videoEmbed?: string | null
+}
+
+export type SeenArticleFootnotesLayout = {
+  __typename: 'SeenArticleLayoutsLayoutsFootnotesLayout'
+  footnotes?: string
+}
+
+export type SeenArticleLayout =
+  | SeenArticleContentLayout
+  | SeenArticleContainedMediaLayout
+  | SeenArticleFullWidthMediaLayout
+  | SeenArticleFootnotesLayout
+
+export type SeenArticlesItem = {
+  title?: string | null
+  preTitle?: string | null
+  subTitle?: string | null
+  type?: string[]
+  image?: { node: { sourceUrl: string; altText: string } } | null
+  link?: { url: string; title: string } | null
+  article?: { nodes: SeenArticle[] } | null
+}
+
+export type SeenArticlesLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsArticlesLayout'
+  articles?: SeenArticlesItem[]
+}
+
+export type SeenSpotlightContainedLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsSpotlightContainedLayout'
+  title1?: string
+  title2?: string
+  title3?: string
+  link?: { url: string; title: string } | null
+  image?: { node: { sourceUrl: string; altText: string } } | null
+}
+
+export type SeenAnchorLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsAnchorLayout'
+  anchorName?: string
+}
+
+export type SeenSpaceLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsSpaceLayout'
+  size?: string[]
+}
+
+export type SeenFlexibleLayout =
+  | SeenArticlesLayout
+  | SeenSpotlightContainedLayout
+  | SeenAnchorLayout
+  | SeenSpaceLayout

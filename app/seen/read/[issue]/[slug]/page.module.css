@@ -1,0 +1,215 @@
+.hero {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+}
+
+.heroVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.desktopOnly { display: block; }
+.mobileOnly { display: none; }
+
+@media (max-width: 768px) {
+  .desktopOnly { display: none; }
+  .mobileOnly { display: block; }
+}
+
+.header {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 20px 40px;
+  text-align: center;
+}
+
+.issue {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.category {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  margin-bottom: 16px;
+}
+
+.authors {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.date {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+.introContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+.introduction {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+  font-style: italic;
+}
+
+.contentContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+.content {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.content img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.containedMedia {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  padding: 0 20px;
+}
+
+.containedMedia.reduced {
+  max-width: 600px;
+}
+
+.fullWidthMedia {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.videoEmbed {
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.videoEmbed iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.footnotesContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  border-top: var(--standard-border);
+}
+
+.footnotes {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.footnotes a {
+  color: inherit;
+}
+
+.actions {
+  padding: 0 20px 60px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.backLink {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.related {
+  padding: 40px 20px;
+  border-top: var(--standard-border);
+}
+
+.relatedHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.relatedCard {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.relatedImageWrapper {
+  position: relative;
+  aspect-ratio: 3/4;
+  margin-bottom: 8px;
+}
+
+.relatedIssue {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+.relatedTitle {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+}
+
+.relatedAuthor {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
