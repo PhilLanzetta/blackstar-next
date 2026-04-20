@@ -2665,6 +2665,7 @@ export async function getAllProgramEvents(): Promise<ProgramEvent[]> {
 
 export async function getChildProgramEvents(
   parentSlug: string,
+  parentProgramType: string,
 ): Promise<ProgramEvent[]> {
   try {
     const data = await client.request<{
@@ -2682,6 +2683,7 @@ export async function getChildProgramEvents(
                     __typename
                     id
                     title
+                    slug
                     link
                     contentTypeName
                     featuredImage {
@@ -2716,11 +2718,111 @@ export async function getChildProgramEvents(
       `,
       { parentSlug },
     )
-    return (data.programEvents.nodes[0] as any)?.children?.nodes ?? []
+    const children = (data.programEvents.nodes[0] as any)?.children?.nodes ?? []
+
+    return children.map((child: ProgramEvent) => ({
+      ...child,
+      link: `/events/${parentProgramType}/${parentSlug}/${child.slug}/`,
+    }))
   } catch (error: any) {
     return (
       (error?.response?.data?.programEvents?.nodes?.[0] as any)?.children
         ?.nodes ?? []
     )
   }
+}
+
+export async function getAllChildProgramEventSlugs(): Promise<
+  {
+    programType: string
+    slug: string
+    childSlug: string
+  }[]
+> {
+  const all: { programType: string; slug: string; childSlug: string }[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        programEvents: {
+          nodes: {
+            slug: string
+            event: {
+              programType: { nodes: { slug: string }[] }
+            }
+            children: {
+              nodes: {
+                __typename: string
+                slug: string
+                event: { redirect?: { url: string } | null }
+              }[]
+            }
+          }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllChildProgramEventSlugs($after: String) {
+            programEvents(first: 100, after: $after, where: { parent: 0 }) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                slug
+                event {
+                  programType {
+                    nodes {
+                      slug
+                    }
+                  }
+                }
+                children {
+                  nodes {
+                    ... on ProgramEvent {
+                      __typename
+                      slug
+                      event {
+                        redirect {
+                          url
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+
+      for (const parent of data.programEvents.nodes) {
+        const programType = parent.event?.programType?.nodes?.[0]?.slug
+        if (!programType) continue
+        for (const child of parent.children?.nodes ?? []) {
+          if (!child.slug) continue
+          if (child.event?.redirect?.url) continue
+          all.push({
+            programType,
+            slug: parent.slug,
+            childSlug: child.slug,
+          })
+        }
+      }
+
+      hasNextPage = data.programEvents.pageInfo.hasNextPage
+      after = data.programEvents.pageInfo.endCursor
+    } catch (error: any) {
+      console.log(
+        'getAllChildProgramEventSlugs error:',
+        error?.response?.errors?.[0]?.message,
+      )
+      break
+    }
+  }
+  return all
 }

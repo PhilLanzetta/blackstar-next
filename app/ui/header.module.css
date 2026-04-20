@@ -34,7 +34,7 @@
 
 .seenLogoContainer {
   padding: 10px;
-  width: 12vw;
+  width: 25%;
   display: flex;
   align-items: center;
   border-left: 2px solid #000;
@@ -125,7 +125,7 @@
   display: flex;
   justify-content: space-between;
   border: 2px solid #000;
-  border-top: none;
+  border-bottom: none;
   transition: all 400ms;
 }
 

@@ -134,11 +134,26 @@ export type EventFields = {
 export type ProgramEvent = {
   __typename: 'ProgramEvent'
   id: string
+  slug: string
   title: string
   link: string
   contentTypeName: string
   featuredImage?: WPImage
   event?: EventFields
+  parent?: {
+    node: {
+      __typename: string
+      slug: string
+      event?: {
+        programType: {
+          nodes: ProgramType[]
+        }
+      }
+    }
+  } | null
+  children?: {
+    nodes: ProgramEvent[]
+  }
 }
 
 export type WPPost = {

@@ -53,7 +53,7 @@ export async function generateStaticParams() {
 }
 
 export default async function EventPage({ params }: Props) {
-  const { slug } = await params
+  const { slug, programType } = await params
   const event = await getProgramEvent(slug)
 
   if (!event) return notFound()
@@ -71,7 +71,9 @@ export default async function EventPage({ params }: Props) {
     const hasChildEvents = layouts.some(
       (l) => l.__typename === 'FlexibleLayoutsLayoutsChildProgramEventsLayout',
     )
-    const childEvents = hasChildEvents ? await getChildProgramEvents(slug) : []
+    const childEvents = hasChildEvents
+      ? await getChildProgramEvents(slug, programType)
+      : []
 
   return (
     <main>
@@ -150,6 +152,8 @@ export default async function EventPage({ params }: Props) {
                 key={index}
                 data={layout as ChildProgramEventsLayout}
                 childEvents={childEvents}
+                parentSlug={slug}
+                parentProgramType={programType}
               />
             )
           default:

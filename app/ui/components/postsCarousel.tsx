@@ -11,6 +11,9 @@ import styles from './postsCarousel.module.css'
 import PostCard from './postCard'
 import CustomPostCard from './customPostCard'
 import LumenCard from './lumenCard'
+import LinkButton from './linkButton'
+import Link from 'next/link'
+import { formatLink } from '@/app/lib/utils/formatLink'
 
 type Props = {
   data: PostsCarouselLayout
@@ -128,9 +131,9 @@ export default function PostsCarousel({ data, lumenEpisodes = [] }: Props) {
         )}
         <div className={styles.headerRight}>
           {link && (
-            <a href={link.url} className={styles.viewAll}>
+            <Link href={formatLink(link.url)} className={styles.viewAll}>
               {link.title}
-            </a>
+            </Link>
           )}
           {showArrows && (
             <div className={styles.arrows}>

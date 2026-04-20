@@ -5,6 +5,8 @@ import styles from './childProgramEvents.module.css'
 type Props = {
   data: ChildProgramEventsLayout
   childEvents: ProgramEvent[]
+  parentSlug: string
+  parentProgramType: string
 }
 
 export default function ChildProgramEvents({ data, childEvents }: Props) {
