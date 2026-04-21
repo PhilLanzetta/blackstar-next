@@ -21,6 +21,12 @@ export function HeaderWrapper({ megaNavs, initialPageBrand }: Props) {
 
   useEffect(() => {
     const slug = pathname.split('/').filter(Boolean).join('/')
+
+    if (pathname.startsWith('/seen/')) {
+      setPageBrand('seen')
+      return
+    }
+
     if (!slug) {
       setPageBrand(null)
       return

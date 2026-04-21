@@ -25,6 +25,9 @@ a {
   --standard-border: 1.5px solid #000;
   --gt-medium: 20px;
   --gt-large: 40px;
+  --times-large: 80px;
+  --times-medium: 50px;
+  --times-small: 20px;
   --mono-large: 30px;
   --mono-medium: 20px;
   --lofty-line-height: 1.1;

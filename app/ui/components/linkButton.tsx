@@ -6,7 +6,7 @@ type LinkButtonProps = {
   href: string
   label: string
   target?: '_blank' | '_self'
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'white'
 }
 
 export default function LinkButton({

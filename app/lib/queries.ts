@@ -2888,6 +2888,12 @@ export async function getSeenPage() {
                                 slug
                               }
                             }
+                            seenCategories {
+                              nodes {
+                                name
+                                slug
+                              }
+                            }
                           }
                         }
                       }
@@ -2913,6 +2919,35 @@ export async function getSeenPage() {
                   }
                   ... on SeenFlexibleLayoutsLayoutsSpaceLayout {
                     size
+                  }
+                  ... on SeenFlexibleLayoutsLayoutsFeatureMediaLayout {
+                    heading
+                    image {
+                      node {
+                        sourceUrl
+                        altText
+                      }
+                    }
+                    mobileImage {
+                      node {
+                        sourceUrl
+                        altText
+                      }
+                    }
+                    video {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    mobileVideo {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    link {
+                      url
+                      title
+                    }
                   }
                 }
               }
@@ -2955,6 +2990,7 @@ export async function getSeenArticle(
             seenAuthors {
               nodes {
                 name
+                description
                 slug
               }
             }
@@ -3113,4 +3149,153 @@ export async function getAllSeenArticleSlugs(): Promise<
     }
   }
   return all
+}
+
+export async function getAllSeenArticles(): Promise<SeenArticle[]> {
+  const all: SeenArticle[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        seenArticles: {
+          nodes: SeenArticle[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllSeenArticles($after: String) {
+            seenArticles(
+              first: 100
+              after: $after
+              where: { orderby: { field: DATE, order: DESC } }
+            ) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                title
+                slug
+                date
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+                seenIssues {
+                  nodes {
+                    name
+                    slug
+                  }
+                }
+                seenAuthors {
+                  nodes {
+                    name
+                    slug
+                  }
+                }
+                seenCategories {
+                  nodes {
+                    name
+                    slug
+                  }
+                }
+                seenArticleLayouts {
+                  introduction
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.seenArticles.nodes)
+      hasNextPage = data.seenArticles.pageInfo.hasNextPage
+      after = data.seenArticles.pageInfo.endCursor
+    } catch (error: any) {
+      const data = error?.response?.data
+      if (data?.seenArticles?.nodes) {
+        all.push(...data.seenArticles.nodes)
+      }
+      break
+    }
+  }
+  return all
+}
+
+export async function getRelatedSeenArticles(
+  slug: string,
+  categorySlug: string,
+  issueSlug: string,
+  authorSlug: string,
+  articleDate: string,
+): Promise<SeenArticle[]> {
+  try {
+    const data = await client.request<{
+      seenArticles: { nodes: SeenArticle[] }
+    }>(gql`
+      query getRelatedSeenArticles {
+        seenArticles(
+          first: 100
+          where: { orderby: { field: DATE, order: DESC } }
+        ) {
+          nodes {
+            title
+            slug
+            date
+            featuredImage {
+              node {
+                sourceUrl
+                altText
+              }
+            }
+            seenIssues {
+              nodes {
+                name
+                slug
+              }
+            }
+            seenAuthors {
+              nodes {
+                name
+                slug
+              }
+            }
+            seenCategories {
+              nodes {
+                name
+                slug
+              }
+            }
+          }
+        }
+      }
+    `)
+
+    const targetDate = new Date(articleDate).getTime()
+    const candidates = data.seenArticles.nodes.filter((a) => a.slug !== slug)
+
+    // Score by relevance
+    const scored = candidates.map((a) => {
+      let score = 0
+      if (a.seenCategories?.nodes?.some((c) => c.slug === categorySlug))
+        score += 3
+      if (a.seenIssues?.nodes?.some((i) => i.slug === issueSlug)) score += 2
+      if (a.seenAuthors?.nodes?.some((au) => au.slug === authorSlug)) score += 2
+      const dateDiff = Math.abs(new Date(a.date ?? '').getTime() - targetDate)
+      score -= dateDiff / (1000 * 60 * 60 * 24 * 365) // penalize by years apart
+      return { article: a, score }
+    })
+
+    return scored
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map((s) => s.article)
+  } catch (error: any) {
+    return []
+  }
 }

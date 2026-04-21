@@ -7,6 +7,7 @@ import type {
 } from '@/app/lib/types'
 import { formatLink } from '@/app/lib/utils/formatLink'
 import styles from './seenArticles.module.css'
+import LinkButton from '../linkButton'
 
 type Props = {
   data: SeenArticlesLayout
@@ -30,7 +31,11 @@ export default function SeenArticles({ data }: Props) {
               : null
         const image = isCustom ? item.image?.node : article?.featuredImage?.node
         const title = isCustom ? item.title : article?.title
-        const preTitle = item.preTitle ?? article?.seenIssues?.nodes?.[0]?.name
+        const preTitle = isCustom
+          ? item.preTitle
+          : article?.seenCategories?.nodes?.[0]?.name
+            ? `(${article.seenCategories.nodes[0].name})`
+            : null
         const subTitle = item.subTitle ?? article?.seenAuthors?.nodes?.[0]?.name
 
         if (!articleLink) return null
@@ -53,8 +58,12 @@ export default function SeenArticles({ data }: Props) {
               {title && <h3 className={styles.title}>{title}</h3>}
               {subTitle && <p className={styles.subTitle}>{subTitle}</p>}
               {isCustom && item.link?.title && (
-                <span className={styles.readMore}>{item.link.title}</span>
+                <LinkButton
+                  href={formatLink(item.link.url)}
+                  label={item.link.title}
+                />
               )}
+              {!isCustom && <LinkButton href={articleLink} label='Read' />}
             </div>
           </Link>
         )

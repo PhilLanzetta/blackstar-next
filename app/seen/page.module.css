@@ -1,7 +1,7 @@
 .main {
-  padding-bottom: 80px;
-}
-
-.space {
-  height: 60px;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  gap: 1px;
+  margin-bottom: -1;
 }

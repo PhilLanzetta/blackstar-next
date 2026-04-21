@@ -604,7 +604,7 @@ export type SeenArticle = {
   date?: string
   featuredImage?: WPImage
   seenIssues?: { nodes: { name: string; slug: string }[] }
-  seenAuthors?: { nodes: { name: string; slug: string }[] }
+  seenAuthors?: { nodes: { name: string; slug: string; description: string }[] }
   seenCategories?: { nodes: { name: string; slug: string }[] }
   seenArticleLayouts?: {
     introduction?: string
@@ -686,8 +686,19 @@ export type SeenSpaceLayout = {
   size?: string[]
 }
 
+export type SeenFeatureMediaLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsFeatureMediaLayout'
+  heading?: string
+  image?: { node: { sourceUrl: string; altText: string } } | null
+  mobileImage?: { node: { sourceUrl: string; altText: string } } | null
+  video?: { node: { mediaItemUrl: string } } | null
+  mobileVideo?: { node: { mediaItemUrl: string } } | null
+  link?: { url: string; title: string } | null
+}
+
 export type SeenFlexibleLayout =
   | SeenArticlesLayout
   | SeenSpotlightContainedLayout
   | SeenAnchorLayout
   | SeenSpaceLayout
+  | SeenFeatureMediaLayout

@@ -1,0 +1,74 @@
+.container {
+  padding: 60px 20px;
+  text-align: center;
+  border-top: var(--standard-border);
+}
+
+.heading {
+  font-family: var(--swiss-time);
+  font-size: var(--gt-large);
+  margin-bottom: 30px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.inputRow {
+  display: flex;
+  border: var(--standard-border);
+  max-width: 600px;
+  width: 100%;
+}
+
+.label {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  padding: 10px 16px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  background: none;
+  outline: none;
+}
+
+.button {
+  border: none;
+  border-left: var(--standard-border);
+  padding: 10px 20px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  cursor: pointer;
+  background: none;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: #f0f0f0;
+}
+
+.success {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+.error {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  color: red;
+}

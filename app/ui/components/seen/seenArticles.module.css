@@ -1,12 +1,18 @@
 .section {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-  padding: 0 20px;
+  grid-template-columns: repeat(2, 1fr);
+  background-color: black;
+  column-gap: 1px;
+}
+
+.section:has(> :only-child) {
+  grid-template-columns: 1fr;
+  padding: 0;
 }
 
 .card {
   text-decoration: none;
+  background: #fff;
   color: inherit;
   display: flex;
   flex-direction: column;
@@ -14,14 +20,18 @@
 
 .imageWrapper {
   position: relative;
-  aspect-ratio: 3/4;
+  aspect-ratio: 16/9;
   margin-bottom: 16px;
 }
 
 .info {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 8px;
+  padding: 10px;
+  padding-bottom: 20px;
 }
 
 .preTitle {
@@ -31,22 +41,21 @@
 }
 
 .title {
-  font-family: var(--gt-expanded);
-  font-size: var(--gt-small);
-  text-transform: uppercase;
+  font-family: var(--swiss-time);
+  font-size: var(--times-medium);
+  line-height: 1.1;
+}
+
+.section:has(> :only-child) .title {
+  font-family: var(--swiss-time);
+  font-size: var(--times-large);
 }
 
 .subTitle {
   font-family: var(--gt-mono);
   font-size: var(--mono-small);
   text-transform: uppercase;
-}
-
-.readMore {
-  font-family: var(--gt-mono);
-  font-size: var(--mono-small);
-  text-transform: uppercase;
-  text-decoration: underline;
+  font-style: italic;
 }
 
 @media (max-width: 768px) {

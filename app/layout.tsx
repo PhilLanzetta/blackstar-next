@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { gtFlexaExpanded, gtFlexaMono } from './ui/fonts'
+import { gtFlexaExpanded, gtFlexaMono, swissTime } from './ui/fonts'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
 import { getMegaNav, getFooterNav, getPageBrand } from './lib/queries'
@@ -9,6 +9,7 @@ import { headers } from 'next/headers'
 import Breadcrumb from './ui/components/breadcrumb'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import SeenNewsletter from './ui/components/seen/seenNewsletter'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -37,12 +38,13 @@ export default async function RootLayout({
   const headersList = await headers()
   const pathname = headersList.get('x-pathname') ?? ''
   const slug = pathname.split('/').filter(Boolean).join('/')
-  const pageBrand = slug ? await getPageBrand(slug) : null
+  const isSeen = pathname.startsWith('/seen/')
+  const pageBrand = isSeen ? 'seen' : slug ? await getPageBrand(slug) : null
 
   return (
     <html
       lang='en'
-      className={`${gtFlexaExpanded.variable} ${gtFlexaMono.variable} antialiased`}
+      className={`${gtFlexaExpanded.variable} ${gtFlexaMono.variable} ${swissTime.variable} antialiased`}
     >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -52,6 +54,7 @@ export default async function RootLayout({
         <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
         <main>{children}</main>
         <SpeedInsights />
+        {pathname.startsWith('/seen') && <SeenNewsletter />}
         <Footer footerNav={footerNav} />
       </body>
     </html>

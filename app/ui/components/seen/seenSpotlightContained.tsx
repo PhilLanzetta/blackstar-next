@@ -14,26 +14,6 @@ export default function SeenSpotlightContained({ data }: Props) {
 
   return (
     <section className={styles.section}>
-      <div className={styles.textColumns}>
-        {title1 && (
-          <div
-            className={styles.column}
-            dangerouslySetInnerHTML={{ __html: cleanHtml(title1) }}
-          />
-        )}
-        {title2 && (
-          <div
-            className={styles.column}
-            dangerouslySetInnerHTML={{ __html: cleanHtml(title2) }}
-          />
-        )}
-        {title3 && (
-          <div
-            className={styles.column}
-            dangerouslySetInnerHTML={{ __html: cleanHtml(title3) }}
-          />
-        )}
-      </div>
       {image?.node?.sourceUrl && (
         <div className={styles.imageWrapper}>
           <Image
@@ -45,18 +25,38 @@ export default function SeenSpotlightContained({ data }: Props) {
           />
         </div>
       )}
-      {link?.url && (
-        <div className={styles.linkWrapper}>
-          <Link
-            href={formatLink(link.url)}
-            target={isExternalLink(link.url) ? '_blank' : undefined}
-            rel={isExternalLink(link.url) ? 'noopener noreferrer' : undefined}
-            className={styles.link}
-          >
-            {link.title}
-          </Link>
-        </div>
-      )}
+      <div className={styles.textColumns}>
+        {title1 && (
+          <div
+            className={styles.column1}
+            dangerouslySetInnerHTML={{ __html: cleanHtml(title1) }}
+          />
+        )}
+        {title2 && (
+          <div
+            className={styles.column2}
+            dangerouslySetInnerHTML={{ __html: cleanHtml(title2) }}
+          />
+        )}
+        {title3 && (
+          <div
+            className={styles.column3}
+            dangerouslySetInnerHTML={{ __html: cleanHtml(title3) }}
+          />
+        )}
+        {link?.url && (
+          <div className={styles.linkWrapper}>
+            <Link
+              href={formatLink(link.url)}
+              target={isExternalLink(link.url) ? '_blank' : undefined}
+              rel={isExternalLink(link.url) ? 'noopener noreferrer' : undefined}
+              className={styles.link}
+            >
+              {link.title}
+            </Link>
+          </div>
+        )}
+      </div>
     </section>
   )
 }

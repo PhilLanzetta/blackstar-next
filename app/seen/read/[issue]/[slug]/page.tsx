@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getSeenArticle, getAllSeenArticleSlugs } from '@/app/lib/queries'
+import {
+  getSeenArticle,
+  getAllSeenArticleSlugs,
+  getRelatedSeenArticles,
+} from '@/app/lib/queries'
 import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import type {
   SeenArticleLayout,
@@ -12,6 +16,8 @@ import type {
   SeenArticle,
 } from '@/app/lib/types'
 import styles from './page.module.css'
+import SeenRelated from '@/app/ui/components/seen/seenRelated'
+import SeenShare from '@/app/ui/components/seen/seenShare'
 
 export const dynamicParams = false
 export const revalidate = 3600
@@ -42,6 +48,22 @@ export default async function SeenArticlePage({ params }: Props) {
   const issueNode = article.seenIssues?.nodes?.[0]
   const categories = article.seenCategories?.nodes ?? []
 
+  const manualRelated = (acf?.relatedArticles?.nodes ?? []) as SeenArticle[]
+  const categorySlug = article.seenCategories?.nodes?.[0]?.slug ?? ''
+  const issueSlug = article.seenIssues?.nodes?.[0]?.slug ?? ''
+  const authorSlug = article.seenAuthors?.nodes?.[0]?.slug ?? ''
+
+  const relatedArticles =
+    manualRelated.length >= 3
+      ? manualRelated.slice(0, 3)
+      : await getRelatedSeenArticles(
+          slug,
+          categorySlug,
+          issueSlug,
+          authorSlug,
+          article.date ?? '',
+        )
+
   const date = article.date
     ? new Date(article.date)
         .toLocaleDateString('en-US', {
@@ -52,10 +74,9 @@ export default async function SeenArticlePage({ params }: Props) {
         .toUpperCase()
     : null
 
-  const relatedArticles = (acf?.relatedArticles?.nodes ?? []) as SeenArticle[]
-
   return (
     <main>
+      <SeenShare />
       {/* Hero */}
       <div className={styles.hero}>
         {coverVideo ? (
@@ -89,12 +110,10 @@ export default async function SeenArticlePage({ params }: Props) {
           />
         )}
       </div>
-
       {/* Header */}
       <div className={styles.header}>
-        {issueNode && <p className={styles.issue}>{issueNode.name}</p>}
         {categories.length > 0 && (
-          <p className={styles.category}>{categories[0].name}</p>
+          <p className={styles.category}>({categories[0].name})</p>
         )}
         <h1 className={styles.title}>
           {cover?.overrideTitle ?? article.title}
@@ -102,22 +121,21 @@ export default async function SeenArticlePage({ params }: Props) {
         {cover?.subtitle && <p className={styles.subtitle}>{cover.subtitle}</p>}
         {authors.length > 0 && (
           <p className={styles.authors}>
-            {authors.map((a) => a.name).join(', ')}
+            BY {authors.map((a) => a.name).join(', ')}
           </p>
         )}
+        {issueNode && <p className={styles.issue}>{issueNode.name}</p>}
         {date && <p className={styles.date}>{date}</p>}
       </div>
-
       {/* Introduction */}
       {acf?.introduction && (
-        <div className={styles.introContainer}>
+        <div className={styles.introContainer} data-share-trigger>
           <div
             className={styles.introduction}
             dangerouslySetInnerHTML={{ __html: cleanHtml(acf.introduction) }}
           />
         </div>
       )}
-
       {/* Layouts */}
       {acf?.layouts?.map((layout: SeenArticleLayout, index: number) => {
         switch (layout.__typename) {
@@ -198,56 +216,16 @@ export default async function SeenArticlePage({ params }: Props) {
             return null
         }
       })}
-
       {/* Back link */}
       <div className={styles.actions}>
         <Link href='/seen' className={styles.backLink}>
           ← Back to Seen
         </Link>
       </div>
-
       {/* Related articles */}
-      {relatedArticles.length > 0 && (
-        <div className={styles.related}>
-          <h2 className={styles.relatedHeading}>RELATED</h2>
-          <div className={styles.relatedGrid}>
-            {relatedArticles.map((related: SeenArticle, i: number) => {
-              const relatedIssue = related.seenIssues?.nodes?.[0]?.slug ?? issue
-              const formattedUri = related.uri?.replace(
-                '%seen-issue%',
-                relatedIssue,
-              )
-              const relatedLink = formattedUri
-                ? formattedUri
-                : `/seen/read/${relatedIssue}/${related.slug}`
-              return (
-                <Link key={i} href={relatedLink} className={styles.relatedCard}>
-                  {related.featuredImage?.node?.sourceUrl && (
-                    <div className={styles.relatedImageWrapper}>
-                      <Image
-                        src={related.featuredImage.node.sourceUrl}
-                        alt={related.featuredImage.node.altText ?? ''}
-                        fill
-                        sizes='(max-width: 768px) 50vw, 25vw'
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
-                  )}
-                  <p className={styles.relatedIssue}>
-                    {related.seenIssues?.nodes?.[0]?.name}
-                  </p>
-                  <h3 className={styles.relatedTitle}>{related.title}</h3>
-                  {related.seenAuthors?.nodes?.[0] && (
-                    <p className={styles.relatedAuthor}>
-                      {related.seenAuthors.nodes[0].name}
-                    </p>
-                  )}
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-      )}
+      <div data-share-end>
+        <SeenRelated articles={relatedArticles} currentArticle={article} />
+      </div>
     </main>
   )
 }

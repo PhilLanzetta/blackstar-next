@@ -22,7 +22,6 @@
 }
 
 .header {
-  max-width: 800px;
   margin: 0 auto;
   padding: 60px 20px 40px;
   text-align: center;
@@ -43,9 +42,8 @@
 }
 
 .title {
-  font-family: var(--gt-expanded);
-  font-size: var(--gt-large);
-  text-transform: uppercase;
+  font-family: var(--swiss-times);
+  font-size: var(--times-large);
   margin-bottom: 16px;
 }
 
@@ -57,9 +55,10 @@
 
 .authors {
   font-family: var(--gt-mono);
-  font-size: var(--mono-small);
+  font-size: var(--mono-medium);
+  font-style: italic;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 40px;
 }
 
 .date {
@@ -88,9 +87,9 @@
 }
 
 .content {
-  font-family: var(--gt-mono);
-  font-size: var(--mono-small);
-  line-height: var(--lofty-line-height);
+  font-family: var(--swiss-times);
+  font-size: var(--times-small);
+  line-height: 1.25;
 }
 
 .content img {
