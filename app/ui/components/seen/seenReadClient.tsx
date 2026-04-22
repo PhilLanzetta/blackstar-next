@@ -35,8 +35,10 @@ export default function SeenReadClient({ articles }: Props) {
   const [selectedAuthor, setSelectedAuthor] = useState<string>(
     searchParams.get('author') ?? 'all',
   )
-  const [search, setSearch] = useState<string>('')
-  const [submittedSearch, setSubmittedSearch] = useState<string>('')
+  const [submittedSearch, setSubmittedSearch] = useState<string>(
+    searchParams.get('search') ?? '',
+  )
+  const [search, setSearch] = useState<string>(searchParams.get('search') ?? '')
   const [page, setPage] = useState(1)
 
   const issues = useMemo(() => {

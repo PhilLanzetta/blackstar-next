@@ -1,9 +1,18 @@
 export function formatLink(url: string): string {
   try {
     const parsed = new URL(url)
-    return parsed.pathname + parsed.hash + parsed.search
+    const isInternal = [
+      'violet-chimpanzee-234778.hostingersite.com',
+      'blackstarfest.org',
+      'www.blackstarfest.org',
+      'blackstar-next.vercel.app',
+    ].includes(parsed.hostname)
+
+    if (isInternal) {
+      return parsed.pathname + parsed.hash + parsed.search
+    }
+    return url
   } catch {
-    // if it's already a relative URL, ensure it starts with /
     return url.startsWith('/') ? url : `/${url}`
   }
 }

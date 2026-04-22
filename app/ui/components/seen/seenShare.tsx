@@ -42,11 +42,9 @@ export default function SeenShare() {
   }
 
   function shareFacebook() {
-    const fullUrl = window.location.href
     window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}&amp;src=sdkpreparse`,
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
       '_blank',
-      'width=600,height=400',
     )
   }
 

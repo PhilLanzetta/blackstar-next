@@ -3299,3 +3299,310 @@ export async function getRelatedSeenArticles(
     return []
   }
 }
+export async function getAllSeenSubPageSlugs(): Promise<string[]> {
+  const all: { uri: string; template: { templateName: string } }[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        pages: {
+          nodes: { uri: string; template: { templateName: string } }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllSeenSubPageSlugs($after: String) {
+            pages(first: 100, after: $after) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                uri
+                template {
+                  templateName
+                }
+              }
+            }
+          }
+        `,
+        variables,
+      )
+      all.push(...data.pages.nodes)
+      hasNextPage = data.pages.pageInfo.hasNextPage
+      after = data.pages.pageInfo.endCursor
+    } catch {
+      break
+    }
+  }
+
+  const slugs = all
+    .filter(
+      (p) =>
+        p.template?.templateName === 'Seen Flexible Layouts' &&
+        p.uri !== '/seen/',
+    )
+    .map((p) => p.uri.replace('/seen/', '').replace(/\/$/, ''))
+
+  return slugs
+}
+
+export async function getSeenSubPage(
+  slug: string,
+): Promise<SeenFlexibleLayout[]> {
+  try {
+    const data = await client.request<{
+      page: {
+        template: {
+          seenFlexibleLayouts: {
+            layouts: SeenFlexibleLayout[]
+          }
+        }
+      } | null
+    }>(
+      gql`
+        query getSeenSubPage($slug: ID!) {
+          page(id: $slug, idType: URI) {
+            template {
+              ... on Template_SeenFlexibleLayouts {
+                seenFlexibleLayouts {
+                  layouts {
+                    __typename
+                    ... on SeenFlexibleLayoutsLayoutsFeatureTextLayout {
+                      text
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsSpotlightLayout {
+                      text
+                      backgroundColour
+                      foregroundColour
+                      link {
+                        url
+                        title
+                      }
+                      image {
+                        node {
+                          sourceUrl
+                          altText
+                        }
+                      }
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsAccordionLayout {
+                      heading
+                      accordionSections {
+                        heading
+                        columns {
+                          heading
+                          content
+                        }
+                      }
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsStockistsLayout {
+                      heading
+                      locations {
+                        locationName
+                        stockists {
+                          name
+                          link {
+                            url
+                            title
+                          }
+                        }
+                      }
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsContactDetailsLayout {
+                      heading
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsListLayout {
+                      heading
+                      listItems {
+                        line1
+                        line2
+                      }
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsIssueCreditsLayout {
+                      heading
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsArticlesLayout {
+                      articles {
+                        title
+                        preTitle
+                        subTitle
+                        type
+                        image {
+                          node {
+                            sourceUrl
+                            altText
+                          }
+                        }
+                        link {
+                          url
+                          title
+                        }
+                        article {
+                          nodes {
+                            ... on SeenArticle {
+                              __typename
+                              title
+                              slug
+                              uri
+                              featuredImage {
+                                node {
+                                  sourceUrl
+                                  altText
+                                }
+                              }
+                              seenIssues {
+                                nodes {
+                                  name
+                                  slug
+                                }
+                              }
+                              seenAuthors {
+                                nodes {
+                                  name
+                                  slug
+                                }
+                              }
+                              seenCategories {
+                                nodes {
+                                  name
+                                  slug
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsSpaceLayout {
+                      size
+                    }
+                    ... on SeenFlexibleLayoutsLayoutsAnchorLayout {
+                      anchorName
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { slug: `/seen/${slug}/` },
+    )
+
+    return data.page?.template?.seenFlexibleLayouts?.layouts ?? []
+  } catch (error: any) {
+    return (
+      error?.response?.data?.page?.template?.seenFlexibleLayouts?.layouts ?? []
+    )
+  }
+}
+
+export async function getSeenIssueCredits(): Promise<
+  {
+    name: string
+    slug: string
+    seenIssueAcf: {
+      showInAbout?: boolean
+      contributors?: { heading?: string; contributors?: string }
+      guestEditors?: {
+        heading?: string
+        editors?: { name: string; role?: string | null }[]
+      }
+    }
+  }[]
+> {
+  try {
+    const data = await client.request<{
+      seenIssues: {
+        nodes: {
+          name: string
+          slug: string
+          seenIssueAcf: {
+            showInAbout?: boolean
+            contributors?: { heading?: string; contributors?: string }
+            guestEditors?: {
+              heading?: string
+              editors?: { name: string; role?: string | null }[]
+            }
+          }
+        }[]
+      }
+    }>(gql`
+      query getSeenIssueCredits {
+        seenIssues(first: 100) {
+          nodes {
+            name
+            slug
+            seenIssueAcf {
+              showInAbout
+              contributors {
+                heading
+                contributors
+              }
+              guestEditors {
+                heading
+                editors {
+                  name
+                  role
+                }
+              }
+            }
+          }
+        }
+      }
+    `)
+    return data.seenIssues.nodes.filter((i) => i.seenIssueAcf?.showInAbout)
+  } catch (error: any) {
+    return (
+      error?.response?.data?.seenIssues?.nodes?.filter(
+        (i: any) => i.seenIssueAcf?.showInAbout,
+      ) ?? []
+    )
+  }
+}
+
+export async function getSeenContactDetails() {
+  try {
+    const data = await client.request<{
+      siteSettings: {
+        siteSettingsAcf: {
+          seenEmail?: string | null
+          seenSocialLinks?: {
+            facebookUrl?: string | null
+            instagramUrl?: string | null
+            twitterUrl?: string | null
+            youtubeUrl?: string | null
+          }
+        }
+      }
+    }>(gql`
+      query getSeenContactDetails {
+        siteSettings {
+          siteSettingsAcf {
+            seenEmail
+            seenSocialLinks {
+              facebookUrl
+              instagramUrl
+              twitterUrl
+              youtubeUrl
+            }
+          }
+        }
+      }
+    `)
+    const acf = data.siteSettings?.siteSettingsAcf
+    return {
+      email: acf?.seenEmail ?? null,
+      facebookUrl: acf?.seenSocialLinks?.facebookUrl ?? null,
+      instagramUrl: acf?.seenSocialLinks?.instagramUrl ?? null,
+      twitterUrl: acf?.seenSocialLinks?.twitterUrl ?? null,
+      youtubeUrl: acf?.seenSocialLinks?.youtubeUrl ?? null,
+    }
+  } catch {
+    return null
+  }
+}

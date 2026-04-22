@@ -696,9 +696,73 @@ export type SeenFeatureMediaLayout = {
   link?: { url: string; title: string } | null
 }
 
+export type SeenFeatureTextLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsFeatureTextLayout'
+  text?: string
+}
+
+export type SeenSpotlightLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsSpotlightLayout'
+  text?: string
+  backgroundColour?: string
+  foregroundColour?: string
+  link?: { url: string; title: string } | null
+  image?: { node: { sourceUrl: string; altText: string } } | null
+}
+
+export type SeenAccordionLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsAccordionLayout'
+  heading?: string
+  accordionSections?: {
+    heading?: string
+    columns?: {
+      heading?: string
+      content?: string
+    }[]
+  }[]
+}
+
+export type SeenStockistsLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsStockistsLayout'
+  heading?: string
+  locations?: {
+    locationName?: string
+    stockists?: {
+      name?: string
+      link?: { url: string; title: string } | null
+    }[]
+  }[]
+}
+
+export type SeenContactDetailsLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsContactDetailsLayout'
+  heading?: string
+}
+
+export type SeenListLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsListLayout'
+  heading?: string
+  listItems?: {
+    line1?: string
+    line2?: string | null
+  }[]
+}
+
+export type SeenIssueCreditsLayout = {
+  __typename: 'SeenFlexibleLayoutsLayoutsIssueCreditsLayout'
+  heading?: string
+}
+
 export type SeenFlexibleLayout =
+  | SeenFeatureMediaLayout
   | SeenArticlesLayout
   | SeenSpotlightContainedLayout
   | SeenAnchorLayout
   | SeenSpaceLayout
-  | SeenFeatureMediaLayout
+  | SeenFeatureTextLayout
+  | SeenSpotlightLayout
+  | SeenAccordionLayout
+  | SeenStockistsLayout
+  | SeenContactDetailsLayout
+  | SeenListLayout
+  | SeenIssueCreditsLayout

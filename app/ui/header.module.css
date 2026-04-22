@@ -241,6 +241,58 @@
   left: 50%;
 }
 
+.searchSeenButton {
+  background: none;
+  border: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+}
+
+.seenSearchBar {
+  border-top: var(--standard-border);
+  border-left: 2px solid #000;
+  border-right: 2px solid #000;
+}
+
+.seenSearchForm {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 12px;
+}
+
+.seenSearchInput {
+  flex: 1;
+  border: none;
+  border-bottom: var(--standard-border);
+  padding: 8px 0;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  background: none;
+  outline: none;
+}
+
+.seenSearchSubmit {
+  border: var(--standard-border);
+  padding: 8px 16px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  cursor: pointer;
+  background: none;
+}
+
+.seenSearchClose {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
 @media screen and (max-width: 800px) {
   .logoWithSeenContainer {
     width: 40vw;

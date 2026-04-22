@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import styles from './header.module.css'
 import { MegaNav } from '../lib/types'
 import Link from 'next/link'
@@ -13,8 +14,25 @@ type HeaderProps = {
 
 export function Header({ megaNavs, pageBrand }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
   const isSeen = pageBrand === 'seen'
   const isFestival = pageBrand === 'festival'
+
+  function handleSearchOpen() {
+    setSearchOpen(true)
+    setTimeout(() => searchInputRef.current?.focus(), 300)
+  }
+
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!searchQuery.trim()) return
+    router.push(`/seen/read?search=${encodeURIComponent(searchQuery.trim())}`)
+    setSearchOpen(false)
+    setSearchQuery('')
+  }
 
   return (
     <header>
@@ -235,13 +253,58 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
         </AnimatePresence>
         {isSeen && (
           <div className={styles.seenSubmenu}>
-            <Link href='/seen'>About Seen</Link>
+            <Link href='/seen/about'>About Seen</Link>
             <Link href='/seen/read'>Read</Link>
             <Link href='/seen/order'>Order</Link>
-            <Link href='/seen/stocklists'>Stocklists</Link>
-            <Link href='/seen/search'>Search Seen</Link>
+            <Link href='/seen/stockists'>Stockists</Link>
+            <button
+              className={styles.searchSeenButton}
+              onClick={handleSearchOpen}
+            >
+              Search Seen
+            </button>
           </div>
         )}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div
+              key='seen-search'
+              className={styles.seenSearchBar}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              style={{ overflow: 'hidden' }}
+            >
+              <form
+                className={styles.seenSearchForm}
+                onSubmit={handleSearchSubmit}
+              >
+                <input
+                  ref={searchInputRef}
+                  className={styles.seenSearchInput}
+                  type='text'
+                  placeholder='SEARCH SEEN...'
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type='submit' className={styles.seenSearchSubmit}>
+                  SEARCH
+                </button>
+                <button
+                  type='button'
+                  className={styles.seenSearchClose}
+                  onClick={() => {
+                    setSearchOpen(false)
+                    setSearchQuery('')
+                  }}
+                >
+                  ✕
+                </button>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   )
