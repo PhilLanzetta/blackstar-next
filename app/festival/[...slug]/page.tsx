@@ -1,5 +1,6 @@
 import { getDefaultPage } from '@/app/lib/queries'
-import { gql, GraphQLClient } from 'graphql-request'
+import { getAllFestivalPageSlugs } from '@/app/lib/queries'
+import { notFound } from 'next/navigation'
 import type {
   SpotlightHeroLayout,
   TextTabsLayout,
@@ -17,8 +18,9 @@ import type {
   PostsGridLayout,
   FeatureTextLayout,
   PressClippingsLayout,
-  EventDetailsLayout,
   ContentLayout as ContentLayoutType,
+  EventDetailsLayout,
+  ChildProgramEventsLayout,
 } from '@/app/lib/types'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
@@ -26,110 +28,41 @@ import TextList from '@/app/ui/components/textList'
 import AnchorBlock from '@/app/ui/components/anchorBlock'
 import MediaBlock from '@/app/ui/components/mediaBlock'
 import TeamListings from '@/app/ui/components/teamListings'
-import Opportunities from '@/app/ui/components/opportunites'
-import GetInTouch from '@/app/ui/components/getInTouch'
-import PostsCarousel from '../ui/components/postsCarousel'
-import SpotlightTextImage from '../ui/components/spotlightTextImage'
+import PostsCarousel from '@/app/ui/components/postsCarousel'
+import SpotlightTextImage from '@/app/ui/components/spotlightTextImage'
 import FaqAccordion from '@/app/ui/components/faqAccordion'
-import SponsorsCarousel from '../ui/components/sponsorsCarousel'
-import SectionHeading from '../ui/components/sectionHeading'
+import SponsorsCarousel from '@/app/ui/components/sponsorsCarousel'
+import SectionHeading from '@/app/ui/components/sectionHeading'
 import TextListAlt from '@/app/ui/components/textListAlt'
-import { notFound } from 'next/navigation'
-import SponsorsRow from '../ui/components/sponsorsRow'
-import PostsGrid from '../ui/components/postsGrid'
-import FeatureText from '../ui/components/featureText'
-import PressClippings from '../ui/components/pressClippings'
-import EventDetails from '../ui/components/eventDetails'
-import ContentLayout from '../ui/components/contentLayout'
+import SponsorsRow from '@/app/ui/components/sponsorsRow'
+import PostsGrid from '@/app/ui/components/postsGrid'
+import FeatureText from '@/app/ui/components/featureText'
+import PressClippings from '@/app/ui/components/pressClippings'
+import ContentLayout from '@/app/ui/components/contentLayout'
+import EventDetails from '@/app/ui/components/eventDetails'
+import ChildProgramEvents from '@/app/ui/components/childProgramEvents'
 
-export const revalidate = 60
+export const revalidate = 3600
 export const dynamicParams = false
 
 type Props = {
   params: Promise<{ slug: string[] }>
 }
 
-const baseURL = process.env.WORDPRESS_URL
-const client = new GraphQLClient(`${baseURL}/graphql`, {
-  errorPolicy: 'all',
-})
-
-type PageSlugNode = {
-  uri: string
-  template: { templateName: string }
-  pageBrands?: { nodes: { slug: string }[] }
-}
-
-type PageSlugResponse = {
-  pages: {
-    pageInfo: { hasNextPage: boolean; endCursor: string }
-    nodes: PageSlugNode[]
-  }
-}
-
-export async function getAllPageSlugs(): Promise<{ slug: string[] }[]> {
-  const allPages: PageSlugNode[] = []
-  let hasNextPage = true
-  let after: string | null = null
-
-  while (hasNextPage) {
-    const variables: { after: string | null } = { after }
-    const data = await client.request<PageSlugResponse>(
-      gql`
-        query getAllPageSlugs($after: String) {
-          pages(first: 100, after: $after) {
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
-            nodes {
-              uri
-              template {
-                templateName
-              }
-              pageBrands {
-                nodes {
-                  slug
-                }
-              }
-            }
-          }
-        }
-      `,
-      variables,
-    )
-
-    allPages.push(...data.pages.nodes)
-    hasNextPage = data.pages.pageInfo.hasNextPage
-    after = data.pages.pageInfo.endCursor
-  }
-
-  return allPages
-    .filter(
-      (page) =>
-        page.template?.templateName === 'Default' &&
-        page.uri &&
-        !page.pageBrands?.nodes?.some((b: any) => b.slug === 'festival'),
-    )
-    .map((page) => ({
-      slug: page.uri.split('/').filter(Boolean),
-    }))
-}
-
 export async function generateStaticParams() {
-  return getAllPageSlugs()
+  console.log(
+    'festival slugs:',
+    JSON.stringify(await getAllFestivalPageSlugs()),
+  )
+  return getAllFestivalPageSlugs()
 }
 
-export default async function DefaultPage({ params }: Props) {
+export default async function FestivalPage({ params }: Props) {
   const { slug } = await params
   const path = slug.join('/')
 
   const {
     layouts,
-    opportunityTypes,
-    noOpportunitiesMessage,
-    contactDetails,
-    socialLinks,
     pressClippings,
     pressReleasePosts,
     allPosts,
@@ -204,6 +137,16 @@ export default async function DefaultPage({ params }: Props) {
             return (
               <SponsorsRow key={index} data={layout as SponsorsRowLayout} />
             )
+          case 'FlexibleLayoutsLayoutsPostsGridLayout':
+            return (
+              <PostsGrid
+                key={index}
+                data={layout as PostsGridLayout}
+                pressReleasePosts={pressReleasePosts ?? []}
+                allPosts={allPosts ?? []}
+                programEvents={programEvents ?? []}
+              />
+            )
           case 'FlexibleLayoutsLayoutsFeatureTextLayout':
             return (
               <FeatureText key={index} data={layout as FeatureTextLayout} />
@@ -216,40 +159,28 @@ export default async function DefaultPage({ params }: Props) {
                 clippings={pressClippings ?? []}
               />
             )
-          case 'FlexibleLayoutsLayoutsPostsGridLayout':
+          case 'FlexibleLayoutsLayoutsContentLayout':
             return (
-              <PostsGrid
-                key={index}
-                data={layout as PostsGridLayout}
-                pressReleasePosts={pressReleasePosts ?? []}
-                allPosts={allPosts ?? []}
-                programEvents={programEvents ?? []}
-              />
+              <ContentLayout key={index} data={layout as ContentLayoutType} />
             )
           case 'FlexibleLayoutsLayoutsEventDetailsLayout':
             return (
               <EventDetails key={index} data={layout as EventDetailsLayout} />
             )
-          case 'FlexibleLayoutsLayoutsContentLayout':
+          case 'FlexibleLayoutsLayoutsChildProgramEventsLayout':
             return (
-              <ContentLayout key={index} data={layout as ContentLayoutType} />
+              <ChildProgramEvents
+                key={index}
+                data={layout as ChildProgramEventsLayout}
+                childEvents={[]}
+                parentSlug={path}
+                parentProgramType='festival'
+              />
             )
           default:
             return null
         }
       })}
-      {path === 'about' && (
-        <>
-          <Opportunities
-            opportunityTypes={opportunityTypes}
-            noOpportunitiesMessage={noOpportunitiesMessage}
-          />
-          <GetInTouch
-            contactDetails={contactDetails}
-            socialLinks={socialLinks}
-          />
-        </>
-      )}
     </main>
   )
 }

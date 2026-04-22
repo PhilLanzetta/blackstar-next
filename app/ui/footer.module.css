@@ -1,11 +1,18 @@
 .footer {
   width: 100%;
   background: #a1cfcc;
+  color: #000;
+}
+
+.footerFestival {
+  width: 100%;
+  background: #0704a5;
+  color: #00d997;
 }
 
 .footerTop {
   padding: 20px;
-  border-bottom: 1.5px solid #000;
+  border-bottom: 1.5px solid currentColor;
   display: flex;
   justify-content: space-between;
   font-family: var(--gt-mono);
@@ -24,7 +31,7 @@
 }
 
 .footerBottom {
-  border-top: 1.5px solid #000;
+  border-top: 1.5px solid currentColor;
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -34,7 +41,7 @@
 }
 
 .mobileFooterBottom {
-  border-top: 1.5px solid #000;
+  border-top: 1.5px solid currentColor;
   padding: 20px;
   display: flex;
   justify-content: space-between;

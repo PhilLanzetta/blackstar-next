@@ -36,7 +36,7 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
 
   return (
     <header>
-      <div className={styles.headerContainer}>
+      <div className={`${styles.headerContainer} ${isFestival ? styles.headerContainerFestival : ''}`}>
         <div className={isFestival ? styles.festivalMain : styles.mainHeader}>
           <div
             className={
@@ -62,6 +62,7 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
                 ? styles.logoWithSeenContainer
                 : styles.logoContainer
             }
+            id={isFestival ? 'festivalLogo' : ''}
             onClick={() => setMenuOpen(false)}
           >
             {isFestival ? (
@@ -224,7 +225,7 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
           {menuOpen && (
             <motion.div
               key='secondary-menu'
-              className={styles.secondaryMenu}
+              className={isFestival ? styles.secondaryMenuFestival : styles.secondaryMenu}
               initial={{ height: 0 }}
               animate={{ height: 'auto' }}
               exit={{ height: 0 }}
@@ -245,6 +246,7 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
                     isLast={index === megaNavs.length - 1}
                     subNav={megaNav.megaNavACF.menuItems}
                     onClose={() => setMenuOpen(false)}
+                    isFestival={isFestival}
                   />
                 ))}
               </motion.div>

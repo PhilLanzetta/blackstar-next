@@ -19,23 +19,33 @@ interface SubLinkProps {
   isLast: boolean
   subNav: MenuItems[]
   onClose: () => void
+  isFestival: boolean
 }
 
-export function SubLink({ title, isLast, subNav, onClose }: SubLinkProps) {
+export function SubLink({
+  title,
+  isLast,
+  subNav,
+  onClose,
+  isFestival,
+}: SubLinkProps) {
   const [expanded, setExpanded] = useState(false)
 
   return (
     <div className={styles.sublinkContainer}>
       <button
-        className={`${styles.sublinkMain} ${expanded ? styles.activeMain : ''} ${isLast ? styles.sublinkMainLast : ''}`}
+        className={`${isFestival ? styles.sublinkMainFestival : styles.sublinkMain} ${expanded ? (isFestival ? styles.activeMainFestival : styles.activeMain) : ''} ${isLast ? styles.sublinkMainLast : ''}`}
         onClick={() => setExpanded(!expanded)}
       >
-        {title} <span className={styles.navArrow}>{expanded ? <span>&#8593;</span> : <span>&#x2193;</span>}</span>
+        {title}{' '}
+        <span className={styles.navArrow}>
+          {expanded ? <span>&#8593;</span> : <span>&#x2193;</span>}
+        </span>
       </button>
       <AnimatePresence>
         {expanded && (
           <motion.div
-            className={styles.underLinkContainer}
+            className={isFestival ? styles.underLinkContainerFestival : styles.underLinkContainer}
             key='sublink-open'
             initial={{
               height: 0,
@@ -52,7 +62,7 @@ export function SubLink({ title, isLast, subNav, onClose }: SubLinkProps) {
               initial={{ transform: 'scaleY(0)', transformOrigin: 'top' }}
               animate={{ transform: 'scaleY(100%)', transformOrigin: 'top' }}
               exit={{ transform: 'scaleY(0)', transformOrigin: 'top' }}
-              className={`${styles.underLinks} ${isLast ? styles.underLinksLast : ''}`}
+              className={`${isFestival ? styles.underLinksFestival : styles.underLinks} ${isLast ? isFestival ? styles.underLinkLastFestival : styles.underLinksLast : ''}`}
               transition={{ ease: 'linear' }}
             >
               {subNav &&
@@ -60,7 +70,7 @@ export function SubLink({ title, isLast, subNav, onClose }: SubLinkProps) {
                   return (
                     <BrandLink
                       href={formatLink(item.menuItem.url)}
-                      className={styles.underLink}
+                      className={isFestival ? styles.underLinkFestival : styles.underLink}
                       key={index}
                       onClick={() => {
                         onClose()

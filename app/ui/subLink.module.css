@@ -13,8 +13,31 @@
   position: relative;
 }
 
+.sublinkMainFestival {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--gt-expanded);
+  font-size: var(--font-heading-lg);
+  text-transform: uppercase;
+  border-top: 1px solid #00d997;
+  border-bottom: 1px solid #00d997;
+  background: #0704a5;
+  color: #00d997;
+  padding: 1% calc(1em + 15px);
+  transition: all 400ms;
+  position: relative;
+}
+
 .sublinkMain:hover {
   background: #a1cfcc;
+  transition: all 400ms;
+}
+
+.sublinkMainFestival:hover {
+  background: #00d997;
+  color: #0704a5;
   transition: all 400ms;
 }
 
@@ -22,12 +45,21 @@
   background: #a1cfcc;
 }
 
+.activeMainFestival {
+  background: #00d997;
+  color: #0704a5;
+}
+
 .sublinkMainLast {
   border-bottom: none;
 }
 
-.underLinkContainer {
+.underLinkContainer, .underLinkContainerFestival {
   overflow: hidden;
+}
+
+.underLinkContainerFestival {
+  background: #0704a5;
 }
 
 .underLinks {
@@ -42,8 +74,26 @@
   text-transform: uppercase;
 }
 
+.underLinksFestival {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #00d997;
+  border-bottom: 1px solid #00d997;
+  background: #0704a5;
+  color: #00d997;
+  font-family: var(--gt-mono);
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
 .underLinksLast {
   border-top: 2px solid #000;
+}
+
+.underLinkLastFestival {
+  border-top: 2px solid #00d997;
 }
 
 .underLink {
@@ -56,6 +106,20 @@
 
 .underLink:hover {
   background: #a1cfcc;
+  transition: all 400ms;
+}
+
+.underLinkFestival {
+  transition: all 400ms;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 1%;
+}
+
+.underLinkFestival:hover {
+  background: #00d997;
+  color: #0704a5;
   transition: all 400ms;
 }
 

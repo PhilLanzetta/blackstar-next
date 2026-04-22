@@ -22,7 +22,7 @@ a {
 
 :root {
   --font-heading-lg: 50px;
-  --standard-border: 1.5px solid #000;
+  --standard-border: 1.5px solid currentColor;
   --gt-medium: 20px;
   --gt-large: 40px;
   --times-large: 80px;
@@ -50,4 +50,14 @@ main {
 
 .view-all {
   font-family: var(--gt-mono);
+}
+
+#festivalLogo:hover {
+  background: #00d997;
+  transition: all 400ms;
+}
+
+#festivalLogo:hover svg path {
+  fill: #0704a5;
+  transition: all 400ms;
 }

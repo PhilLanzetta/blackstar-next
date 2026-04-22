@@ -9,7 +9,7 @@ import { headers } from 'next/headers'
 import Breadcrumb from './ui/components/breadcrumb'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import SeenNewsletter from './ui/components/seen/seenNewsletter'
+import SeenNewsletterWrapper from './ui/components/seen/seenNewsletterWrapper'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -54,8 +54,8 @@ export default async function RootLayout({
         <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
         <main>{children}</main>
         <SpeedInsights />
-        {pathname.startsWith('/seen') && <SeenNewsletter />}
-        <Footer footerNav={footerNav} />
+        <SeenNewsletterWrapper />
+        <Footer pageBrand={pageBrand} footerNav={footerNav} />
       </body>
     </html>
   )

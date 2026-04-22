@@ -3606,3 +3606,48 @@ export async function getSeenContactDetails() {
     return null
   }
 }
+
+export async function getAllFestivalPageSlugs(): Promise<{ slug: string[] }[]> {
+  const all: { uri: string }[] = []
+  let hasNextPage = true
+  let after: string | null = null
+
+  while (hasNextPage) {
+    try {
+      const variables: { after: string | null } = { after }
+      const data = await client.request<{
+        pages: {
+          nodes: { uri: string }[]
+          pageInfo: { hasNextPage: boolean; endCursor: string }
+        }
+      }>(
+        gql`
+          query getAllFestivalPageSlugs($after: String) {
+            pages(first: 100, after: $after, where: { pageBrand: "festival" }) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                uri
+              }
+            }
+          }
+        `,
+        variables,
+      )
+
+      all.push(...data.pages.nodes)
+      hasNextPage = data.pages.pageInfo.hasNextPage
+      after = data.pages.pageInfo.endCursor
+    } catch {
+      break
+    }
+  }
+
+  return all
+    .filter((p) => p.uri)
+    .map((p) => ({
+      slug: p.uri.split('/').filter(Boolean),
+    }))
+}

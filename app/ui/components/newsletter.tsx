@@ -3,7 +3,11 @@
 import { useState } from 'react'
 import styles from './newsletter.module.css'
 
-export default function Newsletter() {
+interface NewsletterProps {
+  isFestival: boolean
+}
+
+export default function Newsletter({ isFestival }: NewsletterProps) {
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -38,7 +42,7 @@ export default function Newsletter() {
         <>
           <div className={styles.field}>
             <input
-              className={styles.input}
+              className={isFestival ? styles.inputFestival : styles.input}
               type='email'
               placeholder='Email:'
               aria-label='Email address'
@@ -48,7 +52,7 @@ export default function Newsletter() {
               disabled={busy}
             />
             <button
-              className={styles.button}
+              className={isFestival ? styles.buttonFestival : styles.button}
               onClick={handleSubmit}
               disabled={busy || !email}
             >
