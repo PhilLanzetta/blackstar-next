@@ -4,7 +4,7 @@ import { useState } from 'react'
 import styles from './newsletter.module.css'
 
 interface NewsletterProps {
-  isFestival: boolean
+  isFestival?: boolean
 }
 
 export default function Newsletter({ isFestival }: NewsletterProps) {
