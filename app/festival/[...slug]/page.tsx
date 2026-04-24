@@ -1,7 +1,20 @@
-import { getDefaultPage } from '@/app/lib/queries'
-import { getAllFestivalPageSlugs } from '@/app/lib/queries'
 import { notFound } from 'next/navigation'
+import {
+  getFestivalPage,
+  getDefaultPage,
+  getAllFestivalPageSlugs,
+} from '@/app/lib/queries'
 import type {
+  FestivalLayout,
+  FestivalSpotlightCarouselLayout,
+  FestivalLatestNewsLayout,
+  FestivalCardsLayout,
+  FestivalHeadingLayout,
+  FestivalVideoCoverLayout,
+  FestivalButtonsLayout,
+  FestivalBiosLayout,
+  FestivalSponsorsCarouselLayout,
+  FestivalAnchorLayout,
   SpotlightHeroLayout,
   TextTabsLayout,
   TextListLayout,
@@ -22,6 +35,14 @@ import type {
   EventDetailsLayout,
   ChildProgramEventsLayout,
 } from '@/app/lib/types'
+import FestivalSpotlightCarousel from '@/app/ui/components/festival/festivalSpotlightCarousel'
+import FestivalLatestNews from '@/app/ui/components/festival/festivalLatestNews'
+import FestivalCards from '@/app/ui/components/festival/festivalCards'
+import FestivalHeading from '@/app/ui/components/festival/festivalHeading'
+import FestivalVideoCover from '@/app/ui/components/festival/festivalVideoCover'
+import FestivalButtons from '@/app/ui/components/festival/festivalButtons'
+import FestivalBios from '@/app/ui/components/festival/festivalBios'
+import FestivalSponsors from '@/app/ui/components/festival/festivalSponsors'
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import TextTabs from '@/app/ui/components/textTabs'
 import TextList from '@/app/ui/components/textList'
@@ -31,7 +52,7 @@ import TeamListings from '@/app/ui/components/teamListings'
 import PostsCarousel from '@/app/ui/components/postsCarousel'
 import SpotlightTextImage from '@/app/ui/components/spotlightTextImage'
 import FaqAccordion from '@/app/ui/components/faqAccordion'
-import SponsorsCarousel from '@/app/ui/components/sponsorsCarousel'
+import SponsorsCarouselComponent from '@/app/ui/components/sponsorsCarousel'
 import SectionHeading from '@/app/ui/components/sectionHeading'
 import TextListAlt from '@/app/ui/components/textListAlt'
 import SponsorsRow from '@/app/ui/components/sponsorsRow'
@@ -50,19 +71,98 @@ type Props = {
 }
 
 export async function generateStaticParams() {
-  console.log(
-    'festival slugs:',
-    JSON.stringify(await getAllFestivalPageSlugs()),
-  )
   return getAllFestivalPageSlugs()
 }
 
 export default async function FestivalPage({ params }: Props) {
   const { slug } = await params
-  const path = slug.join('/')
+  const slugArray = Array.isArray(slug) ? slug : [slug]
+  const path = slugArray.join('/')
 
+  const festivalLayouts = await getFestivalPage(path)
+
+  if (festivalLayouts.length > 0) {
+    return (
+      <main>
+        {festivalLayouts.map((layout: FestivalLayout, index: number) => {
+          switch (layout.__typename) {
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpotlightCarouselLayout':
+              return (
+                <FestivalSpotlightCarousel
+                  key={index}
+                  data={layout as FestivalSpotlightCarouselLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsLatestNewsLayout':
+              return (
+                <FestivalLatestNews
+                  key={index}
+                  data={layout as FestivalLatestNewsLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsCardsLayout':
+              return (
+                <FestivalCards
+                  key={index}
+                  data={layout as FestivalCardsLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsHeadingLayout':
+              return (
+                <FestivalHeading
+                  key={index}
+                  data={layout as FestivalHeadingLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsVideoCoverLayout':
+              return (
+                <FestivalVideoCover
+                  key={index}
+                  data={layout as FestivalVideoCoverLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsButtonsLayout':
+              return (
+                <FestivalButtons
+                  key={index}
+                  data={layout as FestivalButtonsLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsBiosLayout':
+              return (
+                <FestivalBios key={index} data={layout as FestivalBiosLayout} />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSponsorsCarouselLayout':
+              return (
+                <FestivalSponsors
+                  key={index}
+                  data={layout as FestivalSponsorsCarouselLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsAnchorLayout':
+              return (
+                <div
+                  key={index}
+                  id={(layout as FestivalAnchorLayout).anchorName ?? undefined}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpaceLayout':
+              return <div key={index} />
+            default:
+              return null
+          }
+        })}
+      </main>
+    )
+  }
+
+  // Fall back to default template
   const {
     layouts,
+    opportunityTypes,
+    noOpportunitiesMessage,
+    contactDetails,
+    socialLinks,
     pressClippings,
     pressReleasePosts,
     allPosts,
@@ -70,7 +170,7 @@ export default async function FestivalPage({ params }: Props) {
     programEvents,
   } = await getDefaultPage(path)
 
-  if (!layouts || !layouts.length) return notFound()
+  if (!layouts?.length) return notFound()
 
   const firstLayout = layouts[0]
   const startsWithHero =
@@ -117,7 +217,7 @@ export default async function FestivalPage({ params }: Props) {
             )
           case 'FlexibleLayoutsLayoutsSponsorsCarouselLayout':
             return (
-              <SponsorsCarousel
+              <SponsorsCarouselComponent
                 key={index}
                 data={layout as SponsorsCarouselLayout}
               />

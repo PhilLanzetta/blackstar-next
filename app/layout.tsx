@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
 import { getMegaNav, getFooterNav, getPageBrand } from './lib/queries'
 import { HeaderWrapper } from './ui/headerWrapper'
-import { Footer } from './ui/footer'
+import { FooterWrapper } from './ui/footerWrapper'
 import { headers } from 'next/headers'
 import Breadcrumb from './ui/components/breadcrumb'
 import NextTopLoader from 'nextjs-toploader'
@@ -55,7 +55,7 @@ export default async function RootLayout({
         <main>{children}</main>
         <SpeedInsights />
         <SeenNewsletterWrapper />
-        <Footer pageBrand={pageBrand} footerNav={footerNav} />
+        <FooterWrapper initialPageBrand={pageBrand} footerNav={footerNav} />
       </body>
     </html>
   )

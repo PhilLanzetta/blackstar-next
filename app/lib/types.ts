@@ -162,6 +162,7 @@ export type WPPost = {
   title: string
   link: string
   slug: string
+  uri?: string
   date: string
   contentTypeName: string
   featuredImage?: {
@@ -173,6 +174,7 @@ export type WPPost = {
   categories?: {
     nodes: {
       name: string
+      slug: string
     }[]
   }
   pressRelease?: {
@@ -394,18 +396,24 @@ export type FaqAccordionLayout = {
   }
 }
 
-// Team Listings Layout
-export type BiographyAcf = {
-  emailAddress?: string
-  position?: string
-  pronouns?: string
-}
-
 export type Biography = {
   title: string
-  biographyAcf?: BiographyAcf
-  content?: string
-  featuredImage?: WPImage
+  slug: string
+  content?: string | null
+  featuredImage?: { node: { sourceUrl: string; altText: string } } | null
+  biographyAcf?: {
+    emailAddress?: string
+    position?: string | null
+    pronouns?: string | null
+    socialProfiles?: {
+      facebook?: string | null
+      instagram?: string | null
+      linkedin?: string | null
+      twitter?: string | null
+      website?: string | null
+      youtube?: string | null
+    } | null
+  } | null
 }
 
 export type BioCollection = {
@@ -766,3 +774,108 @@ export type SeenFlexibleLayout =
   | SeenContactDetailsLayout
   | SeenListLayout
   | SeenIssueCreditsLayout
+
+export type RichCardCustomButtons = {
+  button: { url: string; title: string }
+  backArrow?: boolean
+}
+
+export type RichCardCustom = {
+  heading?: string | null
+  preHeading?: string | null
+  description?: string | null
+  image?: { node: { sourceUrl: string; altText: string } } | null
+  video?: { node: { mediaItemUrl: string } } | null
+  icon?: { node: { sourceUrl: string; altText: string } } | null
+  buttons?: RichCardCustomButtons[]
+}
+
+export type RichCard = {
+  type?: string[]
+  inverse?: boolean
+  custom?: RichCardCustom | null
+  event?: { nodes: any[] } | null
+  film?: { nodes: any[] } | null
+  newsPost?: { nodes: any[] } | null
+}
+
+export type FestivalCardItem = {
+  heading?: string | null
+  content?: string | null
+  extraHeading?: string | null
+  extraContent?: string | null
+  image?: { node: { sourceUrl: string; altText: string } } | null
+  callToAction?: { url: string; title: string } | null
+}
+
+export type FestivalSpotlightCarouselLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpotlightCarouselLayout'
+  type?: string[]
+  background?: string[]
+  inversed?: boolean
+  cards?: RichCard[]
+}
+
+export type FestivalLatestNewsLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsLatestNewsLayout'
+  heading?: string
+  items?: number
+  viewAllButtonLabel?: string
+}
+
+export type FestivalCardsLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsCardsLayout'
+  gridLayout?: string[]
+  cards?: FestivalCardItem[]
+}
+
+export type FestivalHeadingLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsHeadingLayout'
+  heading?: string
+  links?: { link: { url: string; title: string } }[]
+}
+
+export type FestivalVideoCoverLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsVideoCoverLayout'
+  videoEmbed?: string
+  videoType?: string[]
+  coverImage?: { node: { sourceUrl: string; altText: string } } | null
+}
+
+export type FestivalButtonsLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsButtonsLayout'
+  buttons?: { button: { url: string; title: string }; backArrow?: boolean }[]
+}
+
+export type FestivalBiosLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsBiosLayout'
+  itemsPerPage?: number
+  collection?: { nodes: { name: string; slug: string }[] }
+}
+
+export type FestivalSponsorsCarouselLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSponsorsCarouselLayout'
+  heading?: string
+  collection?: { nodes: { name: string; slug: string }[] }
+}
+
+export type FestivalAnchorLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsAnchorLayout'
+  anchorName?: string
+}
+
+export type FestivalSpaceLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpaceLayout'
+}
+
+export type FestivalLayout =
+  | FestivalSpotlightCarouselLayout
+  | FestivalLatestNewsLayout
+  | FestivalCardsLayout
+  | FestivalHeadingLayout
+  | FestivalVideoCoverLayout
+  | FestivalButtonsLayout
+  | FestivalBiosLayout
+  | FestivalSponsorsCarouselLayout
+  | FestivalAnchorLayout
+  | FestivalSpaceLayout

@@ -14,6 +14,7 @@ import {
   ProgramEvent,
   SeenFlexibleLayout,
   SeenArticle,
+  FestivalLayout,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -3650,4 +3651,390 @@ export async function getAllFestivalPageSlugs(): Promise<{ slug: string[] }[]> {
     .map((p) => ({
       slug: p.uri.split('/').filter(Boolean),
     }))
+}
+
+export async function getFestivalPage(slug: string): Promise<FestivalLayout[]> {
+  try {
+    const data = await client.request<{
+      page: {
+        template: {
+          festivalFlexibleLayoutsAcf: {
+            festival24FlexibleLayouts: {
+              layouts: FestivalLayout[]
+            }[]
+          }
+        }
+      } | null
+    }>(
+      gql`
+        query getFestivalPage($slug: ID!) {
+          page(id: $slug, idType: URI) {
+            template {
+              ... on Template_FestivalFlexiblePage {
+                festivalFlexibleLayoutsAcf {
+                  festival24FlexibleLayouts {
+                    layouts {
+                      __typename
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpotlightCarouselLayout {
+                        type
+                        background
+                        inversed
+                        cards {
+                          type
+                          inverse
+                          custom {
+                            heading
+                            preHeading
+                            description
+                            image {
+                              node {
+                                sourceUrl
+                                altText
+                              }
+                            }
+                            video {
+                              node {
+                                mediaItemUrl
+                              }
+                            }
+                            buttons {
+                              button {
+                                url
+                                title
+                              }
+                              backArrow
+                            }
+                          }
+                          event {
+                            nodes {
+                              ... on FestivalEvent {
+                                title
+                                slug
+                                featuredImage {
+                                  node {
+                                    sourceUrl
+                                    altText
+                                  }
+                                }
+                              }
+                            }
+                          }
+                          film {
+                            nodes {
+                              ... on FestivalFilm {
+                                title
+                                slug
+                                featuredImage {
+                                  node {
+                                    sourceUrl
+                                    altText
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsLatestNewsLayout {
+                        heading
+                        items
+                        viewAllButtonLabel
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsCardsLayout {
+                        gridLayout
+                        cards {
+                          heading
+                          content
+                          extraHeading
+                          extraContent
+                          image {
+                            node {
+                              sourceUrl
+                              altText
+                            }
+                          }
+                          callToAction {
+                            url
+                            title
+                          }
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsHeadingLayout {
+                        heading
+                        links {
+                          link {
+                            url
+                            title
+                          }
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsVideoCoverLayout {
+                        videoEmbed
+                        videoType
+                        coverImage {
+                          node {
+                            sourceUrl
+                            altText
+                          }
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsButtonsLayout {
+                        buttons {
+                          button {
+                            url
+                            title
+                          }
+                          backArrow
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsBiosLayout {
+                        itemsPerPage
+                        collection {
+                          nodes {
+                            ... on BioCollection {
+                              name
+                              slug
+                            }
+                          }
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSponsorsCarouselLayout {
+                        heading
+                        collection {
+                          nodes {
+                            ... on SponsorCollection {
+                              name
+                              slug
+                            }
+                          }
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsAnchorLayout {
+                        anchorName
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpaceLayout {
+                        fieldGroupName
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { slug: `/${slug}/` },
+    )
+    const sections =
+      data.page?.template?.festivalFlexibleLayoutsAcf
+        ?.festival24FlexibleLayouts ?? []
+    return sections.flatMap((section) => section.layouts ?? []).filter(Boolean)
+  } catch (error: any) {
+    const sections =
+      error?.response?.data?.page?.template?.festivalFlexibleLayoutsAcf
+        ?.festival24FlexibleLayouts ?? []
+    return sections
+      .flatMap((section: any) => section.layouts ?? [])
+      .filter(Boolean)
+  }
+}
+
+export async function getBiographiesByCollection(
+  collectionSlug: string,
+  first: number = 4,
+  after: string | null = null,
+): Promise<{
+  bios: {
+    title: string
+    slug: string
+    featuredImage?: { node: { sourceUrl: string; altText: string } } | null
+    biography?: { role?: string }
+  }[]
+  hasNextPage: boolean
+  endCursor: string | null
+}> {
+  console.log('getBiographiesByCollection called with:', collectionSlug)
+  try {
+    const data = await client.request<{
+      biographies: {
+        nodes: {
+          title: string
+          slug: string
+          featuredImage?: {
+            node: { sourceUrl: string; altText: string }
+          } | null
+        }[]
+        pageInfo: { hasNextPage: boolean; endCursor: string }
+      }
+    }>(
+      gql`
+        query getBiographiesByCollection(
+          $collectionSlug: String!
+          $first: Int!
+          $after: String
+        ) {
+          biographies(
+            first: $first
+            after: $after
+            where: { bioCollection: $collectionSlug }
+          ) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            nodes {
+              title
+              slug
+              content
+              featuredImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              biographyAcf {
+                position
+                pronouns
+                socialProfiles {
+                  facebook
+                  instagram
+                  linkedin
+                  twitter
+                  website
+                  youtube
+                }
+              }
+            }
+          }
+        }
+      `,
+      { collectionSlug, first, after },
+    )
+    return {
+      bios: data.biographies.nodes,
+      hasNextPage: data.biographies.pageInfo.hasNextPage,
+      endCursor: data.biographies.pageInfo.endCursor,
+    }
+  } catch (error: any) {
+    console.log(
+      'getBiographiesByCollection error:',
+      error?.response?.errors?.[0]?.message,
+      error?.message,
+    )
+    return { bios: [], hasNextPage: false, endCursor: null }
+  }
+}
+
+export async function getSponsorsByCollection(collectionSlug: string): Promise<
+  {
+    title: string
+    sponsorAcf?: {
+      logo?: { node: { sourceUrl: string; altText: string } } | null
+      logoBlack?: { node: { sourceUrl: string; altText: string } } | null
+      website?: string | null
+    } | null
+  }[]
+> {
+  try {
+    const data = await client.request<{
+      sponsors: {
+        nodes: {
+          title: string
+          sponsorAcf?: {
+            logo?: { node: { sourceUrl: string; altText: string } } | null
+            logoBlack?: { node: { sourceUrl: string; altText: string } } | null
+            website?: string | null
+          } | null
+        }[]
+      }
+    }>(
+      gql`
+        query getSponsorsByCollection($collectionSlug: String!) {
+          sponsors(first: 100, where: { sponsorCollection: $collectionSlug }) {
+            nodes {
+              title
+              sponsorAcf {
+                logo {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+                logoBlack {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+                website
+              }
+            }
+          }
+        }
+      `,
+      { collectionSlug },
+    )
+    return data.sponsors.nodes
+  } catch (error: any) {
+    console.log(
+      'getSponsorsByCollection error:',
+      error?.response?.errors?.[0]?.message,
+    )
+    return []
+  }
+}
+
+export async function getFestivalPosts(first: number = 3): Promise<
+  {
+    title: string
+    link: string
+    featuredImage?: { node: { sourceUrl: string; altText: string } } | null
+    festivalPostAcf?: {
+      redirectTo?: { title?: string; url?: string } | null
+    } | null
+  }[]
+> {
+  try {
+    const data = await client.request<{
+      festivalPosts: {
+        nodes: {
+          title: string
+          link: string
+          featuredImage?: {
+            node: { sourceUrl: string; altText: string }
+          } | null
+          festivalPostAcf?: {
+            redirectTo?: { title?: string; url?: string } | null
+          } | null
+        }[]
+      }
+    }>(
+      gql`
+        query getFestivalPosts($first: Int!) {
+          festivalPosts(first: $first) {
+            nodes {
+              title
+              link
+              featuredImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              festivalPostAcf {
+                redirectTo {
+                  title
+                  url
+                }
+              }
+            }
+          }
+        }
+      `,
+      { first },
+    )
+    return data.festivalPosts.nodes
+  } catch {
+    return []
+  }
 }

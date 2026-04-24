@@ -1,0 +1,100 @@
+.section {
+  position: relative;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  min-height: 80vh;
+  background: black;
+  color: white;
+}
+
+.inversed {
+  grid-template-columns: 40% 60%;
+}
+
+.imageWrapper {
+  position: relative;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 40px;
+  gap: 20px;
+}
+
+.preHeading {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  color: #00d997;
+}
+
+.heading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+}
+
+.description {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.button {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: white;
+  border: 1px solid white;
+  padding: 8px 16px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.activeDot {
+  background: white;
+}
+
+@media (max-width: 768px) {
+  .section, .inversed {
+    grid-template-columns: 1fr;
+  }
+
+  .imageWrapper {
+    aspect-ratio: 16/9;
+    position: relative;
+  }
+}

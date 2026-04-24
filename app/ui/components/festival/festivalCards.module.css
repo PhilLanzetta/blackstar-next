@@ -1,0 +1,70 @@
+.grid {
+  display: grid;
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.twoUp {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.threeUp {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 4/3;
+}
+
+.cardContent {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+}
+
+.cardExtraHeading {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+.cardText, .cardExtraText {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.cardCta {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  border: var(--standard-border);
+  padding: 8px 16px;
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.cardCta:hover {
+  background: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .twoUp, .threeUp {
+    grid-template-columns: 1fr;
+  }
+}
