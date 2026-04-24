@@ -400,7 +400,16 @@ export type Biography = {
   title: string
   slug: string
   content?: string | null
-  featuredImage?: { node: { sourceUrl: string; altText: string } } | null
+  featuredImage?: {
+    node: {
+      sourceUrl: string
+      altText: string
+      mediaDetails?: {
+        width?: number
+        height?: number
+      } | null
+    }
+  } | null
   biographyAcf?: {
     emailAddress?: string
     position?: string | null
