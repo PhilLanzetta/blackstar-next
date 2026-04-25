@@ -3815,6 +3815,37 @@ export async function getFestivalPage(slug: string): Promise<FestivalLayout[]> {
                       ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpaceLayout {
                         fieldGroupName
                       }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsContentLayout {
+                        columns {
+                          content
+                          buttons {
+                            button {
+                              url
+                              title
+                            }
+                            backArrow
+                          }
+                        }
+                      }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsExplainersLayout {
+                        explainer {
+                          heading
+                          description
+                          icon {
+                            node {
+                              sourceUrl
+                              altText
+                            }
+                          }
+                          buttons {
+                            button {
+                              url
+                              title
+                            }
+                            backArrow
+                          }
+                        }
+                      }
                     }
                   }
                 }

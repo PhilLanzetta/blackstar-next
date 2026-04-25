@@ -877,6 +877,28 @@ export type FestivalSpaceLayout = {
   __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpaceLayout'
 }
 
+export type FestivalContentLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsContentLayout'
+  columns?: {
+    content?: string | null
+    buttons?:
+      | { button: { url: string; title: string }; backArrow?: boolean }[]
+      | null
+  }[]
+}
+
+export type FestivalExplainersLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsExplainersLayout'
+  explainer?: {
+    heading?: string | null
+    description?: string | null
+    icon?: { node: { sourceUrl: string; altText: string } } | null
+    buttons?:
+      | { button: { url: string; title: string }; backArrow?: boolean }[]
+      | null
+  }[]
+}
+
 export type FestivalLayout =
   | FestivalSpotlightCarouselLayout
   | FestivalLatestNewsLayout
@@ -888,3 +910,5 @@ export type FestivalLayout =
   | FestivalSponsorsCarouselLayout
   | FestivalAnchorLayout
   | FestivalSpaceLayout
+  | FestivalContentLayout
+  | FestivalExplainersLayout

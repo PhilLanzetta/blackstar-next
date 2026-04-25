@@ -22,8 +22,13 @@ export function HeaderWrapper({ megaNavs, initialPageBrand }: Props) {
   useEffect(() => {
     const slug = pathname.split('/').filter(Boolean).join('/')
 
-    if (pathname.startsWith('/seen/')) {
+    if (pathname.startsWith('/seen/') || pathname === '/seen') {
       setPageBrand('seen')
+      return
+    }
+
+    if (pathname.startsWith('/festival/') || pathname === '/festival') {
+      setPageBrand('festival')
       return
     }
 
@@ -46,6 +51,8 @@ export function HeaderWrapper({ megaNavs, initialPageBrand }: Props) {
       })
       .catch(() => setPageBrand(null))
   }, [pathname])
+
+  console.log('pathname:', pathname, 'pageBrand:', pageBrand)
 
   return <Header megaNavs={megaNavs} pageBrand={pageBrand} />
 }

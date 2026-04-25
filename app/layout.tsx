@@ -10,6 +10,7 @@ import Breadcrumb from './ui/components/breadcrumb'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import SeenNewsletterWrapper from './ui/components/seen/seenNewsletterWrapper'
+import EventiveProvider from './ui/components/festival/eventiveProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -39,7 +40,14 @@ export default async function RootLayout({
   const pathname = headersList.get('x-pathname') ?? ''
   const slug = pathname.split('/').filter(Boolean).join('/')
   const isSeen = pathname.startsWith('/seen/')
-  const pageBrand = isSeen ? 'seen' : slug ? await getPageBrand(slug) : null
+  const isFestival = pathname.startsWith('/festival/')
+  const pageBrand = isSeen
+    ? 'seen'
+    : isFestival
+      ? 'festival'
+      : slug
+        ? await getPageBrand(slug)
+        : null
 
   return (
     <html
@@ -52,6 +60,7 @@ export default async function RootLayout({
         <NextTopLoader color='#000' height={3} showSpinner={false} />
         <Breadcrumb></Breadcrumb>
         <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
+        <EventiveProvider />
         <main>{children}</main>
         <SpeedInsights />
         <SeenNewsletterWrapper />

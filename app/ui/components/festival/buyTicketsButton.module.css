@@ -1,0 +1,20 @@
+.wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.externalButton {
+  display: inline-block;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  border: var(--standard-border);
+  padding: 10px 20px;
+}
+
+.externalButton:hover {
+  background: #f0f0f0;
+}

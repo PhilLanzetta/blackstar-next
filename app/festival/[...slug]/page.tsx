@@ -33,7 +33,7 @@ import type {
   PressClippingsLayout,
   ContentLayout as ContentLayoutType,
   EventDetailsLayout,
-  ChildProgramEventsLayout,
+  ChildProgramEventsLayout, FestivalContentLayout, FestivalExplainersLayout
 } from '@/app/lib/types'
 import FestivalSpotlightCarousel from '@/app/ui/components/festival/festivalSpotlightCarousel'
 import FestivalLatestNews from '@/app/ui/components/festival/festivalLatestNews'
@@ -62,6 +62,8 @@ import PressClippings from '@/app/ui/components/pressClippings'
 import ContentLayout from '@/app/ui/components/contentLayout'
 import EventDetails from '@/app/ui/components/eventDetails'
 import ChildProgramEvents from '@/app/ui/components/childProgramEvents'
+import FestivalExplainers from '@/app/ui/components/festival/festivalExplainers'
+import FestivalContent from '@/app/ui/components/festival/festivalContent'
 
 export const revalidate = 3600
 export const dynamicParams = false
@@ -148,6 +150,20 @@ export default async function FestivalPage({ params }: Props) {
               )
             case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpaceLayout':
               return <div key={index} />
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsContentLayout':
+              return (
+                <FestivalContent
+                  key={index}
+                  data={layout as FestivalContentLayout}
+                />
+              )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsExplainersLayout':
+              return (
+                <FestivalExplainers
+                  key={index}
+                  data={layout as FestivalExplainersLayout}
+                />
+              )
             default:
               return null
           }
