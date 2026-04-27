@@ -6,7 +6,9 @@
 .topNav {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  color: var(--color-festival);
   border-bottom: var(--standard-border);
+  border-top: var(--standard-border);
 }
 
 .topNavItem {
@@ -14,10 +16,12 @@
   font-size: var(--gt-medium);
   text-transform: uppercase;
   text-decoration: none;
+  background: var(--background-festival);
   color: inherit;
   padding: 20px;
   text-align: center;
   border-right: var(--standard-border);
+  transition: all 400ms;
 }
 
 .topNavItem:last-child {
@@ -25,12 +29,14 @@
 }
 
 .topNavItem:hover {
-  background: #f0f0f0;
+  background: var(--color-festival);
+  color: var(--background-festival);
+  transition: all 400ms;
 }
 
 .topNavItemActive {
-  background: black;
-  color: white;
+  background: var(--color-festival);
+  color: var(--background-festival);
 }
 
 /* Date nav */
@@ -41,6 +47,7 @@
   padding: 20px;
   border-bottom: var(--standard-border);
   gap: 20px;
+  color: var(--background-festival);
 }
 
 .dateNavLeft {
@@ -50,7 +57,7 @@
 
 .scheduleTitle {
   font-family: var(--gt-expanded);
-  font-size: var(--gt-xlarge);
+  font-size: var(--gt-large);
   text-transform: uppercase;
 }
 
@@ -98,12 +105,14 @@
   padding: 6px 16px;
   background: none;
   cursor: pointer;
+  transition: all 400ms;
 }
 
 .filterToggle:hover,
 .filterToggleActive {
-  background: black;
-  color: white;
+  background: var(--background-festival);
+  color: var(--color-festival);
+  transition: all 400ms;
 }
 
 .personageToggle {
@@ -123,12 +132,15 @@
 }
 
 .personageBtn:hover {
-  background: #f0f0f0;
+  background: var(--background-festival);
+  color: var(--color-festival);
+  transition: all 400ms;
 }
 
 .personageBtnActive {
-  background: black;
-  color: white;
+  background: var(--background-festival);
+  color: var(--color-festival);
+  transition: all 400ms;
 }
 
 /* Filters panel */
@@ -208,11 +220,12 @@
 .eventsList {
   display: flex;
   flex-direction: column;
+  color: var(--background-festival);
 }
 
 .eventRow {
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 2fr 1fr;
   border-bottom: var(--standard-border);
   min-height: 200px;
 }
@@ -222,7 +235,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-right: var(--standard-border);
 }
 
 .eventTags {
@@ -239,8 +251,8 @@
 }
 
 .eventTitle {
-  font-family: var(--gt-expanded);
-  font-size: var(--gt-large);
+  font-family: var(--gt-mono);
+  font-size: var(--mono-large);
   text-transform: uppercase;
 }
 
@@ -289,14 +301,18 @@
   border: var(--standard-border);
   padding: 6px 14px;
   display: inline-block;
+  transition: all 400ms;
 }
 
 .actionBtn:hover {
-  background: #f0f0f0;
+  background: var(--background-festival);
+  color: var(--color-festival);
+  transition: all 400ms;
 }
 
 .eventImageWrapper {
   position: relative;
+  margin: 10px;
   display: block;
 }
 

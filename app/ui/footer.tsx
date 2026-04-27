@@ -39,13 +39,6 @@ export function Footer({ footerNav, pageBrand }: FooterProps) {
             Instagram
           </a>
           <a
-            href={footerNav.socialLinks.twitterUrl}
-            target='_blank'
-            rel='noreferrer'
-          >
-            Twitter
-          </a>
-          <a
             href={footerNav.socialLinks.facebookUrl}
             target='_blank'
             rel='noreferrer'
@@ -63,7 +56,7 @@ export function Footer({ footerNav, pageBrand }: FooterProps) {
         {!isMobile && (
           <div>
             SIGN UP FOR BLACKSTAR NEWS,<br></br>OUR MONTHLY NEWSLETTER
-            <Newsletter isFestival={isFestival}/>
+            <Newsletter isFestival={isFestival} />
           </div>
         )}
       </div>
@@ -119,30 +112,17 @@ export function Footer({ footerNav, pageBrand }: FooterProps) {
       )}
       {mobileBottom ? (
         <div className={styles.mobileFooterBottom}>
-          <div className={styles.footerBottomGroup}>
-            <Link href='/'>Archive</Link>
-            <Link href='/'>Press</Link>
-            <Link href='/'>Contact</Link>
-          </div>
-          <div className={styles.footerBottomGroup}>
-            <Link href='/'>Opportunities</Link>
-            <Link href='/'>Submissions</Link>
-          </div>
-          <div className={styles.footerBottomGroup}>
-            <Link href='/'>Privacy Policy</Link>
-            <Link href='/'>Accessibility</Link>
-            <div>C {new Date().getFullYear()} Blackstar</div>
-          </div>
+          <Link href='/'>Press</Link>
+          <Link href='/'>Privacy Policy</Link>
+          <Link href='/'>Accessibility</Link>
+          <div>C {new Date().getFullYear()} Blackstar</div>
         </div>
       ) : (
         <div className={styles.footerBottom}>
-          <Link href='/'>Archive</Link>
-          <Link href='/'>Press</Link>
-          <Link href='/'>Contact</Link>
-          <Link href='/'>Opportunities</Link>
-          <Link href='/'>Submissions</Link>
-          <Link href='/'>Privacy Policy</Link>
-          <Link href='/'>Accessibility</Link>
+          <Link href='/about#contact'>Contact</Link>
+          <Link href='/press-room'>Press</Link>
+          <Link href='/privacy-policy'>Privacy Policy</Link>
+          <Link href='/accessibility'>Accessibility</Link>
           <div>C {new Date().getFullYear()} Blackstar</div>
         </div>
       )}

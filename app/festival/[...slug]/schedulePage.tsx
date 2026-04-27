@@ -14,6 +14,7 @@ export default async function SchedulePage({ year = '2025' }: Props) {
       dates={dates}
       venues={venues}
       tags={tags}
+      initialShowInPerson
     />
   )
 }

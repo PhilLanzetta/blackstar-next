@@ -65,7 +65,7 @@ export default async function RootLayout({
           initialPageBrand={pageBrand}
           festivalMenus={festivalMenus}
         />
-        <EventiveProvider />
+        <EventiveProvider>{children}</EventiveProvider>
         <main>{children}</main>
         <SpeedInsights />
         <SeenNewsletterWrapper />

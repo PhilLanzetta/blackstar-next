@@ -4166,6 +4166,10 @@ export async function getFestivalSchedule(year: string = '2025'): Promise<{
                 startTime
                 endTime
                 timezone
+                timezoneAbv
+                isVirtual
+                timezoneAbv
+                isEvent
                 isVirtual
               }
               premiereStatuses {

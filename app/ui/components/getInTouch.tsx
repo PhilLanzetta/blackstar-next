@@ -11,7 +11,7 @@ export default function GetInTouch({ contactDetails, socialLinks }: Props) {
   if (!contactDetails && !socialLinks) return null
 
   return (
-    <section className={styles.wrapper}>
+    <section className={styles.wrapper} id="contact">
       <h2 className={styles.heading}>Get In Touch</h2>
       <div className={styles.inner}>
         {contactDetails && (

@@ -28,7 +28,7 @@ export default function Opportunities({
       .nodes ?? []
 
   return (
-    <section className={styles.wrapper}>
+    <section className={styles.wrapper} id="opportunities">
       <h2>Opportunities</h2>
       <div className={styles.tabs}>
         {opportunityTypes.map((type) => (

@@ -916,6 +916,8 @@ export type FestivalEvent = {
     endTime?: string | null
     timezone?: string | null
     isVirtual?: boolean | null
+    timezoneAbv?: string | null
+    isEvent?: boolean | null
   } | null
   premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
   festivalAwards?: { nodes: { name: string; slug: string }[] } | null

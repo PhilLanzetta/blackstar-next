@@ -1,8 +1,14 @@
 'use client'
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { WishlistProvider } from './eventiveWishlistContext'
+import type { ReactNode } from 'react'
 
-export default function EventiveProvider() {
+export default function EventiveProvider({
+  children,
+}: {
+  children: ReactNode
+}) {
   const pathname = usePathname()
   const isFestival = pathname.startsWith('/festival')
 
@@ -10,23 +16,19 @@ export default function EventiveProvider() {
     if (!isFestival) return
     if (document.querySelector('script[data-eventive]')) return
 
-    // Load Stripe first (required by Eventive)
     const stripe = document.createElement('script')
     stripe.src = 'https://js.stripe.com/v3/'
     stripe.async = true
     document.head.appendChild(stripe)
 
-    // Load Eventive Everywhere
     const eventive = document.createElement('script')
     eventive.src = 'https://festival.blackstarfest.org/loader.js'
     eventive.async = true
     eventive.setAttribute('data-eventive', 'true')
     document.head.appendChild(eventive)
-
-    return () => {
-      // Don't remove on unmount — Eventive needs to persist
-    }
   }, [isFestival])
 
-  return null
+  if (!isFestival) return <>{children}</>
+
+  return <WishlistProvider>{children}</WishlistProvider>
 }

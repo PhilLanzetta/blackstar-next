@@ -25,6 +25,7 @@ a {
   --standard-border: 1.5px solid currentColor;
   --gt-medium: 20px;
   --gt-large: 40px;
+  --gt-xlarge: 60px;
   --times-large: 80px;
   --times-medium: 50px;
   --times-small: 20px;
@@ -32,6 +33,8 @@ a {
   --mono-medium: 20px;
   --lofty-line-height: 1.1;
   --color-accent: #a1cfcc;
+  --color-festival: #00D997;
+  --background-festival: #0704a5;
 }
 
 p {

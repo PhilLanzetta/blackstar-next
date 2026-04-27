@@ -62,7 +62,5 @@ export function HeaderWrapper({ megaNavs, initialPageBrand, festivalMenus }: Pro
       .catch(() => setPageBrand(null))
   }, [pathname])
 
-  console.log('festivalMenus received:', festivalMenus?.length)
-
   return <Header megaNavs={megaNavs} pageBrand={pageBrand} festivalMenus={festivalMenus}/>
 }
