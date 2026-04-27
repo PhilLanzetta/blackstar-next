@@ -940,3 +940,23 @@ export type FestivalLayout =
   | FestivalSpaceLayout
   | FestivalContentLayout
   | FestivalExplainersLayout
+
+export type FestivalFilm = {
+  title: string
+  slug: string
+  excerpt?: string | null
+  featuredImage?: { node: { sourceUrl: string; altText: string } } | null
+  premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
+  festivalAwards?: { nodes: { name: string; slug: string }[] } | null
+  eventiveTags?: { nodes: { name: string; slug: string }[] } | null
+  festivalFilmAcf?: {
+    runtime?: string | null
+    country?: string | null
+    language?: string | null
+    year?: string | null
+    trailerUrl?: string | null
+    hideFromFilmGuide?: boolean | null
+    triggerWarning?: string | null
+    credits?: { type?: string | null; name?: string | null }[] | null
+  } | null
+}

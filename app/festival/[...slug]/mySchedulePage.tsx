@@ -18,9 +18,6 @@ export default function MySchedulePage({ events, dates, venues, tags }: Props) {
   const initialized = useRef(false)
 
   useEffect(() => {
-    if (initialized.current && wishlist.length === 0) return
-    initialized.current = true
-
     const filtered = events.filter(
       (e) =>
         e.festivalEventAcf?.eventiveId &&

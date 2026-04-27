@@ -1,0 +1,375 @@
+.wrapper {
+  padding-bottom: 80px;
+}
+
+.topNav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  color: var(--color-festival);
+  border-bottom: var(--standard-border);
+  border-top: var(--standard-border);
+}
+
+.topNavItem {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-medium);
+  text-transform: uppercase;
+  text-decoration: none;
+  background: var(--background-festival);
+  color: inherit;
+  padding: 20px;
+  text-align: center;
+  border-right: var(--standard-border);
+  transition: all 400ms;
+}
+
+.topNavItem:last-child {
+  border-right: none;
+}
+
+.topNavItem:hover {
+  background: var(--color-festival);
+  color: var(--background-festival);
+  transition: all 400ms;
+}
+
+.topNavItemActive {
+  background: var(--color-festival);
+  color: var(--background-festival);
+}
+
+.backBar {
+  padding: 16px 20px;
+  border-bottom: var(--standard-border);
+}
+
+.backLink {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 40px 20px 20px;
+  gap: 20px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-xlarge);
+  text-transform: uppercase;
+}
+
+.coverImage {
+  position: relative;
+  aspect-ratio: 16/6;
+  width: 100%;
+}
+
+.mainContent {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  padding: 40px 20px;
+  align-items: start;
+}
+
+.contentCol {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.infoHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+}
+
+.prose {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.prose a {
+  color: inherit;
+}
+
+.prose p {
+  margin-bottom: 12px;
+}
+
+/* Films */
+.filmsSection {
+  margin-top: 20px;
+}
+
+.filmsHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.filmsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.filmCard {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  border: var(--standard-border);
+}
+
+.filmCard:hover {
+  background: #f9f9f9;
+}
+
+.filmCardImage {
+  position: relative;
+  aspect-ratio: 16/9;
+}
+
+.filmCardContent {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filmCardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filmCardTitle {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+}
+
+.filmCardExcerpt {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+/* Tickets */
+.ticketsCol {
+  position: sticky;
+  top: 120px;
+}
+
+.ticketsBox {
+  border: var(--standard-border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ticketsHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-medium);
+  text-transform: uppercase;
+}
+
+.instanceGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.instanceGroupLabel {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  font-weight: bold;
+  border-bottom: var(--standard-border);
+  padding-bottom: 8px;
+}
+
+.instance {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: var(--standard-border);
+}
+
+.instance:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.instanceMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.instanceTime {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+}
+
+.instanceVenue {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+.externalTicketsBtn {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  border: var(--standard-border);
+  padding: 8px 16px;
+  display: inline-block;
+}
+
+.externalTicketsBtn:hover {
+  background: #f0f0f0;
+}
+
+.additionalCredits {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.creditGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.creditLabel {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+}
+
+.creditSponsors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+}
+
+.creditText {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+}
+
+.creditText a {
+  color: inherit;
+}
+
+/* Related events */
+.relatedEvents {
+  padding: 40px 20px;
+  border-top: var(--standard-border);
+}
+
+.relatedHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.relatedCard {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.relatedCardImage {
+  position: relative;
+  aspect-ratio: 16/9;
+}
+
+.relatedCardTitle {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+}
+
+.relatedCardMeta {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+  }
+
+  .ticketsCol {
+    position: static;
+    order: -1;
+  }
+
+  .filmsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+}

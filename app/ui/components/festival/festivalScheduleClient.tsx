@@ -48,7 +48,9 @@ export default function FestivalScheduleClient({
   dates,
   venues,
   tags,
-  emptyMessage, initialShowInPerson
+  emptyMessage,
+  initialShowInPerson,
+  isMySchedule,
 }: Props) {
   const [activeDateIndex, setActiveDateIndex] = useState(0)
   const [activeVenue, setActiveVenue] = useState<string | null>(null)
@@ -57,8 +59,6 @@ export default function FestivalScheduleClient({
   const [showVirtual, setShowVirtual] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
-
-  console.log('FestivalScheduleClient rendering, events:', events.length)
 
   useEffect(() => {
     setActiveDateIndex(0)
@@ -148,7 +148,7 @@ export default function FestivalScheduleClient({
       <div className={styles.topNav}>
         <Link
           href={`/festival/festival-2025/schedule`}
-          className={`${styles.topNavItem} ${styles.topNavItemActive}`}
+          className={`${styles.topNavItem} ${!isMySchedule ? styles.topNavItemActive : ''}`}
         >
           Schedule
         </Link>
@@ -166,7 +166,7 @@ export default function FestivalScheduleClient({
         </Link>
         <Link
           href={`/festival/festival-2025/my-schedule`}
-          className={styles.topNavItem}
+          className={`${styles.topNavItem} ${isMySchedule ? styles.topNavItemActive : ''}`}
         >
           My Schedule
         </Link>
@@ -199,40 +199,46 @@ export default function FestivalScheduleClient({
           </button>
         </div>
         <div className={styles.dateNavRight}>
-          <button
-            className={`${styles.filterToggle} ${filtersOpen ? styles.filterToggleActive : ''}`}
-            onClick={() => setFiltersOpen((f) => !f)}
-          >
-            {filtersOpen ? 'CLOSE' : 'FILTER'}
-          </button>
-          <div className={styles.personageToggle}>
+          {!isMySchedule && (
+            <>
+              <button
+                className={`${styles.filterToggle} ${filtersOpen ? styles.filterToggleActive : ''}`}
+                onClick={() => setFiltersOpen((f) => !f)}
+              >
+                {filtersOpen ? 'CLOSE' : 'FILTER'}
+              </button>
+              <div className={styles.personageToggle}>
+                <button
+                  className={`${styles.personageBtn} ${showInPerson && !showVirtual ? styles.personageBtnActive : ''}`}
+                  onClick={() => {
+                    setShowInPerson(true)
+                    setShowVirtual(false)
+                  }}
+                >
+                  IN PERSON
+                </button>
+                <button
+                  className={`${styles.personageBtn} ${showVirtual && !showInPerson ? styles.personageBtnActive : ''}`}
+                  onClick={() => {
+                    setShowVirtual(true)
+                    setShowInPerson(false)
+                  }}
+                >
+                  VIRTUAL
+                </button>
+              </div>
+            </>
+          )}
+          {(!isMySchedule || events.length > 0) && (
             <button
-              className={`${styles.personageBtn} ${showInPerson && !showVirtual ? styles.personageBtnActive : ''}`}
-              onClick={() => {
-                setShowInPerson(true)
-                setShowVirtual(false)
-              }}
+              className={styles.filterToggle}
+              onClick={() =>
+                setViewMode((v) => (v === 'list' ? 'calendar' : 'list'))
+              }
             >
-              IN PERSON
+              {`${viewMode === 'calendar' ? 'LIST' : 'CALENDAR'}`} VIEW
             </button>
-            <button
-              className={`${styles.personageBtn} ${showVirtual && !showInPerson ? styles.personageBtnActive : ''}`}
-              onClick={() => {
-                setShowVirtual(true)
-                setShowInPerson(false)
-              }}
-            >
-              VIRTUAL
-            </button>
-          </div>
-          <button
-            className={styles.filterToggle}
-            onClick={() =>
-              setViewMode((v) => (v === 'list' ? 'calendar' : 'list'))
-            }
-          >
-            {`${viewMode === 'calendar' ? 'LIST' : 'CALENDAR'}`} VIEW
-          </button>
+          )}
         </div>
       </div>
 
