@@ -15,6 +15,7 @@ import {
   SeenFlexibleLayout,
   SeenArticle,
   FestivalLayout,
+  FestivalEvent,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -4067,5 +4068,202 @@ export async function getFestivalPosts(first: number = 3): Promise<
     return data.festivalPosts.nodes
   } catch {
     return []
+  }
+}
+
+export async function getFestivalMenus() {
+  try {
+    const data = await client.request<{
+      siteSettings: {
+        siteSettingsAcf: {
+          festivalMenus: {
+            year: { nodes: { slug: string }[] }
+            menuItems: {
+              link: { url: string; title: string }
+              submenuItems?: { link: { url: string; title: string } }[] | null
+            }[]
+            topMenuItems?: { link: { url: string; title: string } }[] | null
+          }[]
+        }
+      }
+    }>(gql`
+      query getFestivalMenus {
+        siteSettings {
+          siteSettingsAcf {
+            festivalMenus {
+              year {
+                nodes {
+                  slug
+                }
+              }
+              menuItems {
+                link {
+                  url
+                  title
+                }
+                submenuItems {
+                  link {
+                    url
+                    title
+                  }
+                }
+              }
+              topMenuItems {
+                link {
+                  url
+                  title
+                }
+              }
+            }
+          }
+        }
+      }
+    `)
+    return data.siteSettings?.siteSettingsAcf?.festivalMenus ?? []
+  } catch {
+    return []
+  }
+}
+
+export async function getFestivalSchedule(year: string = '2025'): Promise<{
+  events: FestivalEvent[]
+  dates: { name: string; slug: string; count?: number | null }[]
+  venues: { name: string; slug: string; count?: number | null }[]
+  tags: { name: string; slug: string; count?: number | null }[]
+}> {
+  try {
+    const data = await client.request<{
+      festivalEvents: { nodes: FestivalEvent[] }
+      festivalDates: {
+        nodes: { name: string; slug: string; count?: number | null }[]
+      }
+      festivalVenues: {
+        nodes: { name: string; slug: string; count?: number | null }[]
+      }
+      eventiveTags: {
+        nodes: { name: string; slug: string; count?: number | null }[]
+      }
+    }>(
+      gql`
+        query getFestivalSchedule($year: String!) {
+          festivalEvents(first: 500, where: { festivalYear: $year }) {
+            nodes {
+              title
+              slug
+              excerpt
+              content
+              featuredImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              festivalEventAcf {
+                eventiveId
+                ticketsAvailable
+                hideTicketsButton
+                externalTicketsUrl
+                startTime
+                endTime
+                timezone
+                isVirtual
+              }
+              premiereStatuses {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              festivalAwards {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              accessibilities {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              eventiveTags {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              festivalDates {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              festivalVenues {
+                nodes {
+                  name
+                  slug
+                }
+              }
+            }
+          }
+          festivalDates(first: 100) {
+            nodes {
+              name
+              slug
+              count
+            }
+          }
+          festivalVenues(first: 100) {
+            nodes {
+              name
+              slug
+              count
+            }
+          }
+          eventiveTags(first: 100) {
+            nodes {
+              name
+              slug
+              count
+            }
+          }
+        }
+      `,
+      { year },
+    )
+    return {
+      events: data.festivalEvents.nodes,
+      dates: data.festivalDates.nodes.filter(
+        (d) => d.slug.endsWith(year) && (d.count ?? 0) > 0,
+      ),
+      venues: data.festivalVenues.nodes.filter((v) => (v.count ?? 0) > 0),
+      tags: data.eventiveTags.nodes.filter((t) => (t.count ?? 0) > 0),
+    }
+  } catch (error: any) {
+    console.log(
+      'getFestivalSchedule error:',
+      error?.response?.errors?.[0]?.message,
+    )
+    return { events: [], dates: [], venues: [], tags: [] }
+  }
+}
+
+// Add this query to queries.ts first
+export async function getFestivalPageTemplate(slug: string): Promise<string | null> {
+  try {
+    const data = await client.request<{
+      page: { template: { templateName: string } } | null
+    }>(gql`
+      query getFestivalPageTemplate($slug: ID!) {
+        page(id: $slug, idType: URI) {
+          template {
+            templateName
+          }
+        }
+      }
+    `, { slug: `/${slug}/` })
+    return data.page?.template?.templateName ?? null
+  } catch {
+    return null
   }
 }

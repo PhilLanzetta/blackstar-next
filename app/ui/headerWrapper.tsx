@@ -6,14 +6,24 @@ import { useEffect, useState } from 'react'
 import { Header } from './header'
 import type { MegaNav } from '../lib/types'
 
+type FestivalMenu = {
+  year: { nodes: { slug: string }[] }
+  menuItems: {
+    link: { url: string; title: string }
+    submenuItems?: { link: { url: string; title: string } }[] | null
+  }[]
+  topMenuItems?: { link: { url: string; title: string } }[] | null
+}
+
 type Props = {
   megaNavs: MegaNav[]
   initialPageBrand?: string | null
+  festivalMenus?: FestivalMenu[]
 }
 
 export const brandCache = new Map<string, string | null>()
 
-export function HeaderWrapper({ megaNavs, initialPageBrand }: Props) {
+export function HeaderWrapper({ megaNavs, initialPageBrand, festivalMenus }: Props) {
   const pathname = usePathname()
   const [pageBrand, setPageBrand] = useState<string | null>(
     initialPageBrand ?? null,
@@ -52,7 +62,7 @@ export function HeaderWrapper({ megaNavs, initialPageBrand }: Props) {
       .catch(() => setPageBrand(null))
   }, [pathname])
 
-  console.log('pathname:', pathname, 'pageBrand:', pageBrand)
+  console.log('festivalMenus received:', festivalMenus?.length)
 
-  return <Header megaNavs={megaNavs} pageBrand={pageBrand} />
+  return <Header megaNavs={megaNavs} pageBrand={pageBrand} festivalMenus={festivalMenus}/>
 }

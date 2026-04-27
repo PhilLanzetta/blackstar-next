@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { gtFlexaExpanded, gtFlexaMono, swissTime } from './ui/fonts'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
-import { getMegaNav, getFooterNav, getPageBrand } from './lib/queries'
+import { getMegaNav, getFooterNav, getPageBrand, getFestivalMenus } from './lib/queries'
 import { HeaderWrapper } from './ui/headerWrapper'
 import { FooterWrapper } from './ui/footerWrapper'
 import { headers } from 'next/headers'
@@ -35,6 +35,7 @@ export default async function RootLayout({
 }>) {
   const megaNavs = await getMegaNav()
   const footerNav = await getFooterNav()
+  const festivalMenus = await getFestivalMenus()
 
   const headersList = await headers()
   const pathname = headersList.get('x-pathname') ?? ''
@@ -59,7 +60,11 @@ export default async function RootLayout({
       >
         <NextTopLoader color='#000' height={3} showSpinner={false} />
         <Breadcrumb></Breadcrumb>
-        <HeaderWrapper megaNavs={megaNavs} initialPageBrand={pageBrand} />
+        <HeaderWrapper
+          megaNavs={megaNavs}
+          initialPageBrand={pageBrand}
+          festivalMenus={festivalMenus}
+        />
         <EventiveProvider />
         <main>{children}</main>
         <SpeedInsights />

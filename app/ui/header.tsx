@@ -1,25 +1,56 @@
 'use client'
 import { useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import styles from './header.module.css'
 import { MegaNav } from '../lib/types'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { SubLink } from './subLink'
+import { formatLink, isExternalLink } from '@/app/lib/utils/formatLink'
+import EventiveLogin from './components/festival/eventiveLogin'
+
+type FestivalMenuItem = {
+  link: { url: string; title: string }
+  submenuItems?: { link: { url: string; title: string } }[] | null
+}
+
+type FestivalMenu = {
+  year: { nodes: { slug: string }[] }
+  menuItems: FestivalMenuItem[]
+  topMenuItems?: { link: { url: string; title: string } }[] | null
+}
 
 type HeaderProps = {
   megaNavs: MegaNav[]
   pageBrand?: string | null
+  festivalMenus?: FestivalMenu[]
 }
 
-export function Header({ megaNavs, pageBrand }: HeaderProps) {
+function getFestivalYear(pathname: string): number {
+  const match = pathname.match(/festival-(\d{4})/)
+  if (match) return parseInt(match[1])
+  return 2025
+}
+
+export function Header({
+  megaNavs,
+  pageBrand,
+  festivalMenus = [],
+}: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [openSubmenu, setOpenSubmenu] = useState<number | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
+  const pathname = usePathname()
   const isSeen = pageBrand === 'seen'
   const isFestival = pageBrand === 'festival'
+
+  const festivalYear = getFestivalYear(pathname)
+  const currentFestivalMenu = festivalMenus.find(
+    (menu) => parseInt(menu.year.nodes[0]?.slug ?? '0') === festivalYear,
+  )
 
   function handleSearchOpen() {
     setSearchOpen(true)
@@ -36,7 +67,9 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
 
   return (
     <header>
-      <div className={`${styles.headerContainer} ${isFestival ? styles.headerContainerFestival : ''}`}>
+      <div
+        className={`${styles.headerContainer} ${isFestival ? styles.headerContainerFestival : ''}`}
+      >
         <div className={isFestival ? styles.festivalMain : styles.mainHeader}>
           <div
             className={
@@ -173,28 +206,7 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
           )}
           {isFestival && (
             <div className={styles.festivalDateContainer}>
-              <svg
-                viewBox='0 0 264 59'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  d='M233.248 58.4682C217.338 58.4682 206.992 52.9819 203.23 42.6363C202.055 39.3446 201.428 35.5825 201.428 31.3503C201.428 25.9423 202.133 21.2398 203.544 17.2426C207.619 5.87818 218.122 0 234.816 0C252.137 0 263.344 7.21056 263.815 17.5561V17.7913H244.613V17.6345C244.142 13.7941 240.459 11.4428 234.11 11.4428C224.784 11.4428 220.316 17.0859 220.316 29.3909H222.041C225.489 24.2964 231.289 21.3965 241.478 21.3965C249.472 21.3965 255.585 23.6694 259.426 27.4315C262.247 30.253 263.815 34.0934 263.815 38.6392C263.815 43.4201 262.09 47.574 258.877 50.7874C254.018 55.6467 245.318 58.4682 233.248 58.4682ZM221.492 39.8148C221.492 41.5391 222.119 43.185 223.295 44.3606C225.176 46.2416 228.624 47.4173 233.248 47.4173C237.872 47.4173 241.321 46.2416 243.202 44.3606C244.378 43.185 245.005 41.5391 245.005 39.8148C245.005 38.0122 244.378 36.3663 243.202 35.1907C241.321 33.3096 237.872 32.134 233.248 32.134C228.624 32.134 225.176 33.3096 223.295 35.1907C222.119 36.3663 221.492 38.0122 221.492 39.8148Z'
-                  fill='#00D997'
-                />
-                <path
-                  d='M139.175 56.6656V36.9149L166.763 26.9612C173.582 24.2181 175.933 21.6317 175.933 18.0264C175.933 16.4589 175.384 15.2049 174.365 14.186C172.955 12.6969 170.29 11.8347 166.371 11.8347C159.474 11.8347 155.712 14.9697 155.477 20.5344V21.3182H136.432V20.456C136.667 7.60244 147.639 0 166.214 0C178.363 0 186.592 2.74315 191.059 7.28893C193.881 10.0321 195.292 13.6374 195.292 17.6345C195.292 26.2558 190.824 31.8205 177.5 35.9744L156.809 42.7147V44.3606H195.292V56.6656H139.175Z'
-                  fill='#00D997'
-                />
-                <path
-                  d='M97.9922 58.4682C81.6901 58.4682 70.8743 52.59 66.8771 41.5391C65.7015 38.0122 64.9961 33.9366 64.9961 29.2341C64.9961 24.5316 65.6231 20.456 66.8771 16.9291C70.8743 5.87817 81.6901 0 97.9922 0C114.216 0 125.032 5.87817 129.029 16.9291C130.283 20.456 130.91 24.5316 130.91 29.2341C130.91 33.9366 130.283 38.0122 129.029 41.5391C125.11 52.59 114.216 58.4682 97.9922 58.4682ZM84.5116 29.2341C84.5116 33.1529 84.9035 36.2879 85.7656 38.7176C87.725 43.7336 91.8006 46.1632 97.9922 46.1632C104.106 46.1632 108.181 43.7336 110.14 38.7176C111.003 36.2879 111.394 33.1529 111.394 29.2341C111.394 25.3153 111.003 22.1803 110.14 19.7507C108.259 14.6562 104.106 12.305 97.9922 12.305C91.8006 12.305 87.6467 14.6562 85.7656 19.7507C84.9035 22.1803 84.5116 25.3153 84.5116 29.2341Z'
-                  fill='#00D997'
-                />
-                <path
-                  d='M2.74314 56.6656V36.9149L30.3314 26.9612C37.15 24.2181 39.5013 21.6317 39.5013 18.0264C39.5013 16.4589 38.9527 15.2049 37.9338 14.186C36.523 12.6969 33.8583 11.8347 29.9395 11.8347C23.0424 11.8347 19.2804 14.9697 19.0453 20.5344V21.3182H0V20.456C0.235127 7.60244 11.2077 0 29.7827 0C41.931 0 50.1604 2.74315 54.6278 7.28893C57.4493 10.0321 58.8601 13.6374 58.8601 17.6345C58.8601 26.2558 54.3927 31.8205 41.0688 35.9744L20.3777 42.7147V44.3606H58.8601V56.6656H2.74314Z'
-                  fill='#00D997'
-                />
-              </svg>
+              <span className={styles.festivalYear}>{festivalYear}</span>
             </div>
           )}
           <button
@@ -221,11 +233,14 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
             </svg>
           </button>
         </div>
+
         <AnimatePresence>
           {menuOpen && (
             <motion.div
               key='secondary-menu'
-              className={isFestival ? styles.secondaryMenuFestival : styles.secondaryMenu}
+              className={
+                isFestival ? styles.secondaryMenuFestival : styles.secondaryMenu
+              }
               initial={{ height: 0 }}
               animate={{ height: 'auto' }}
               exit={{ height: 0 }}
@@ -253,6 +268,7 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
         {isSeen && (
           <div className={styles.seenSubmenu}>
             <Link href='/seen/about'>About Seen</Link>
@@ -267,6 +283,31 @@ export function Header({ megaNavs, pageBrand }: HeaderProps) {
             </button>
           </div>
         )}
+
+        {isFestival && currentFestivalMenu && (
+          <div className={styles.festivalSubmenu}>
+            {currentFestivalMenu.menuItems.map((item, i) => (
+              <div key={i} className={styles.festivalNavItem}>
+                <Link
+                  href={formatLink(item.link.url)}
+                  target={isExternalLink(item.link.url) ? '_blank' : undefined}
+                  rel={
+                    isExternalLink(item.link.url)
+                      ? 'noopener noreferrer'
+                      : undefined
+                  }
+                  onClick={() => setOpenSubmenu(openSubmenu === i ? null : i)}
+                >
+                  <span
+                    dangerouslySetInnerHTML={{ __html: item.link.title }}
+                  ></span>
+                </Link>
+              </div>
+            ))}
+            <EventiveLogin />
+          </div>
+        )}
+
         <AnimatePresence>
           {searchOpen && (
             <motion.div

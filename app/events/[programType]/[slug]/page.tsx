@@ -75,6 +75,7 @@ export default async function EventPage({ params }: Props) {
       ? await getChildProgramEvents(slug, programType)
       : []
 
+
   return (
     <main>
       {layouts.map((layout, index) => {

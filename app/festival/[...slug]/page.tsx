@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import {
   getFestivalPage,
+  getFestivalPageTemplate,
   getDefaultPage,
   getAllFestivalPageSlugs,
 } from '@/app/lib/queries'
@@ -33,7 +34,9 @@ import type {
   PressClippingsLayout,
   ContentLayout as ContentLayoutType,
   EventDetailsLayout,
-  ChildProgramEventsLayout, FestivalContentLayout, FestivalExplainersLayout
+  ChildProgramEventsLayout,
+  FestivalContentLayout,
+  FestivalExplainersLayout,
 } from '@/app/lib/types'
 import FestivalSpotlightCarousel from '@/app/ui/components/festival/festivalSpotlightCarousel'
 import FestivalLatestNews from '@/app/ui/components/festival/festivalLatestNews'
@@ -64,6 +67,7 @@ import EventDetails from '@/app/ui/components/eventDetails'
 import ChildProgramEvents from '@/app/ui/components/childProgramEvents'
 import FestivalExplainers from '@/app/ui/components/festival/festivalExplainers'
 import FestivalContent from '@/app/ui/components/festival/festivalContent'
+import SchedulePage from './schedulePage'
 
 export const revalidate = 3600
 export const dynamicParams = false
@@ -81,11 +85,28 @@ export default async function FestivalPage({ params }: Props) {
   const slugArray = Array.isArray(slug) ? slug : [slug]
   const path = slugArray.join('/')
 
+  // Check template first
+  const templateName = await getFestivalPageTemplate(path)
+
+  if (templateName === 'Festival Schedule') {
+    const year = path.match(/(\d{4})/)?.[1] ?? '2025'
+    return (
+      <main style={{ paddingTop: '200px' }}>
+        <SchedulePage year={year} />
+      </main>
+    )
+  }
+
   const festivalLayouts = await getFestivalPage(path)
 
   if (festivalLayouts.length > 0) {
+    const firstLayout = festivalLayouts[0]
+    const startsWithHero =
+      firstLayout?.__typename ===
+      'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpotlightCarouselLayout'
+
     return (
-      <main>
+      <main style={startsWithHero ? undefined : { paddingTop: '200px' }}>
         {festivalLayouts.map((layout: FestivalLayout, index: number) => {
           switch (layout.__typename) {
             case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpotlightCarouselLayout':

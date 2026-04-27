@@ -899,6 +899,32 @@ export type FestivalExplainersLayout = {
   }[]
 }
 
+export type FestivalEvent = {
+  title: string
+  slug: string
+  excerpt?: string | null
+  content?: string | null
+  featuredImage?: {
+    node: { sourceUrl: string; altText: string }
+  } | null
+  festivalEventAcf?: {
+    eventiveId?: string | null
+    ticketsAvailable?: boolean | null
+    hideTicketsButton?: boolean | null
+    externalTicketsUrl?: string | null
+    startTime?: string | null
+    endTime?: string | null
+    timezone?: string | null
+    isVirtual?: boolean | null
+  } | null
+  premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
+  festivalAwards?: { nodes: { name: string; slug: string }[] } | null
+  accessibilities?: { nodes: { name: string; slug: string }[] } | null
+  eventiveTags?: { nodes: { name: string; slug: string }[] } | null
+  festivalDates?: { nodes: { name: string; slug: string }[] } | null
+  festivalVenues?: { nodes: { name: string; slug: string }[] } | null
+}
+
 export type FestivalLayout =
   | FestivalSpotlightCarouselLayout
   | FestivalLatestNewsLayout

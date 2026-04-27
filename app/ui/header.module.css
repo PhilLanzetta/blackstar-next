@@ -47,7 +47,6 @@
 
 .festivalDateContainer {
   padding: 10px;
-  width: 25%;
   display: flex;
   align-items: center;
   border-left: 2px solid #00d997;
@@ -358,4 +357,53 @@
   .seenSubmenu a:nth-last-of-type(-n + 2) {
     grid-column: span 3;
   }
+}
+
+.festivalYear {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  color: #00D997;
+  text-transform: uppercase;
+}
+
+.festivalNavItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.submenuChevron {
+  margin-left: 4px;
+  font-size: 0.8em;
+}
+
+.festivalSubmenu {
+  padding: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #00D997;
+  color: #00D997;
+  background: #0704a5;
+  border-bottom: none;
+  transition: all 400ms;
+}
+
+.festivalSubmenu a {
+  padding: 8px 12px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  color: #00D997;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  white-space: nowrap;
+  transition: all 400ms;
+}
+
+.festivalSubmenu a:hover {
+  background: #00D997;
+  color: #0704a5;
+  transition: all 400ms;
 }
