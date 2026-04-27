@@ -66,7 +66,6 @@ export default async function RootLayout({
           festivalMenus={festivalMenus}
         />
         <EventiveProvider>{children}</EventiveProvider>
-        <main>{children}</main>
         <SpeedInsights />
         <SeenNewsletterWrapper />
         <FooterWrapper initialPageBrand={pageBrand} footerNav={footerNav} />
