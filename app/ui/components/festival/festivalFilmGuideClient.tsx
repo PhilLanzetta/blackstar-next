@@ -1,5 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { FestivalFilm } from '@/app/lib/types'
@@ -22,7 +23,6 @@ function Tooltip({ label, tooltip }: { label: string; tooltip: string }) {
 }
 
 function TrailerModal({ url, onClose }: { url: string; onClose: () => void }) {
-  // Extract YouTube ID if YouTube URL
   const youtubeMatch = url.match(
     /(?:youtube\.com\/embed\/|youtu\.be\/|youtube\.com\/watch\?v=)([^&?/]+)/,
   )
@@ -58,6 +58,10 @@ function TrailerModal({ url, onClose }: { url: string; onClose: () => void }) {
 }
 
 export default function FestivalFilmGuideClient({ films, tags }: Props) {
+  const pathname = usePathname()
+  const yearMatch = pathname.match(/festival-(\d{4})/)
+  const festivalYear = yearMatch ? yearMatch[1] : '2025'
+
   const [activeTag, setActiveTag] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -93,26 +97,26 @@ export default function FestivalFilmGuideClient({ films, tags }: Props) {
       {/* Top nav */}
       <div className={styles.topNav}>
         <Link
-          href='/festival/festival-2025/schedule'
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/schedule`}
+          className={`${styles.topNavItem} ${pathname.includes('schedule') ? styles.topNavItemActive : ''}`}
         >
           Schedule
         </Link>
         <Link
-          href='/festival/festival-2025/film-guide'
-          className={`${styles.topNavItem} ${styles.topNavItemActive}`}
+          href={`/festival/festival-${festivalYear}/film-guide`}
+          className={`${styles.topNavItem} ${pathname.includes('film-guide') ? styles.topNavItemActive : ''}`}
         >
           Films A–Z
         </Link>
         <Link
-          href='/festival/festival-2025/event-guide'
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/event-guide`}
+          className={`${styles.topNavItem} ${pathname.includes('event-guide') ? styles.topNavItemActive : ''}`}
         >
           Talks & Events
         </Link>
         <Link
-          href='/festival/festival-2025/my-schedule'
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/my-schedule`}
+          className={`${styles.topNavItem} ${pathname.includes('my-schedule') ? styles.topNavItemActive : ''}`}
         >
           My Schedule
         </Link>
@@ -172,10 +176,7 @@ export default function FestivalFilmGuideClient({ films, tags }: Props) {
         {filteredFilms.map((film, i) => (
           <div key={i} className={styles.card}>
             {/* Image */}
-            <Link
-              href={`/festival/films/${film.slug}`}
-              className={styles.cardImageLink}
-            >
+            <Link href={film.uri} className={styles.cardImageLink}>
               <div className={styles.cardImage}>
                 {film.featuredImage?.node?.sourceUrl ? (
                   <Image
@@ -206,10 +207,7 @@ export default function FestivalFilmGuideClient({ films, tags }: Props) {
                 ))}
               </div>
 
-              <Link
-                href={`/festival/films/${film.slug}`}
-                className={styles.cardTitleLink}
-              >
+              <Link href={film.uri} className={styles.cardTitleLink}>
                 <h2 className={styles.cardTitle}>{film.title}</h2>
               </Link>
 
@@ -245,10 +243,7 @@ export default function FestivalFilmGuideClient({ films, tags }: Props) {
 
               {/* Actions */}
               <div className={styles.cardActions}>
-                <Link
-                  href={`/festival/films/${film.slug}`}
-                  className={styles.actionBtn}
-                >
+                <Link href={film.uri} className={styles.actionBtn}>
                   Learn More
                 </Link>
                 {film.festivalFilmAcf?.trailerUrl && (

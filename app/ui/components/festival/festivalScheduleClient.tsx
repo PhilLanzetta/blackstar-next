@@ -1,10 +1,9 @@
 'use client'
 import { useState, useMemo, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { FestivalEvent } from '@/app/lib/types'
-import { cleanHtml } from '@/app/lib/utils/cleanHtml'
-import { formatLink } from '@/app/lib/utils/formatLink'
 import styles from './festivalSchedule.module.css'
 import FestivalCalendarView from './festivalCalendarView'
 import WishlistButton from './wishlistButton'
@@ -52,6 +51,10 @@ export default function FestivalScheduleClient({
   initialShowInPerson,
   isMySchedule,
 }: Props) {
+  const pathname = usePathname()
+  const yearMatch = pathname.match(/festival-(\d{4})/)
+  const festivalYear = yearMatch ? yearMatch[1] : '2025'
+
   const [activeDateIndex, setActiveDateIndex] = useState(0)
   const [activeVenue, setActiveVenue] = useState<string | null>(null)
   const [activeTags, setActiveTags] = useState<string[]>([])
@@ -64,7 +67,6 @@ export default function FestivalScheduleClient({
     setActiveDateIndex(0)
   }, [events])
 
-  // Sort dates chronologically
   const sortedDates = useMemo(() => {
     return [...dates].sort((a, b) => {
       const months = [
@@ -147,26 +149,26 @@ export default function FestivalScheduleClient({
       {/* Top nav tabs */}
       <div className={styles.topNav}>
         <Link
-          href={`/festival/festival-2025/schedule`}
-          className={`${styles.topNavItem} ${!isMySchedule ? styles.topNavItemActive : ''}`}
+          href={`/festival/festival-${festivalYear}/schedule`}
+          className={`${styles.topNavItem} ${pathname.includes('schedule') && !pathname.includes('my-schedule') ? styles.topNavItemActive : ''}`}
         >
           Schedule
         </Link>
         <Link
-          href={`/festival/festival-2025/film-guide`}
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/film-guide`}
+          className={`${styles.topNavItem} ${pathname.includes('film-guide') ? styles.topNavItemActive : ''}`}
         >
           Films A–Z
         </Link>
         <Link
-          href={`/festival/festival-2025/event-guide`}
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/event-guide`}
+          className={`${styles.topNavItem} ${pathname.includes('event-guide') ? styles.topNavItemActive : ''}`}
         >
           Talks & Events
         </Link>
         <Link
-          href={`/festival/festival-2025/my-schedule`}
-          className={`${styles.topNavItem} ${isMySchedule ? styles.topNavItemActive : ''}`}
+          href={`/festival/festival-${festivalYear}/my-schedule`}
+          className={`${styles.topNavItem} ${pathname.includes('my-schedule') ? styles.topNavItemActive : ''}`}
         >
           My Schedule
         </Link>
@@ -337,7 +339,7 @@ export default function FestivalScheduleClient({
                       {/* Title */}
                       <h2 className={styles.eventTitle}>
                         <Link
-                          href={`/festival/events/${event.slug}`}
+                          href={event.uri}
                           className={styles.eventTitleLink}
                         >
                           {event.title}
@@ -378,10 +380,7 @@ export default function FestivalScheduleClient({
 
                       {/* Actions */}
                       <div className={styles.eventActions}>
-                        <Link
-                          href={`/festival/events/${event.slug}`}
-                          className={styles.actionBtn}
-                        >
+                        <Link href={event.uri} className={styles.actionBtn}>
                           READ MORE
                         </Link>
                         {acf?.eventiveId && (
@@ -393,7 +392,7 @@ export default function FestivalScheduleClient({
                     {/* Image */}
                     {event.featuredImage?.node?.sourceUrl && (
                       <Link
-                        href={`/festival/events/${event.slug}`}
+                        href={event.uri}
                         className={styles.eventImageWrapper}
                       >
                         <Image

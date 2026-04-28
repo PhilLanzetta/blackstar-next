@@ -2,7 +2,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useState, useRef, useEffect } from 'react'
 import styles from './subLink.module.css'
-import BrandLink from './components/brandLink'
+import Link from 'next/link'
 import { useWindowSize } from 'usehooks-ts'
 import { formatLink } from '@/app/lib/utils/formatLink'
 
@@ -68,7 +68,7 @@ export function SubLink({
               {subNav &&
                 subNav.map((item, index) => {
                   return (
-                    <BrandLink
+                    <Link
                       href={formatLink(item.menuItem.url)}
                       className={isFestival ? styles.underLinkFestival : styles.underLink}
                       key={index}
@@ -89,7 +89,7 @@ export function SubLink({
                       }}
                     >
                       {item.menuItem.title}
-                    </BrandLink>
+                    </Link>
                   )
                 })}
             </motion.div>

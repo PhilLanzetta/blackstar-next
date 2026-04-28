@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { cleanHtml } from '@/app/lib/utils/cleanHtml'
@@ -28,6 +29,7 @@ type Director = {
 type EventNode = {
   title: string
   slug: string
+  uri: string
   festivalEventAcf?: {
     startTime?: string | null
     endTime?: string | null
@@ -45,6 +47,7 @@ type Props = {
   film: {
     title: string
     slug: string
+    uri: string
     content?: string | null
     featuredImage?: { node: { sourceUrl: string; altText: string } } | null
     premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
@@ -157,6 +160,10 @@ function SocialIcon({
 }
 
 export default function FestivalFilmPage({ film }: Props) {
+  const pathname = usePathname()
+  const yearMatch = pathname.match(/\/festival(?:-\d{4})?\/(\d{4})\//)
+  const festivalYear = yearMatch ? yearMatch[1] : '2025'
+
   const [showTrailer, setShowTrailer] = useState(false)
   const acf = film.festivalFilmAcf
   const coverImage =
@@ -171,26 +178,26 @@ export default function FestivalFilmPage({ film }: Props) {
       {/* Top nav */}
       <div className={styles.topNav}>
         <Link
-          href='/festival/festival-2025/schedule'
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/schedule`}
+          className={`${styles.topNavItem} ${pathname.includes('schedule') && !pathname.includes('my-schedule') ? styles.topNavItemActive : ''}`}
         >
           Schedule
         </Link>
         <Link
-          href='/festival/festival-2025/film-guide'
-          className={`${styles.topNavItem} ${styles.topNavItemActive}`}
+          href={`/festival/festival-${festivalYear}/film-guide`}
+          className={`${styles.topNavItem} ${pathname.includes('film-guide') || pathname.includes('/films/') ? styles.topNavItemActive : ''}`}
         >
           Films A–Z
         </Link>
         <Link
-          href='/festival/festival-2025/event-guide'
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/event-guide`}
+          className={`${styles.topNavItem} ${pathname.includes('event-guide') || pathname.includes('/events/') ? styles.topNavItemActive : ''}`}
         >
           Talks & Events
         </Link>
         <Link
-          href='/festival/festival-2025/my-schedule'
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/my-schedule`}
+          className={`${styles.topNavItem} ${pathname.includes('my-schedule') ? styles.topNavItemActive : ''}`}
         >
           My Schedule
         </Link>
@@ -199,7 +206,7 @@ export default function FestivalFilmPage({ film }: Props) {
       {/* Back + header */}
       <div className={styles.backBar}>
         <Link
-          href='/festival/festival-2025/film-guide'
+          href={`/festival/festival-${festivalYear}/film-guide`}
           className={styles.backLink}
         >
           ← Back to Films A–Z
@@ -305,10 +312,7 @@ export default function FestivalFilmPage({ film }: Props) {
                   const eacf = event.festivalEventAcf
                   return (
                     <div key={i} className={styles.instance}>
-                      <Link
-                        href={`/festival/events/${event.slug}`}
-                        className={styles.instanceLink}
-                      >
+                      <Link href={event.uri} className={styles.instanceLink}>
                         <div className={styles.instanceMeta}>
                           {event.festivalDates?.nodes[0] && (
                             <span className={styles.instanceDate}>

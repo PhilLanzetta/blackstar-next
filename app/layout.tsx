@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { gtFlexaExpanded, gtFlexaMono, swissTime } from './ui/fonts'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
-import { getMegaNav, getFooterNav, getPageBrand, getFestivalMenus } from './lib/queries'
+import { getMegaNav, getFooterNav, getFestivalMenus } from './lib/queries'
 import { HeaderWrapper } from './ui/headerWrapper'
 import { FooterWrapper } from './ui/footerWrapper'
 import { headers } from 'next/headers'
@@ -33,22 +33,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const megaNavs = await getMegaNav()
-  const footerNav = await getFooterNav()
-  const festivalMenus = await getFestivalMenus()
+  const [megaNavs, footerNav, festivalMenus] = await Promise.all([
+    getMegaNav(),
+    getFooterNav(),
+    getFestivalMenus(),
+  ])
 
+  // Used only to conditionally wrap children in EventiveProvider.
+  // HeaderWrapper and FooterWrapper derive brand client-side via usePathname().
   const headersList = await headers()
   const pathname = headersList.get('x-pathname') ?? ''
-  const slug = pathname.split('/').filter(Boolean).join('/')
-  const isSeen = pathname.startsWith('/seen/')
-  const isFestival = pathname.startsWith('/festival/')
-  const pageBrand = isSeen
-    ? 'seen'
-    : isFestival
-      ? 'festival'
-      : slug
-        ? await getPageBrand(slug)
-        : null
+  const isFestival = pathname.startsWith('/festival')
 
   return (
     <html
@@ -59,12 +54,8 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextTopLoader color='#000' height={3} showSpinner={false} />
-        <Breadcrumb></Breadcrumb>
-        <HeaderWrapper
-          megaNavs={megaNavs}
-          initialPageBrand={pageBrand}
-          festivalMenus={festivalMenus}
-        />
+        <Breadcrumb />
+        <HeaderWrapper megaNavs={megaNavs} festivalMenus={festivalMenus} />
         {isFestival ? (
           <EventiveProvider>{children}</EventiveProvider>
         ) : (
@@ -72,7 +63,7 @@ export default async function RootLayout({
         )}
         <SpeedInsights />
         <SeenNewsletterWrapper />
-        <FooterWrapper initialPageBrand={pageBrand} footerNav={footerNav} />
+        <FooterWrapper footerNav={footerNav} />
       </body>
     </html>
   )

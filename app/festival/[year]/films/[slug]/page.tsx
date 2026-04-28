@@ -5,8 +5,8 @@ import FestivalFilmPage from '@/app/ui/components/festival/festivalFilmPage'
 export const revalidate = 3600
 export const dynamicParams = true
 
-type Props = {
-  params: Promise<{ slug: string }>
+interface Props {
+  params: Promise<{ year: string; slug: string }>
 }
 
 export async function generateStaticParams() {

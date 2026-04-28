@@ -1,0 +1,226 @@
+/* app/components/search/search.module.css
+   ─────────────────────────────────────────────────────────────────────────────
+   Only page-level chrome: layout, search bar, filter tabs, grid wrapper,
+   skeleton. Card internals live in your existing postCard.module.css.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Page layout ─────────────────────────────────────────────────────────── */
+
+.page {
+  padding-top: 200px;
+  padding-bottom: 6rem;
+}
+
+.header {
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: var(--gt-large);
+  font-family: var(--gt-expanded);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.prompt {
+  padding: 0 20px;
+  opacity: 0.5;
+  font-size: 0.9rem;
+}
+
+/* ── Search bar ──────────────────────────────────────────────────────────── */
+/* Matches design: full-width text input + GO button flush right           */
+
+.searchBar {
+  display: flex;
+  width: 100%;
+  border: 1px solid currentColor;
+  margin-bottom: 1rem;
+}
+
+.searchBarInput {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  font-size: var(--mono-large);
+  font-style: italic;
+  font-family: var(--gt-mono);
+  background: transparent;
+  color: inherit;
+  border: none;
+  outline: none;
+  min-width: 0;
+}
+
+.searchBarInput::placeholder {
+  opacity: 0.4;
+}
+
+/* Remove browser default search-input chrome */
+.searchBarInput::-webkit-search-decoration,
+.searchBarInput::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.searchBarButton {
+  flex-shrink: 0;
+  padding: 0.875rem 2rem;
+  font-size: var(--mono-large);
+  font-family: var(--gt-mono);
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: inherit;
+  border: none;
+  border-left: 1px solid currentColor;
+  cursor: pointer;
+  transition: all 400ms;
+}
+
+.searchBarButton:hover:not(:disabled) {
+  background: #a1cfcc;
+  transition: all 400ms;
+}
+
+.searchBarButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── Filter tabs ─────────────────────────────────────────────────────────── */
+/* Horizontal scrolling pill row; active tab fills with black              */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filterTab {
+  flex-shrink: 0;
+  padding: 0.4em 1.5em;
+  font-size: 0.75rem;
+  font-family: var(--gt-mono);
+  text-transform: uppercase;
+  background: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  transition: all 400ms;
+  white-space: nowrap;
+}
+
+.filterTab:hover:not(:disabled):not(.filterTabActive) {
+  background: #a1cfcc;
+  transition: all 400ms;
+}
+
+.filterTabActive {
+  background: #a1cfcc;
+}
+
+.filterTabDisabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ── Results grid ────────────────────────────────────────────────────────── */
+/* 4 columns desktop → 2 tablet → 1 mobile                                 */
+
+.grid {
+  display: grid;
+  padding: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px; /* cards use borders, not gap, to match the design */
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.noResults {
+  padding: 3rem 0;
+  opacity: 0.5;
+  font-size: 0.9rem;
+  grid-column: 1 / -1;
+}
+
+/* ── Skeleton loader ─────────────────────────────────────────────────────── */
+
+.skeleton {
+  display: grid;
+  padding: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  .skeleton {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .skeleton {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skeletonCard {
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.skeletonImage,
+.skeletonMeta,
+.skeletonTitle,
+.skeletonExcerpt {
+  border-radius: 2px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  animation: shimmer 1.4s ease-in-out infinite;
+  background-size: 200% 100%;
+}
+
+.skeletonImage {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 0.875rem;
+}
+
+.skeletonMeta {
+  width: 55%;
+  height: 11px;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonTitle {
+  width: 85%;
+  height: 20px;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonExcerpt {
+  width: 100%;
+  height: 48px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -908,6 +908,7 @@ export type FestivalExplainersLayout = {
 export type FestivalEvent = {
   title: string
   slug: string
+  uri: string
   excerpt?: string | null
   content?: string | null
   featuredImage?: {
@@ -952,6 +953,7 @@ export type FestivalLayout =
 export type FestivalFilm = {
   title: string
   slug: string
+  uri: string
   excerpt?: string | null
   featuredImage?: { node: { sourceUrl: string; altText: string } } | null
   premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
@@ -970,4 +972,45 @@ export type FestivalFilm = {
   accessibilities?: {
     nodes: { name: string; slug: string; description?: string | null }[]
   } | null
+}
+
+// ─── REPLACE search types in app/lib/types.ts ────────────────────────────────
+
+export type SearchFilterType =
+  | 'all'
+  | 'pages'
+  | 'news'
+  | 'festival'
+  | 'events'
+  | 'seen'
+  | 'many-lumens'
+
+export type SearchResultType =
+  | 'film'         // festivalFilms  → filterKey: 'festival'
+  | 'event'        // festivalEvents → filterKey: 'events'
+  | 'post'         // posts          → filterKey: 'news'
+  | 'page'         // pages          → filterKey: 'pages'
+  | 'seen-article' // seenArticles   → filterKey: 'seen'
+  | 'lumen-episode'// lumenEpisodes  → filterKey: 'many-lumens'
+
+export interface SearchResultImage {
+  sourceUrl: string
+  altText: string
+}
+
+export interface SearchResult {
+  id: string
+  title: string
+  uri: string
+  type: SearchResultType
+  filterKey: SearchFilterType
+  image?: SearchResultImage | null
+  typeLabel: string
+  meta?: string      // directors, issue name, season, etc.
+  excerpt?: string
+}
+
+export interface SearchData {
+  results: SearchResult[]
+  total: number
 }

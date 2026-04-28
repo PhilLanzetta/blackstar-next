@@ -24,6 +24,7 @@ import FestivalSponsors from '@/app/ui/components/festival/festivalSponsors'
 type Film = {
   title: string
   slug: string
+  uri: string
   excerpt?: string | null
   featuredImage?: { node: { sourceUrl: string; altText: string } } | null
   premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
@@ -34,6 +35,7 @@ type Film = {
 type EventInstance = {
   title: string
   slug: string
+  uri: string
   featuredImage?: { node: { sourceUrl: string; altText: string } } | null
   festivalEventAcf?: {
     startTime?: string | null
@@ -48,9 +50,11 @@ type EventInstance = {
 }
 
 type Props = {
+  festivalYear?: string
   event: {
     title: string
     slug: string
+    uri: string
     content?: string | null
     featuredImage?: { node: { sourceUrl: string; altText: string } } | null
     premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
@@ -127,7 +131,10 @@ function formatTime(isoString: string, timezoneAbv?: string | null): string {
   }
 }
 
-export default function FestivalEventPage({ event }: Props) {
+export default function FestivalEventPage({
+  event,
+  festivalYear = '2025',
+}: Props) {
   const acf = event.festivalEventAcf
   const isCollection = acf?.eventLayout?.[0] === 'collection'
   const films = acf?.films?.nodes ?? []
@@ -140,17 +147,10 @@ export default function FestivalEventPage({ event }: Props) {
     (e) => e.festivalEventAcf?.isVirtual,
   )
 
-  console.log(
-    'flexible layouts:',
-    JSON.stringify(
-      event.festivalFlexibleLayoutsAcf?.festival24FlexibleLayouts?.length,
-    ),
-  )
-
-  // This event itself counts as an instance too
   const thisInstance: EventInstance = {
     title: event.title,
     slug: event.slug,
+    uri: event.uri,
     festivalEventAcf: acf,
     festivalVenues: event.festivalVenues,
   }
@@ -168,34 +168,35 @@ export default function FestivalEventPage({ event }: Props) {
       {/* Top nav tabs */}
       <div className={styles.topNav}>
         <Link
-          href='/festival/festival-2025/schedule'
+          href={`/festival/festival-${festivalYear}/schedule`}
           className={styles.topNavItem}
         >
           Schedule
         </Link>
         <Link
-          href='/festival/festival-2025/film-guide'
+          href={`/festival/festival-${festivalYear}/film-guide`}
           className={styles.topNavItem}
         >
           Films A–Z
         </Link>
         <Link
-          href='/festival/festival-2025/event-guide'
-          className={styles.topNavItem}
+          href={`/festival/festival-${festivalYear}/event-guide`}
+          className={`${styles.topNavItem} ${styles.topNavItemActive}`}
         >
           Talks & Events
         </Link>
         <Link
-          href='/festival/festival-2025/my-schedule'
+          href={`/festival/festival-${festivalYear}/my-schedule`}
           className={styles.topNavItem}
         >
           My Schedule
         </Link>
       </div>
+
       {/* Back link */}
       <div className={styles.backBar}>
         <Link
-          href='/festival/festival-2025/schedule'
+          href={`/festival/festival-${festivalYear}/schedule`}
           className={styles.backLink}
         >
           ← Back to Schedule
@@ -205,7 +206,6 @@ export default function FestivalEventPage({ event }: Props) {
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          {/* Tags */}
           <div className={styles.tags}>
             {event.premiereStatuses?.nodes.map((s, i) => (
               <span key={i} className={styles.tag}>
@@ -266,11 +266,7 @@ export default function FestivalEventPage({ event }: Props) {
               </h2>
               <div className={styles.filmsGrid}>
                 {films.map((film, i) => (
-                  <Link
-                    key={i}
-                    href={`/festival/films/${film.slug}`}
-                    className={styles.filmCard}
-                  >
+                  <Link key={i} href={film.uri} className={styles.filmCard}>
                     {film.featuredImage?.node?.sourceUrl && (
                       <div className={styles.filmCardImage}>
                         <Image
@@ -315,7 +311,6 @@ export default function FestivalEventPage({ event }: Props) {
           <div className={styles.ticketsBox}>
             <h2 className={styles.ticketsHeading}>Screenings</h2>
 
-            {/* In-person instances */}
             {allInPersonInstances.length > 0 && (
               <div className={styles.instanceGroup}>
                 <h3 className={styles.instanceGroupLabel}>In Person</h3>
@@ -353,7 +348,6 @@ export default function FestivalEventPage({ event }: Props) {
               </div>
             )}
 
-            {/* Virtual instances */}
             {allVirtualInstances.length > 0 && (
               <div className={styles.instanceGroup}>
                 <h3 className={styles.instanceGroupLabel}>Virtual</h3>
@@ -386,7 +380,6 @@ export default function FestivalEventPage({ event }: Props) {
               </div>
             )}
 
-            {/* Single instance with no duplicates */}
             {allInPersonInstances.length === 0 &&
               allVirtualInstances.length === 0 && (
                 <div className={styles.instance}>
@@ -433,14 +426,11 @@ export default function FestivalEventPage({ event }: Props) {
         <div className={styles.additionalCredits}>
           {acf.additionalCredits.map((credit, i) => {
             const type = credit.type?.[0]
-
             return (
               <div key={i} className={styles.creditGroup}>
                 {credit.label && (
                   <h3 className={styles.creditLabel}>{credit.label}</h3>
                 )}
-
-                {/* Sponsor logos */}
                 {type === 'sponsor' && credit.sponsors?.nodes && (
                   <div className={styles.creditSponsors}>
                     {credit.sponsors.nodes.map((sponsor, j) => {
@@ -477,8 +467,6 @@ export default function FestivalEventPage({ event }: Props) {
                     })}
                   </div>
                 )}
-
-                {/* Single logo */}
                 {type === 'logo' && credit.logo?.node?.sourceUrl && (
                   <div className={styles.creditSponsors}>
                     {credit.link ? (
@@ -514,8 +502,6 @@ export default function FestivalEventPage({ event }: Props) {
                     )}
                   </div>
                 )}
-
-                {/* Text credit */}
                 {type === 'text' && credit.credit && (
                   <p className={styles.creditText}>
                     {credit.link ? (
@@ -531,8 +517,6 @@ export default function FestivalEventPage({ event }: Props) {
                     )}
                   </p>
                 )}
-
-                {/* Manual credits */}
                 {credit.manualCredits && credit.manualCredits.length > 0 && (
                   <div className={styles.creditSponsors}>
                     {credit.manualCredits.map((mc, j) => {
@@ -649,11 +633,7 @@ export default function FestivalEventPage({ event }: Props) {
           <h2 className={styles.relatedHeading}>Related Events</h2>
           <div className={styles.relatedGrid}>
             {acf.relatedEvents.nodes.map((rel, i) => (
-              <Link
-                key={i}
-                href={`/festival/events/${rel.slug}`}
-                className={styles.relatedCard}
-              >
+              <Link key={i} href={rel.uri} className={styles.relatedCard}>
                 {rel.featuredImage?.node?.sourceUrl && (
                   <div className={styles.relatedCardImage}>
                     <Image

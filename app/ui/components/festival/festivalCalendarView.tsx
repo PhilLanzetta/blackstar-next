@@ -167,7 +167,7 @@ export default function FestivalCalendarView({ events, venues }: Props) {
                     return (
                       <Link
                         key={ei}
-                        href={`/festival/events/${event.slug}`}
+                        href={event.uri}
                         className={styles.eventBlock}
                         style={style}
                         title={event.title ?? ''}

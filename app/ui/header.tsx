@@ -26,10 +26,15 @@ type HeaderProps = {
   festivalMenus?: FestivalMenu[]
 }
 
+// Replace getFestivalYear in app/ui/header.tsx with this:
+
 function getFestivalYear(pathname: string): number {
-  const match = pathname.match(/festival-(\d{4})/)
-  if (match) return parseInt(match[1])
-  return 2025
+  // Explicit year in URL: /festival-2024/... or /blackstar-film-festival-2024/...
+  const yearInPath = pathname.match(/[/-](\d{4})[/-]?/)
+  if (yearInPath) return parseInt(yearInPath[1])
+
+  // Fall back to current festival year
+  return 2026
 }
 
 export function Header({
@@ -209,7 +214,7 @@ export function Header({
               <span className={styles.festivalYear}>{festivalYear}</span>
             </div>
           )}
-          <button
+          <Link href="/search"
             className={isFestival ? styles.festivalSearch : styles.searchButton}
           >
             <svg
@@ -231,7 +236,7 @@ export function Header({
                 strokeWidth='2.05595'
               />
             </svg>
-          </button>
+          </Link>
         </div>
 
         <AnimatePresence>

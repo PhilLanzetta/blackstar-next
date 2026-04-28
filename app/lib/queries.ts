@@ -1076,33 +1076,6 @@ export async function getDefaultPage(slug: string): Promise<DefaultPageResult> {
   }
 }
 
-export async function getPageBrand(slug: string): Promise<string | null> {
-  try {
-    const data = await client.request<{
-      page: { pageBrands: { nodes: { slug: string }[] } } | null
-    }>(
-      gql`
-        query getPageBrand($slug: ID!) {
-          page(id: $slug, idType: URI) {
-            pageBrands {
-              nodes {
-                slug
-              }
-            }
-          }
-        }
-      `,
-      { slug },
-    )
-
-    return data.page?.pageBrands?.nodes?.[0]?.slug ?? null
-  } catch (error: any) {
-    // handle partial responses
-    const data = error?.response?.data
-    return data?.page?.pageBrands?.nodes?.[0]?.slug ?? null
-  }
-}
-
 export async function getAllPressClippings(): Promise<PressClipping[]> {
   const all: PressClipping[] = []
   let hasNextPage = true
@@ -3726,6 +3699,7 @@ export async function getFestivalPage(slug: string): Promise<FestivalLayout[]> {
                               ... on FestivalFilm {
                                 title
                                 slug
+                                uri
                                 featuredImage {
                                   node {
                                     sourceUrl
@@ -4178,6 +4152,7 @@ export async function getFestivalSchedule(year: string = '2025'): Promise<{
             nodes {
               title
               slug
+              uri
               excerpt
               content
               featuredImage {
@@ -4196,9 +4171,7 @@ export async function getFestivalSchedule(year: string = '2025'): Promise<{
                 timezone
                 timezoneAbv
                 isVirtual
-                timezoneAbv
                 isEvent
-                isVirtual
               }
               premiereStatuses {
                 nodes {
@@ -4311,6 +4284,7 @@ export async function getFestivalEvent(slug: string) {
       festivalEvent: {
         title: string
         slug: string
+        uri: string
         content?: string | null
         excerpt?: string | null
         featuredImage?: { node: { sourceUrl: string; altText: string } } | null
@@ -4345,6 +4319,7 @@ export async function getFestivalEvent(slug: string) {
             nodes: {
               title: string
               slug: string
+              uri: string
               excerpt?: string | null
               content?: string | null
               festivalFilmId?: number | null
@@ -4364,6 +4339,7 @@ export async function getFestivalEvent(slug: string) {
             nodes: {
               title: string
               slug: string
+              uri: string
               featuredImage?: {
                 node: { sourceUrl: string; altText: string }
               } | null
@@ -4386,6 +4362,7 @@ export async function getFestivalEvent(slug: string) {
             nodes: {
               title: string
               slug: string
+              uri: string
               featuredImage?: {
                 node: { sourceUrl: string; altText: string }
               } | null
@@ -4440,6 +4417,7 @@ export async function getFestivalEvent(slug: string) {
           festivalEvent(id: $slug, idType: SLUG) {
             title
             slug
+            uri
             content
             excerpt
             featuredImage {
@@ -4672,6 +4650,7 @@ export async function getFestivalEvent(slug: string) {
                   ... on FestivalFilm {
                     title
                     slug
+                    uri
                     excerpt
                     content
                     festivalFilmId
@@ -4707,6 +4686,7 @@ export async function getFestivalEvent(slug: string) {
                   ... on FestivalEvent {
                     title
                     slug
+                    uri
                     featuredImage {
                       node {
                         sourceUrl
@@ -4737,6 +4717,7 @@ export async function getFestivalEvent(slug: string) {
                   ... on FestivalEvent {
                     title
                     slug
+                    uri
                     featuredImage {
                       node {
                         sourceUrl
@@ -4775,20 +4756,35 @@ export async function getFestivalEvent(slug: string) {
   }
 }
 
-export async function getAllFestivalEventSlugs(): Promise<{ slug: string }[]> {
+export async function getAllFestivalEventSlugs(): Promise<
+  { year: string; slug: string }[]
+> {
   try {
     const data = await client.request<{
-      festivalEvents: { nodes: { slug: string }[] }
+      festivalEvents: {
+        nodes: {
+          slug: string
+          festivalYears: { nodes: { slug: string }[] }
+        }[]
+      }
     }>(gql`
       query getAllFestivalEventSlugs {
-        festivalEvents(first: 100, where: { festivalYear: "2025" }) {
+        festivalEvents(first: 1000) {
           nodes {
             slug
+            festivalYears {
+              nodes {
+                slug
+              }
+            }
           }
         }
       }
     `)
-    return data.festivalEvents.nodes.map((n) => ({ slug: n.slug }))
+    return data.festivalEvents.nodes.map((n) => ({
+      year: n.festivalYears.nodes[0]?.slug ?? '2026',
+      slug: n.slug,
+    }))
   } catch {
     return []
   }
@@ -4809,10 +4805,11 @@ export async function getFestivalFilmGuide(year: string = '2025'): Promise<{
     }>(
       gql`
         query getFestivalFilmGuide($year: String!) {
-          festivalFilms(first: 100, where: { festivalYear: $year }) {
+          festivalFilms(first: 1000, where: { festivalYear: $year }) {
             nodes {
               title
               slug
+              uri
               excerpt
               featuredImage {
                 node {
@@ -4892,6 +4889,7 @@ export async function getFestivalFilm(slug: string) {
       festivalFilm: {
         title: string
         slug: string
+        uri: string
         content?: string | null
         excerpt?: string | null
         featuredImage?: { node: { sourceUrl: string; altText: string } } | null
@@ -4937,6 +4935,7 @@ export async function getFestivalFilm(slug: string) {
             nodes: {
               title: string
               slug: string
+              uri: string
               festivalEventAcf?: {
                 startTime?: string | null
                 endTime?: string | null
@@ -4960,6 +4959,7 @@ export async function getFestivalFilm(slug: string) {
           festivalFilm(id: $slug, idType: SLUG) {
             title
             slug
+            uri
             content
             excerpt
             featuredImage {
@@ -5048,6 +5048,7 @@ export async function getFestivalFilm(slug: string) {
                   ... on FestivalEvent {
                     title
                     slug
+                    uri
                     festivalEventAcf {
                       startTime
                       endTime
@@ -5085,20 +5086,36 @@ export async function getFestivalFilm(slug: string) {
   }
 }
 
-export async function getAllFestivalFilmSlugs(): Promise<{ slug: string }[]> {
+export async function getAllFestivalFilmSlugs(): Promise<
+  { year: string; slug: string }[]
+> {
   try {
     const data = await client.request<{
-      festivalFilms: { nodes: { slug: string }[] }
+      festivalFilms: {
+        nodes: {
+          slug: string
+          festivalYears: { nodes: { slug: string }[] }
+        }[]
+      }
     }>(gql`
       query getAllFestivalFilmSlugs {
-        festivalFilms(first: 100, where: { festivalYear: "2025" }) {
+        festivalFilms(first: 1000) {
           nodes {
             slug
+            uri
+            festivalYears {
+              nodes {
+                slug
+              }
+            }
           }
         }
       }
     `)
-    return data.festivalFilms.nodes.map((n) => ({ slug: n.slug }))
+    return data.festivalFilms.nodes.map((n) => ({
+      year: n.festivalYears.nodes[0]?.slug ?? '2026',
+      slug: n.slug,
+    }))
   } catch {
     return []
   }
@@ -5121,6 +5138,7 @@ export async function getFestivalEventGuide(year: string = '2025'): Promise<{
             nodes {
               title
               slug
+              uri
               excerpt
               featuredImage {
                 node {
@@ -5198,3 +5216,136 @@ export async function getFestivalEventGuide(year: string = '2025'): Promise<{
     return { events: [], tags: [] }
   }
 }
+
+// ─── REPLACE the SEARCH_QUERY in app/lib/queries.ts ─────────────────────────
+
+// ─── REPLACE the SEARCH_QUERY in app/lib/queries.ts ─────────────────────────
+
+export const SEARCH_QUERY = `
+  query Search($search: String!) {
+    festivalFilms(where: { search: $search }, first: 12) {
+      nodes {
+        id
+        title
+        uri
+        featuredImage {
+          node {
+            sourceUrl(size: MEDIUM)
+            altText
+          }
+        }
+        festivalFilmAcf {
+          festivalYear
+          credits {
+            name
+            type
+          }
+        }
+      }
+    }
+    festivalEvents(where: { search: $search }, first: 10) {
+      nodes {
+        id
+        title
+        uri
+        featuredImage {
+          node {
+            sourceUrl(size: MEDIUM)
+            altText
+          }
+        }
+        festivalEventAcf {
+          location
+          additionalCredits {
+            credit
+          }
+        }
+        eventiveTags {
+          nodes {
+            name
+          }
+        }
+      }
+    }
+    posts(where: { search: $search }, first: 6) {
+      nodes {
+        id
+        title
+        uri
+        date
+        excerpt
+        featuredImage {
+          node {
+            sourceUrl(size: MEDIUM)
+            altText
+          }
+        }
+      }
+    }
+    pages(where: { search: $search }, first: 4) {
+      nodes {
+        id
+        title
+        uri
+        featuredImage {
+          node {
+            sourceUrl(size: MEDIUM)
+            altText
+          }
+        }
+      }
+    }
+    seenArticles(where: { search: $search }, first: 6) {
+      nodes {
+        id
+        title
+        uri
+        featuredImage {
+          node {
+            sourceUrl(size: MEDIUM)
+            altText
+          }
+        }
+        seenIssues {
+          nodes {
+            name
+          }
+        }
+        seenAuthors {
+          nodes {
+            name
+          }
+        }
+        seenCategories {
+          nodes {
+            name
+          }
+        }
+        seenArticleLayouts {
+          introduction
+        }
+      }
+    }
+    lumenEpisodes(where: { search: $search }, first: 6) {
+      nodes {
+        id
+        title
+        uri
+        featuredImage {
+          node {
+            sourceUrl(size: MEDIUM)
+            altText
+          }
+        }
+        lumenSeasons {
+          nodes {
+            name
+          }
+        }
+        manyLumensEpisodesAcf {
+          introduction
+        }
+      }
+    }
+  }
+`;
