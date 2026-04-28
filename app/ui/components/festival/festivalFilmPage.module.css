@@ -1,0 +1,480 @@
+.wrapper {
+  padding-bottom: 80px;
+  color: var(--background-festival);
+}
+
+/* Top nav — reuse same pattern */
+.topNav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  color: var(--color-festival);
+  border-bottom: var(--standard-border);
+  border-top: var(--standard-border);
+}
+
+.topNavItem {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-medium);
+  text-transform: uppercase;
+  text-decoration: none;
+  background: var(--background-festival);
+  color: inherit;
+  padding: 20px;
+  text-align: center;
+  border-right: var(--standard-border);
+  transition: all 400ms;
+}
+
+.topNavItem:last-child {
+  border-right: none;
+}
+
+.topNavItem:hover {
+  background: var(--color-festival);
+  color: var(--background-festival);
+  transition: all 400ms;
+}
+
+.topNavItemActive {
+  background: var(--color-festival);
+  color: var(--background-festival);
+}
+
+.backBar {
+  padding: 16px 20px;
+  border-bottom: var(--standard-border);
+}
+
+.backLink {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 40px 20px 20px;
+  gap: 20px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.headerRight {
+  flex-shrink: 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-xlarge);
+  text-transform: uppercase;
+}
+
+.headerIcons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltipIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: var(--standard-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--gt-mono);
+  font-size: 0.65rem;
+  font-weight: bold;
+  cursor: default;
+  text-transform: uppercase;
+}
+
+.tooltip:hover .tooltipText {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltipText {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: black;
+  color: white;
+  font-family: var(--gt-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 4px 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
+  z-index: 10;
+}
+
+.tooltipText::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: black;
+}
+
+.screeningsBtn {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  border: var(--standard-border);
+  padding: 8px 16px;
+  display: inline-block;
+}
+
+.screeningsBtn:hover {
+  background: #f0f0f0;
+}
+
+/* Cover image */
+.coverImage {
+  position: relative;
+  aspect-ratio: 16/7;
+  width: 100%;
+  cursor: pointer;
+}
+
+.trailerBtn {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--background-festival);
+  color: var(--color-festival);
+  border: none;
+  padding: 10px 20px;
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 1;
+  transition: all 400ms;
+}
+
+.coverImage:hover .trailerBtn {
+  background: var(--color-festival);
+  color: var(--background-festival);
+  transition: all 400ms;
+}
+
+/* Main content */
+.mainContent {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  padding: 40px 20px;
+  align-items: start;
+}
+
+.contentCol {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.prose {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.prose a {
+  color: inherit;
+}
+.prose p {
+  margin-bottom: 12px;
+}
+
+/* Screenings */
+
+.screeningsAnchor {
+  position: absolute;
+  top: -120px;
+}
+
+.screeningsCol {
+  position: sticky;
+  top: 120px;
+}
+
+.screeningsBox {
+  border: var(--standard-border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.screeningsHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-medium);
+  text-transform: uppercase;
+}
+
+.instanceGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.instanceGroupLabel {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  font-weight: bold;
+  border-bottom: var(--standard-border);
+  padding-bottom: 8px;
+}
+
+.instance {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: var(--standard-border);
+}
+
+.instance:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.instanceLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.instanceLink:hover .instanceTime {
+  text-decoration: underline;
+}
+
+.instanceMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.instanceDate {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+}
+
+.instanceTime {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+}
+
+.instanceVenue {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+}
+
+/* Directors spotlight */
+.spotlight {
+  padding: 40px 20px;
+  border-top: var(--standard-border);
+}
+
+.spotlightHeading {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+
+.spotlightGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.directorCard {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.directorImage {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.directorContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.directorName {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-large);
+  text-transform: uppercase;
+}
+
+.directorRole {
+  font-family: var(--gt-expanded);
+  font-size: var(--gt-small);
+  text-transform: uppercase;
+  font-style: italic;
+}
+
+.directorBio {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  line-height: var(--lofty-line-height);
+}
+
+.socialLinks {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.socialLink {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  color: inherit;
+  text-decoration: none;
+  border: var(--standard-border);
+  padding: 4px 10px;
+}
+
+.socialLink:hover {
+  background: #f0f0f0;
+}
+
+/* Film details */
+.details {
+  padding: 40px 20px;
+  border-top: var(--standard-border);
+}
+
+.detailsList {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 8px 20px;
+}
+
+.detailsList dt {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.detailsList dd {
+  font-family: var(--gt-mono);
+  font-size: var(--mono-small);
+  margin: 0;
+}
+
+/* Trailer modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modalContent {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+}
+
+.modalClose {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modalVideo {
+  aspect-ratio: 16/9;
+  width: 100%;
+}
+
+.modalIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .topNav {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mainContent {
+    grid-template-columns: 1fr;
+  }
+  .screeningsCol {
+    position: static;
+  }
+  .directorCard {
+    grid-template-columns: 1fr;
+  }
+  .detailsList {
+    grid-template-columns: 1fr;
+  }
+}

@@ -311,6 +311,11 @@
   color: inherit;
 }
 
+.biosSection {
+  padding: 40px 20px;
+  border-top: var(--standard-border);
+}
+
 /* Related events */
 .relatedEvents {
   padding: 40px 20px;

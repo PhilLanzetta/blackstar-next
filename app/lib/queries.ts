@@ -15,7 +15,8 @@ import {
   SeenFlexibleLayout,
   SeenArticle,
   FestivalLayout,
-  FestivalEvent, FestivalFilm
+  FestivalEvent,
+  FestivalFilm,
 } from './types'
 
 const client = new GraphQLClient(`${baseURL}/graphql`)
@@ -3790,6 +3791,33 @@ export async function getFestivalPage(slug: string): Promise<FestivalLayout[]> {
                       }
                       ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsBiosLayout {
                         itemsPerPage
+                        type
+                        bios {
+                          nodes {
+                            ... on Biography {
+                              title
+                              content
+                              featuredImage {
+                                node {
+                                  sourceUrl
+                                  altText
+                                }
+                              }
+                              biographyAcf {
+                                position
+                                pronouns
+                                socialProfiles {
+                                  instagram
+                                  twitter
+                                  facebook
+                                  website
+                                  youtube
+                                  linkedin
+                                }
+                              }
+                            }
+                          }
+                        }
                         collection {
                           nodes {
                             ... on BioCollection {
@@ -4484,6 +4512,33 @@ export async function getFestivalEvent(slug: string) {
                   }
                   ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsBiosLayout {
                     itemsPerPage
+                    type
+                    bios {
+                      nodes {
+                        ... on Biography {
+                          title
+                          content
+                          featuredImage {
+                            node {
+                              sourceUrl
+                              altText
+                            }
+                          }
+                          biographyAcf {
+                            position
+                            pronouns
+                            socialProfiles {
+                              instagram
+                              twitter
+                              facebook
+                              website
+                              youtube
+                              linkedin
+                            }
+                          }
+                        }
+                      }
+                    }
                     collection {
                       nodes {
                         ... on BioCollection {
@@ -4796,6 +4851,13 @@ export async function getFestivalFilmGuide(year: string = '2025'): Promise<{
                   name
                 }
               }
+              accessibilities {
+                nodes {
+                  name
+                  slug
+                  description
+                }
+              }
             }
           }
           eventiveTags(first: 100) {
@@ -4821,5 +4883,318 @@ export async function getFestivalFilmGuide(year: string = '2025'): Promise<{
       error?.response?.errors?.[0]?.message,
     )
     return { films: [], tags: [] }
+  }
+}
+
+export async function getFestivalFilm(slug: string) {
+  try {
+    const data = await client.request<{
+      festivalFilm: {
+        title: string
+        slug: string
+        content?: string | null
+        excerpt?: string | null
+        featuredImage?: { node: { sourceUrl: string; altText: string } } | null
+        premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
+        festivalAwards?: { nodes: { name: string; slug: string }[] } | null
+        eventiveTags?: { nodes: { name: string; slug: string }[] } | null
+        accessibilities?: {
+          nodes: { name: string; slug: string; description?: string | null }[]
+        } | null
+        festivalFilmAcf?: {
+          runtime?: string | null
+          country?: string | null
+          language?: string | null
+          year?: string | null
+          trailerUrl?: string | null
+          triggerWarning?: string | null
+          directorsSpotlightHeading?: string | null
+          coverImage?: { node: { sourceUrl: string; altText: string } } | null
+          stillImage?: { node: { sourceUrl: string; altText: string } } | null
+          credits?: { type?: string | null; name?: string | null }[] | null
+          directorsSpotlight?: {
+            nodes: {
+              title: string
+              content?: string | null
+              featuredImage?: {
+                node: { sourceUrl: string; altText: string }
+              } | null
+              biographyAcf?: {
+                position?: string | null
+                pronouns?: string | null
+                socialProfiles?: {
+                  instagram?: string | null
+                  twitter?: string | null
+                  facebook?: string | null
+                  website?: string | null
+                  youtube?: string | null
+                  linkedin?: string | null
+                } | null
+              } | null
+            }[]
+          } | null
+          events?: {
+            nodes: {
+              title: string
+              slug: string
+              festivalEventAcf?: {
+                startTime?: string | null
+                endTime?: string | null
+                timezoneAbv?: string | null
+                isVirtual?: boolean | null
+                ticketsAvailable?: boolean | null
+                hideTicketsButton?: boolean | null
+                eventiveId?: string | null
+              } | null
+              festivalVenues?: {
+                nodes: { name: string; slug: string }[]
+              } | null
+              festivalDates?: { nodes: { name: string; slug: string }[] } | null
+            }[]
+          } | null
+        } | null
+      } | null
+    }>(
+      gql`
+        query getFestivalFilm($slug: ID!) {
+          festivalFilm(id: $slug, idType: SLUG) {
+            title
+            slug
+            content
+            excerpt
+            featuredImage {
+              node {
+                sourceUrl
+                altText
+              }
+            }
+            premiereStatuses {
+              nodes {
+                name
+                slug
+              }
+            }
+            festivalAwards {
+              nodes {
+                name
+                slug
+              }
+            }
+            eventiveTags {
+              nodes {
+                name
+                slug
+              }
+            }
+            accessibilities {
+              nodes {
+                name
+                slug
+                description
+              }
+            }
+            festivalFilmAcf {
+              runtime
+              country
+              language
+              year
+              trailerUrl
+              triggerWarning
+              directorsSpotlightHeading
+              coverImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              stillImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              credits {
+                type
+                name
+              }
+              directorsSpotlight {
+                nodes {
+                  ... on Biography {
+                    title
+                    content
+                    featuredImage {
+                      node {
+                        sourceUrl
+                        altText
+                      }
+                    }
+                    biographyAcf {
+                      position
+                      pronouns
+                      socialProfiles {
+                        instagram
+                        twitter
+                        facebook
+                        website
+                        youtube
+                        linkedin
+                      }
+                    }
+                  }
+                }
+              }
+              events {
+                nodes {
+                  ... on FestivalEvent {
+                    title
+                    slug
+                    festivalEventAcf {
+                      startTime
+                      endTime
+                      timezoneAbv
+                      isVirtual
+                      ticketsAvailable
+                      hideTicketsButton
+                      eventiveId
+                    }
+                    festivalVenues {
+                      nodes {
+                        name
+                        slug
+                      }
+                    }
+                    festivalDates {
+                      nodes {
+                        name
+                        slug
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      { slug },
+    )
+    return data.festivalFilm
+  } catch (error: any) {
+    console.log('getFestivalFilm error:', error?.response?.errors?.[0]?.message)
+    return null
+  }
+}
+
+export async function getAllFestivalFilmSlugs(): Promise<{ slug: string }[]> {
+  try {
+    const data = await client.request<{
+      festivalFilms: { nodes: { slug: string }[] }
+    }>(gql`
+      query getAllFestivalFilmSlugs {
+        festivalFilms(first: 100, where: { festivalYear: "2025" }) {
+          nodes {
+            slug
+          }
+        }
+      }
+    `)
+    return data.festivalFilms.nodes.map((n) => ({ slug: n.slug }))
+  } catch {
+    return []
+  }
+}
+
+export async function getFestivalEventGuide(year: string = '2025'): Promise<{
+  events: FestivalEvent[]
+  tags: { name: string; slug: string; count?: number | null }[]
+}> {
+  try {
+    const data = await client.request<{
+      festivalEvents: { nodes: FestivalEvent[] }
+      eventiveTags: {
+        nodes: { name: string; slug: string; count?: number | null }[]
+      }
+    }>(
+      gql`
+        query getFestivalEventGuide($year: String!) {
+          festivalEvents(first: 100, where: { festivalYear: $year }) {
+            nodes {
+              title
+              slug
+              excerpt
+              featuredImage {
+                node {
+                  sourceUrl
+                  altText
+                }
+              }
+              festivalEventAcf {
+                startTime
+                timezoneAbv
+                isVirtual
+                ticketsAvailable
+                hideTicketsButton
+                eventiveId
+                isEvent
+              }
+              eventiveTags {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              festivalVenues {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              festivalDates {
+                nodes {
+                  name
+                  slug
+                }
+              }
+              accessibilities {
+                nodes {
+                  name
+                  slug
+                  description
+                }
+              }
+            }
+          }
+          eventiveTags(first: 100) {
+            nodes {
+              name
+              slug
+              count
+            }
+          }
+        }
+      `,
+      { year },
+    )
+
+    const events = data.festivalEvents.nodes.filter(
+      (event) => event.festivalEventAcf?.isEvent === true,
+    )
+
+    const eventTagSlugs = new Set(
+      events.flatMap((e) => e.eventiveTags?.nodes.map((t) => t.slug) ?? []),
+    )
+
+    return {
+      events,
+      tags: data.eventiveTags.nodes.filter(
+        (t) => (t.count ?? 0) > 0 && eventTagSlugs.has(t.slug),
+      ),
+    }
+  } catch (error: any) {
+    console.log(
+      'getFestivalEventGuide error:',
+      error?.response?.errors?.[0]?.message,
+    )
+    return { events: [], tags: [] }
   }
 }

@@ -4,7 +4,7 @@ import {
   getFestivalPageTemplate,
   getFestivalSchedule,
   getDefaultPage,
-  getAllFestivalPageSlugs, getFestivalFilmGuide
+  getAllFestivalPageSlugs, getFestivalFilmGuide, getFestivalEventGuide
 } from '@/app/lib/queries'
 import type {
   FestivalLayout,
@@ -71,6 +71,7 @@ import FestivalContent from '@/app/ui/components/festival/festivalContent'
 import SchedulePage from './schedulePage'
 import MySchedulePage from './mySchedulePage'
 import FilmGuidePage from './filmGuidePage'
+import EventGuidePage from './eventGuidePage'
 
 export const revalidate = 3600
 export const dynamicParams = false
@@ -121,6 +122,16 @@ export default async function FestivalPage({ params }: Props) {
     return (
       <main style={{ paddingTop: '200px' }}>
         <FilmGuidePage year={year} />
+      </main>
+    )
+  }
+
+  if (templateName === 'Festival Event Guide') {
+    const year = path.match(/(\d{4})/)?.[1] ?? '2025'
+    const { events, tags } = await getFestivalEventGuide(year)
+    return (
+      <main style={{ paddingTop: '200px' }}>
+        <EventGuidePage events={events} tags={tags} />
       </main>
     )
   }

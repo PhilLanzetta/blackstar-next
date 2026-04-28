@@ -12,6 +12,7 @@ type Props = {
   initialEndCursor: string | null
   collectionSlug: string
   itemsPerPage: number
+  directBios?: Biography[]
 }
 
 export default function FestivalBiosClient({
@@ -20,10 +21,15 @@ export default function FestivalBiosClient({
   initialEndCursor,
   collectionSlug,
   itemsPerPage,
+  directBios,
 }: Props) {
-  const [bios, setBios] = useState<Biography[]>(initialBios)
-  const [hasNextPage, setHasNextPage] = useState(initialHasNextPage)
-  const [endCursor, setEndCursor] = useState<string | null>(initialEndCursor)
+  const [bios, setBios] = useState<Biography[]>(directBios ?? initialBios)
+  const [hasNextPage, setHasNextPage] = useState(
+    directBios ? false : initialHasNextPage,
+  )
+  const [endCursor, setEndCursor] = useState<string | null>(
+    directBios ? null : initialEndCursor,
+  )
   const [loading, setLoading] = useState(false)
   const [activeBio, setActiveBio] = useState<Biography | null>(null)
 

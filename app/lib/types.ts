@@ -857,9 +857,15 @@ export type FestivalButtonsLayout = {
 }
 
 export type FestivalBiosLayout = {
-  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsBiosLayout'
-  itemsPerPage?: number
-  collection?: { nodes: { name: string; slug: string }[] }
+  __typename: string
+  itemsPerPage?: number | null
+  type?: string[] | null
+  bios?: {
+    nodes: Biography[]
+  } | null
+  collection?: {
+    nodes: { name: string; slug: string }[]
+  } | null
 }
 
 export type FestivalSponsorsCarouselLayout = {
@@ -921,7 +927,9 @@ export type FestivalEvent = {
   } | null
   premiereStatuses?: { nodes: { name: string; slug: string }[] } | null
   festivalAwards?: { nodes: { name: string; slug: string }[] } | null
-  accessibilities?: { nodes: { name: string; slug: string }[] } | null
+  accessibilities?: {
+    nodes: { name: string; slug: string; description?: string }[]
+  } | null
   eventiveTags?: { nodes: { name: string; slug: string }[] } | null
   festivalDates?: { nodes: { name: string; slug: string }[] } | null
   festivalVenues?: { nodes: { name: string; slug: string }[] } | null
@@ -958,5 +966,8 @@ export type FestivalFilm = {
     hideFromFilmGuide?: boolean | null
     triggerWarning?: string | null
     credits?: { type?: string | null; name?: string | null }[] | null
+  } | null
+  accessibilities?: {
+    nodes: { name: string; slug: string; description?: string | null }[]
   } | null
 }
