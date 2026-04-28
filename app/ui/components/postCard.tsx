@@ -125,6 +125,7 @@ export default function PostCard({ post }: PostCardProps) {
             src={featuredImage.node.sourceUrl}
             alt={featuredImage.node.altText ?? ''}
             fill
+            quality={85}
             sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw'
             style={{ objectFit: 'cover', objectPosition: 'center' }}
           />
