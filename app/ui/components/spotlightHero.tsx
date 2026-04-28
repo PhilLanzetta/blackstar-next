@@ -1,9 +1,8 @@
-'use client'
 import Image from 'next/image'
-import { useRef, useEffect } from 'react'
 import type { SpotlightHeroLayout } from '@/app/lib/types'
 import styles from './spotlightHero.module.css'
 import LinkButton from '@/app/ui/components/linkButton'
+import SpotlightHeroVideo from './spotlightHeroVideo'
 
 export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
   const {
@@ -17,24 +16,10 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
     links,
   } = data
 
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const mobileVideoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {})
-    }
-    if (mobileVideoRef.current) {
-      mobileVideoRef.current.play().catch(() => {})
-    }
-  }, [])
-
   const hasVideo =
-    video && video.length > 0 && video[0]?.file?.node?.mediaItemUrl
+    (video?.length ?? 0) > 0 && video?.[0]?.file?.node?.mediaItemUrl
   const hasMobileVideo =
-    mobileVideo &&
-    mobileVideo.length > 0 &&
-    mobileVideo[0]?.file?.node?.mediaItemUrl
+    (mobileVideo?.length ?? 0) > 0 && mobileVideo?.[0]?.file?.node?.mediaItemUrl
   const hasMobileImage = mobileImage?.node?.sourceUrl
   const mobileUsesDesktop = !hasMobileVideo && !hasMobileImage
   const showInfoBox = heading1 || (links && !overlayImage)
@@ -48,17 +33,12 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
         marginBottom: '80px',
       }}
     >
-      {/* Desktop media — always shown on desktop, also shown on mobile if no mobile media */}
+      {/* Desktop media */}
       {hasVideo ? (
-        <video
-          ref={videoRef}
-          className={`${styles.heroMedia} ${!mobileUsesDesktop ? styles.desktopOnly : ''}`}
+        <SpotlightHeroVideo
           src={video[0].file!.node.mediaItemUrl}
           poster={image?.node?.sourceUrl}
-          autoPlay
-          muted
-          loop
-          playsInline
+          className={`${styles.heroMedia} ${!mobileUsesDesktop ? styles.desktopOnly : ''}`}
         />
       ) : image?.node?.sourceUrl ? (
         <Image
@@ -66,22 +46,18 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
           alt={image.node.altText ?? ''}
           fill
           sizes='100vw'
+          priority
           style={{ objectFit: 'cover', objectPosition: 'center' }}
           className={`${styles.heroMedia} ${!mobileUsesDesktop ? styles.desktopOnly : ''}`}
         />
       ) : null}
 
-      {/* Mobile media — only rendered if mobile-specific media exists */}
+      {/* Mobile media */}
       {hasMobileVideo ? (
-        <video
-          ref={mobileVideoRef}
-          className={`${styles.heroMedia} ${styles.mobileOnly}`}
+        <SpotlightHeroVideo
           src={mobileVideo[0].file!.node.mediaItemUrl}
           poster={mobileImage?.node?.sourceUrl ?? image?.node?.sourceUrl}
-          autoPlay
-          muted
-          loop
-          playsInline
+          className={`${styles.heroMedia} ${styles.mobileOnly}`}
         />
       ) : hasMobileImage ? (
         <Image
@@ -89,12 +65,13 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
           alt={mobileImage!.node!.altText ?? ''}
           fill
           sizes='100vw'
+          priority
           style={{ objectFit: 'cover', objectPosition: 'center' }}
           className={`${styles.heroMedia} ${styles.mobileOnly}`}
         />
       ) : null}
 
-      {/* Desktop overlay — shown on all sizes if no mobile overlay */}
+      {/* Overlay images */}
       {overlayImage?.node?.sourceUrl && (
         <div
           className={`${styles.overlayImageContainer} ${mobileOverlayImage?.node?.sourceUrl ? styles.desktopOnly : ''}`}
@@ -104,12 +81,12 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
             alt={overlayImage.node.altText ?? ''}
             width={overlayImage.node.mediaDetails?.width ?? 1920}
             height={overlayImage.node.mediaDetails?.height ?? 200}
+            priority
             className={styles.overlayImage}
           />
         </div>
       )}
 
-      {/* Mobile overlay — only rendered if mobile-specific overlay exists */}
       {mobileOverlayImage?.node?.sourceUrl && (
         <div className={`${styles.overlayImageContainer} ${styles.mobileOnly}`}>
           <Image
@@ -117,12 +94,13 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
             alt={mobileOverlayImage.node.altText ?? ''}
             width={mobileOverlayImage.node.mediaDetails?.width ?? 1920}
             height={mobileOverlayImage.node.mediaDetails?.height ?? 200}
+            priority
             className={styles.overlayImage}
           />
         </div>
       )}
 
-      {/* Info box - only show if heading1 exists and no overlay image */}
+      {/* Info box */}
       {showInfoBox && (
         <div className={styles.heroInfoBox}>
           {heading1 && <p className={styles.heroBoxHeading}>{heading1}</p>}

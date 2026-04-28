@@ -16,16 +16,27 @@ export default function EventiveProvider({
     if (!isFestival) return
     if (document.querySelector('script[data-eventive]')) return
 
-    const stripe = document.createElement('script')
-    stripe.src = 'https://js.stripe.com/v3/'
-    stripe.async = true
-    document.head.appendChild(stripe)
+    // Defer until after page load
+    const load = () => {
+      const stripe = document.createElement('script')
+      stripe.src = 'https://js.stripe.com/v3/'
+      stripe.async = true
+      stripe.defer = true
+      document.head.appendChild(stripe)
 
-    const eventive = document.createElement('script')
-    eventive.src = 'https://festival.blackstarfest.org/loader.js'
-    eventive.async = true
-    eventive.setAttribute('data-eventive', 'true')
-    document.head.appendChild(eventive)
+      const eventive = document.createElement('script')
+      eventive.src = 'https://festival.blackstarfest.org/loader.js'
+      eventive.async = true
+      eventive.defer = true
+      eventive.setAttribute('data-eventive', 'true')
+      document.head.appendChild(eventive)
+    }
+
+    if (document.readyState === 'complete') {
+      load()
+    } else {
+      window.addEventListener('load', load, { once: true })
+    }
   }, [isFestival])
 
   if (!isFestival) return <>{children}</>

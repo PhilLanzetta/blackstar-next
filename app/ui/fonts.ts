@@ -87,5 +87,6 @@ export const swissTime = localFont({
       style: 'italic',
     },
   ],
+  display: 'swap',
   variable: '--swiss-time',
 })
