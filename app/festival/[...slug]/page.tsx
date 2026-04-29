@@ -76,6 +76,7 @@ import EventDetails from '@/app/ui/components/eventDetails'
 import ChildProgramEvents from '@/app/ui/components/childProgramEvents'
 import FestivalExplainers from '@/app/ui/components/festival/festivalExplainers'
 import FestivalContent from '@/app/ui/components/festival/festivalContent'
+import FestivalPassesLayout from '@/app/ui/components/festival/festivalPassesLayout'
 import SchedulePage from './schedulePage'
 import MySchedulePage from './mySchedulePage'
 import FilmGuidePage from './filmGuidePage'
@@ -240,6 +241,8 @@ export default async function FestivalPage({ params }: Props) {
                   data={layout as FestivalExplainersLayout}
                 />
               )
+            case 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsPassesLayout':
+              return <FestivalPassesLayout key={index} />
             default:
               return null
           }

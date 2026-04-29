@@ -3716,6 +3716,9 @@ export async function getFestivalPage(slug: string): Promise<FestivalLayout[]> {
                         items
                         viewAllButtonLabel
                       }
+                      ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsPassesLayout {
+                        __typename
+                      }
                       ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsCardsLayout {
                         gridLayout
                         cards {

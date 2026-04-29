@@ -936,6 +936,10 @@ export type FestivalEvent = {
   festivalVenues?: { nodes: { name: string; slug: string }[] } | null
 }
 
+export type FestivalPassesLayout = {
+  __typename: 'FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsPassesLayout'
+}
+
 export type FestivalLayout =
   | FestivalSpotlightCarouselLayout
   | FestivalLatestNewsLayout
@@ -949,6 +953,7 @@ export type FestivalLayout =
   | FestivalSpaceLayout
   | FestivalContentLayout
   | FestivalExplainersLayout
+  | FestivalPassesLayout
 
 export type FestivalFilm = {
   title: string

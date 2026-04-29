@@ -1,0 +1,109 @@
+/* app/ui/components/festival/festivalPasses.module.css */
+
+.wrapper {
+  padding: 4rem var(--page-gutter, 2rem);
+  max-width: var(--page-max-width, 1400px);
+  margin: 0 auto;
+}
+
+.title {
+  font-family: var(--gt-expanded);
+  font-size: clamp(2rem, 4vw, 3rem);
+  text-transform: uppercase;
+  color: var(--color-festival);
+  margin: 0 0 3rem;
+  letter-spacing: -0.02em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0;
+  border: 1px solid var(--color-festival);
+}
+
+.card {
+  padding: 2rem;
+  border: 1px solid var(--color-festival);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: var(--background-festival, transparent);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-festival);
+}
+
+.passName {
+  font-family: var(--gt-expanded);
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  color: var(--color-festival);
+  margin: 0;
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+.priceBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.price {
+  font-family: var(--gt-expanded);
+  font-size: 1.5rem;
+  color: var(--color-festival);
+  line-height: 1;
+}
+
+.discountPrice {
+  font-family: var(--gt-mono);
+  font-size: 0.875rem;
+  color: var(--color-festival);
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.description {
+  font-family: var(--gt-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-festival);
+  opacity: 0.8;
+  margin: 0;
+  flex: 1;
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-festival);
+}
+
+.unavailable {
+  font-family: var(--gt-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-festival);
+  opacity: 0.4;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+}

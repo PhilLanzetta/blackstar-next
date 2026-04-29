@@ -1265,6 +1265,9 @@ export async function getFestivalEventPreview(slug: string) {
                   ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsSpaceLayout {
                     fieldGroupName
                   }
+                  ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsPassesLayout {
+                    __typename
+                  }
                   ... on FestivalFlexibleLayoutsAcfFestival24FlexibleLayoutsLayoutsContentLayout {
                     columns {
                       content
