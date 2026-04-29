@@ -19,7 +19,7 @@ function resolvePreviewUrl(type: string, slug: string, id: string): string {
     case 'opportunity':
       return `/opportunities/${slug}`
     case 'page':
-      if (!slug || slug === '/') return '/'
+      if (!slug || slug === '/') return `/?previewId=${id}`
       return `/${slug}`
     case 'post':
       return `/news/${slug}`

@@ -15,11 +15,16 @@ import SpotlightTextImage from './ui/components/spotlightTextImage'
 import SponsorsCarousel from './ui/components/sponsorsCarousel'
 
 export const revalidate = 3600
+type Props = {
+  searchParams: Promise<{ previewId?: string }>
+}
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: Props) {
   const { isEnabled: isPreview } = await draftMode()
-  const layouts = isPreview ? await getHomePagePreview() : await getHomePage()
-
+  const { previewId } = await searchParams
+  const layouts = isPreview
+    ? await getHomePagePreview(previewId)
+    : await getHomePage()
 
   if (!layouts.length) return null
 

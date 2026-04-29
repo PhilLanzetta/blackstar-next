@@ -2644,20 +2644,123 @@ export async function getSeenPagePreview() {
   }
 }
 
-export async function getHomePagePreview(): Promise<FlexibleLayout[]> {
+// Add to app/lib/previewQueries.ts
+// Replace the existing getHomePagePreview function with this one.
+
+export async function getHomePagePreview(id?: string): Promise<FlexibleLayout[]> {
   try {
+    // If we have a database ID, use asPreview: true for reliable draft content
+    if (id) {
+      const data = await previewClient.request<{
+        page: {
+          flexibleLayouts: {
+            layouts: FlexibleLayout[]
+          }
+        } | null
+      }>(
+        gql`
+          query getHomePagePreviewById($id: ID!) {
+            page(id: $id, idType: DATABASE_ID, asPreview: true) {
+              flexibleLayouts {
+                layouts {
+                  __typename
+                  ... on FlexibleLayoutsLayoutsSpotlightHeroLayout {
+                    heading1
+                    links { link { title url target } }
+                    image { node { altText sourceUrl mediaDetails { height width } } }
+                    mobileImage { node { altText sourceUrl mediaDetails { height width } } }
+                    overlayImage { node { altText sourceUrl mediaDetails { height width } } }
+                    mobileOverlayImage { node { altText sourceUrl mediaDetails { height width } } }
+                    video { file { node { mediaItemUrl altText } } type }
+                    mobileVideo { file { node { mediaItemUrl altText } } type }
+                  }
+                  ... on FlexibleLayoutsLayoutsFeatureTextLayout {
+                    additionalContent
+                    content
+                    buttons { link { target title url } }
+                  }
+                  ... on FlexibleLayoutsLayoutsPostsCarouselLayout {
+                    title
+                    link { title url }
+                    posts {
+                      nodes {
+                        ... on ProgramEvent {
+                          __typename id title link contentTypeName
+                          featuredImage { node { altText sourceUrl } }
+                          event {
+                            customExcerpt endTime listingDateFormat location startTime timezone
+                            redirect { url }
+                            programType { nodes { name } }
+                          }
+                        }
+                        ... on Post {
+                          __typename id slug contentTypeName title date link
+                          featuredImage { node { altText sourceUrl } }
+                          categories { nodes { name } }
+                          pressRelease {
+                            introduction
+                            pdf { node { mediaItemUrl title } }
+                          }
+                        }
+                      }
+                    }
+                    customPosts {
+                      buttons { link { title url } }
+                      image { node { altText sourceUrl } }
+                      preTitle title shortDescription
+                      programLogo { node { altText sourceUrl mediaDetails { height width } } }
+                    }
+                    type
+                    featured
+                  }
+                  ... on FlexibleLayoutsLayoutsSpotlightTextImageLayout {
+                    content flip heading
+                    link { title url target }
+                    image { node { altText sourceUrl mediaDetails { height width } } }
+                  }
+                  ... on FlexibleLayoutsLayoutsSponsorsCarouselLayout {
+                    __typename title
+                    button { title url }
+                    sponsorCollection {
+                      nodes {
+                        ... on SponsorCollection {
+                          id
+                          sponsors {
+                            nodes {
+                              ... on Sponsor {
+                                __typename
+                                sponsorAcf {
+                                  logoBlack { node { altText mediaDetails { height width } sourceUrl } }
+                                  website
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        { id },
+      )
+      return (data.page?.flexibleLayouts?.layouts ?? []).filter(Boolean)
+    }
+
+    // Fallback to title-based query (no ID available)
     const data = await previewClient.request<HomePageData>(GET_HOME_PAGE)
     if (!data?.pages) return []
-    const layouts = (
-      data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []
-    ).filter(Boolean)
-    return layouts
+    return (data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []).filter(Boolean)
+
   } catch (error: any) {
+    if (error?.response?.data?.page?.flexibleLayouts?.layouts) {
+      return (error.response.data.page.flexibleLayouts.layouts ?? []).filter(Boolean)
+    }
     if (error?.response?.data?.pages) {
-      const layouts = (
-        error.response.data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []
-      ).filter(Boolean)
-      return layouts
+      return (error.response.data.pages.nodes[0]?.flexibleLayouts?.layouts ?? []).filter(Boolean)
     }
     return []
   }
