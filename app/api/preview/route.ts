@@ -19,6 +19,7 @@ function resolvePreviewUrl(type: string, slug: string, id: string): string {
     case 'opportunity':
       return `/opportunities/${slug}`
     case 'page':
+      if (!slug || slug === '/') return '/'
       return `/${slug}`
     case 'post':
       return `/news/${slug}`
@@ -44,7 +45,8 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  if (!slug) {
+  // Allow empty slug for home page
+  if (!slug && type !== 'page') {
     return NextResponse.json({ error: 'Missing slug' }, { status: 400 })
   }
 
@@ -52,6 +54,5 @@ export async function GET(req: NextRequest) {
   draft.enable()
 
   const destination = resolvePreviewUrl(type, slug, id)
-
   return NextResponse.redirect(new URL(destination, req.url))
 }
