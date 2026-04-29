@@ -1,4 +1,6 @@
+import { draftMode } from 'next/headers'
 import { getHomePage } from '@/app/lib/queries'
+import { getHomePagePreview } from './lib/previewQueries'
 import type {
   SpotlightHeroLayout,
   PostsCarouselLayout,
@@ -12,10 +14,12 @@ import PostsCarousel from '@/app/ui/components/postsCarousel'
 import SpotlightTextImage from './ui/components/spotlightTextImage'
 import SponsorsCarousel from './ui/components/sponsorsCarousel'
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export default async function HomePage() {
-  const layouts = await getHomePage()
+  const { isEnabled: isPreview } = await draftMode()
+  const layouts = isPreview ? await getHomePagePreview() : await getHomePage()
+
 
   if (!layouts.length) return null
 

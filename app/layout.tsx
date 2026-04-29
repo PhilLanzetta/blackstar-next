@@ -6,11 +6,13 @@ import { getMegaNav, getFooterNav, getFestivalMenus } from './lib/queries'
 import { HeaderWrapper } from './ui/headerWrapper'
 import { FooterWrapper } from './ui/footerWrapper'
 import { headers } from 'next/headers'
+import { draftMode } from 'next/headers'
 import Breadcrumb from './ui/components/breadcrumb'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import SeenNewsletterWrapper from './ui/components/seen/seenNewsletterWrapper'
 import EventiveProvider from './ui/components/festival/eventiveProvider'
+import PreviewBanner from './ui/components/previewBanner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -39,11 +41,11 @@ export default async function RootLayout({
     getFestivalMenus(),
   ])
 
-  // Used only to conditionally wrap children in EventiveProvider.
-  // HeaderWrapper and FooterWrapper derive brand client-side via usePathname().
   const headersList = await headers()
   const pathname = headersList.get('x-pathname') ?? ''
   const isFestival = pathname.startsWith('/festival')
+
+  const { isEnabled: isPreview } = await draftMode()
 
   return (
     <html
@@ -64,6 +66,7 @@ export default async function RootLayout({
         <SpeedInsights />
         <SeenNewsletterWrapper />
         <FooterWrapper footerNav={footerNav} />
+        {isPreview && <PreviewBanner />}
       </body>
     </html>
   )

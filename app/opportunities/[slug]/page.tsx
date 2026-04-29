@@ -1,8 +1,10 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import Link from 'next/link'
 import { getOpportunity, getAllOpportunitySlugs } from '@/app/lib/queries'
 import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import styles from './page.module.css'
+import { getOpportunityPreview } from '@/app/lib/previewQueries'
 
 export const dynamicParams = false
 export const revalidate = 3600
@@ -18,7 +20,10 @@ export async function generateStaticParams() {
 
 export default async function OpportunityPage({ params }: Props) {
   const { slug } = await params
-  const opportunity = await getOpportunity(slug)
+  const { isEnabled: isPreview } = await draftMode()
+  const opportunity = isPreview
+    ? await getOpportunityPreview(slug)
+    : await getOpportunity(slug)
 
   if (!opportunity) return notFound()
 

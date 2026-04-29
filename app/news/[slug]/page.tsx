@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -6,6 +7,7 @@ import {
   getAllBlogSlugs,
   getRelatedPosts,
 } from '@/app/lib/queries'
+import { getPressReleasePostPreview } from '@/app/lib/previewQueries'
 import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import PostCard from '@/app/ui/components/postCard'
 import styles from '@/app/press/[slug]/page.module.css'
@@ -25,7 +27,10 @@ export async function generateStaticParams() {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
-  const post = await getPressReleasePost(slug)
+  const { isEnabled: isPreview } = await draftMode()
+  const post = isPreview
+    ? await getPressReleasePostPreview(slug)
+    : await getPressReleasePost(slug)
 
   if (!post) return notFound()
 

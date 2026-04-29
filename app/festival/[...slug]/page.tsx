@@ -1,11 +1,19 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import {
   getFestivalPage,
   getFestivalPageTemplate,
   getFestivalSchedule,
   getDefaultPage,
-  getAllFestivalPageSlugs, getFestivalFilmGuide, getFestivalEventGuide
+  getAllFestivalPageSlugs,
+  getFestivalFilmGuide,
+  getFestivalEventGuide,
 } from '@/app/lib/queries'
+import {
+  getFestivalPagePreview,
+  getFestivalPageTemplatePreview,
+  getDefaultPagePreview,
+} from '@/app/lib/previewQueries'
 import type {
   FestivalLayout,
   FestivalSpotlightCarouselLayout,
@@ -89,8 +97,13 @@ export default async function FestivalPage({ params }: Props) {
   const slugArray = Array.isArray(slug) ? slug : [slug]
   const path = slugArray.join('/')
 
-  // Check template first
-  const templateName = await getFestivalPageTemplate(path)
+  // ── Draft Mode ──────────────────────────────────────────────────────────────
+  const { isEnabled: isPreview } = await draftMode()
+
+  const templateName = isPreview
+    ? await getFestivalPageTemplatePreview(path)
+    : await getFestivalPageTemplate(path)
+  // ───────────────────────────────────────────────────────────────────────────
 
   if (templateName === 'Festival Schedule') {
     const year = path.match(/(\d{4})/)?.[1] ?? '2025'
@@ -118,7 +131,6 @@ export default async function FestivalPage({ params }: Props) {
 
   if (templateName === 'Festival Film Guide') {
     const year = path.match(/(\d{4})/)?.[1] ?? '2025'
-    const { films, tags } = await getFestivalFilmGuide(year)
     return (
       <main style={{ paddingTop: '200px' }}>
         <FilmGuidePage year={year} />
@@ -136,7 +148,11 @@ export default async function FestivalPage({ params }: Props) {
     )
   }
 
-  const festivalLayouts = await getFestivalPage(path)
+  // ── Draft Mode ──────────────────────────────────────────────────────────────
+  const festivalLayouts = isPreview
+    ? await getFestivalPagePreview(path)
+    : await getFestivalPage(path)
+  // ───────────────────────────────────────────────────────────────────────────
 
   if (festivalLayouts.length > 0) {
     const firstLayout = festivalLayouts[0]
@@ -232,6 +248,7 @@ export default async function FestivalPage({ params }: Props) {
     )
   }
 
+  // ── Draft Mode ──────────────────────────────────────────────────────────────
   // Fall back to default template
   const {
     layouts,
@@ -244,7 +261,8 @@ export default async function FestivalPage({ params }: Props) {
     allPosts,
     lumenEpisodes,
     programEvents,
-  } = await getDefaultPage(path)
+  } = isPreview ? await getDefaultPagePreview(path) : await getDefaultPage(path)
+  // ───────────────────────────────────────────────────────────────────────────
 
   if (!layouts?.length) return notFound()
 

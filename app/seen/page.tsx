@@ -1,4 +1,6 @@
+import { draftMode } from 'next/headers'
 import { getSeenPage } from '@/app/lib/queries'
+import { getSeenPagePreview } from '@/app/lib/previewQueries'
 import type {
   SeenFlexibleLayout,
   SeenArticlesLayout,
@@ -14,7 +16,8 @@ import styles from './page.module.css'
 export const revalidate = 3600
 
 export default async function SeenPage() {
-  const layouts = await getSeenPage()
+  const { isEnabled: isPreview } = await draftMode()
+  const layouts = isPreview ? await getSeenPagePreview() : await getSeenPage()
 
   return (
     <main className={styles.main}>

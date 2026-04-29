@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -6,6 +7,7 @@ import {
   getAllLumenEpisodeSlugs,
   getRelatedLumenEpisodes,
 } from '@/app/lib/queries'
+import { getLumenEpisodePreview } from '@/app/lib/previewQueries'
 import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import LumenCard from '@/app/ui/components/lumenCard'
 import LumenDropdown from '@/app/ui/components/lumenDropdown'
@@ -21,40 +23,47 @@ type Props = {
 
 export async function generateStaticParams() {
   const episodes = await getAllLumenEpisodeSlugs()
-  return episodes.map(e => ({ season: e.season, slug: e.slug }))
+  return episodes.map((e) => ({ season: e.season, slug: e.slug }))
 }
 
 export default async function LumenEpisodePage({ params }: Props) {
   const { slug } = await params
-  const episode = await getLumenEpisode(slug)
+  const { isEnabled: isPreview } = await draftMode()
+  const episode = isPreview
+    ? await getLumenEpisodePreview(slug)
+    : await getLumenEpisode(slug)
 
   if (!episode) return notFound()
 
   const acf = episode.manyLumensEpisodesAcf
-  const coverImage = episode.blogSettings?.coverImage?.node ?? episode.featuredImage?.node
+  const coverImage =
+    episode.blogSettings?.coverImage?.node ?? episode.featuredImage?.node
   const mobileCoverImage = episode.blogSettings?.mobileCoverImage?.node
   const coverVideo = episode.blogSettings?.coverVideo?.node
   const hasMobileCover = !!mobileCoverImage
   const season = episode.lumenSeasons?.nodes?.[0]
 
   const manualRelated = (acf?.relatedEpisodes?.nodes ?? []) as LumenEpisode[]
-  const relatedEpisodes = manualRelated.length > 0
-    ? manualRelated
-    : await getRelatedLumenEpisodes(slug, episode.date ?? '')
+  const relatedEpisodes =
+    manualRelated.length > 0
+      ? manualRelated
+      : await getRelatedLumenEpisodes(slug, episode.date ?? '')
 
   const date = episode.date
-    ? new Date(episode.date).toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      }).toUpperCase()
+    ? new Date(episode.date)
+        .toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+        })
+        .toUpperCase()
     : null
 
   const dropdowns = [
     { label: 'Show Notes', content: acf?.showNotes },
     { label: 'Credits', content: acf?.credits },
     { label: 'Transcript', content: acf?.transcript },
-  ].filter(d => d.content)
+  ].filter((d) => d.content)
 
   return (
     <main>

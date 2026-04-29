@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import { getSeenSubPage, getAllSeenSubPageSlugs } from '@/app/lib/queries'
+import { getSeenSubPagePreview } from '@/app/lib/previewQueries'
 import type {
   SeenFlexibleLayout,
   SeenFeatureTextLayout,
@@ -36,7 +38,10 @@ export async function generateStaticParams() {
 
 export default async function SeenSubPage({ params }: Props) {
   const { slug } = await params
-  const layouts = await getSeenSubPage(slug)
+  const { isEnabled: isPreview } = await draftMode()
+  const layouts = isPreview
+    ? await getSeenSubPagePreview(slug)
+    : await getSeenSubPage(slug)
 
   if (!layouts.length) return notFound()
 

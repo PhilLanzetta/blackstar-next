@@ -1,4 +1,6 @@
 import { getDefaultPage } from '@/app/lib/queries'
+import { getDefaultPagePreview } from '@/app/lib/previewQueries'
+import { draftMode } from 'next/headers'
 import { gql, GraphQLClient } from 'graphql-request'
 import type {
   SpotlightHeroLayout,
@@ -42,7 +44,7 @@ import PressClippings from '../ui/components/pressClippings'
 import EventDetails from '../ui/components/eventDetails'
 import ContentLayout from '../ui/components/contentLayout'
 
-export const revalidate = 60
+export const revalidate = 3600
 export const dynamicParams = false
 
 type Props = {
@@ -124,6 +126,9 @@ export default async function DefaultPage({ params }: Props) {
   const { slug } = await params
   const path = slug.join('/')
 
+  // ── Draft Mode ──────────────────────────────────────────────────────────────
+  const { isEnabled: isPreview } = await draftMode()
+
   const {
     layouts,
     opportunityTypes,
@@ -135,7 +140,8 @@ export default async function DefaultPage({ params }: Props) {
     allPosts,
     lumenEpisodes,
     programEvents,
-  } = await getDefaultPage(path)
+  } = isPreview ? await getDefaultPagePreview(path) : await getDefaultPage(path)
+  // ───────────────────────────────────────────────────────────────────────────
 
   if (!layouts || !layouts.length) return notFound()
 

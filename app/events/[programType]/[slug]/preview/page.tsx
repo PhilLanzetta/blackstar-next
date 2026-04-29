@@ -1,11 +1,12 @@
+// app/events/preview/page.tsx
+// Handles program-event draft previews only.
+// WordPress redirects to /events/preview?previewId=<id>&slug=<slug>
+// because WPGraphQL can't resolve program-event slugs — only database IDs.
+
 import { notFound, redirect } from 'next/navigation'
 import { draftMode } from 'next/headers'
-import {
-  getProgramEvent,
-  getAllProgramEventSlugs,
-  getChildProgramEvents,
-} from '@/app/lib/queries'
 import { getProgramEventPreview } from '@/app/lib/previewQueries'
+import { getChildProgramEvents } from '@/app/lib/queries'
 import type {
   SpotlightHeroLayout,
   TextTabsLayout,
@@ -46,31 +47,21 @@ import EventDetails from '@/app/ui/components/eventDetails'
 import ContentLayout from '@/app/ui/components/contentLayout'
 import ChildProgramEvents from '@/app/ui/components/childProgramEvents'
 
-export const dynamicParams = true
-export const revalidate = 3600
-
 type Props = {
-  params: Promise<{ programType: string; slug: string }>
+  searchParams: Promise<{ previewId?: string; slug?: string }>
 }
 
-export async function generateStaticParams() {
-  const events = await getAllProgramEventSlugs()
-  return events.map((e) => ({ programType: e.programType, slug: e.slug }))
-}
-
-export default async function EventPage({ params }: Props) {
-  const { slug, programType } = await params
-
-  // ── Draft Mode ──────────────────────────────────────────────────────────────
-  // Note: program-event preview uses a separate /events/preview route
-  // because slug resolution doesn't work for this CPT in WPGraphQL.
-  // This page only handles published content.
+export default async function ProgramEventPreviewPage({ searchParams }: Props) {
   const { isEnabled: isPreview } = await draftMode()
 
-  const event = isPreview
-    ? await getProgramEvent(slug) // falls back to published — preview handled via /events/preview
-    : await getProgramEvent(slug)
-  // ───────────────────────────────────────────────────────────────────────────
+  // This page should only be accessible in preview mode
+  if (!isPreview) return notFound()
+
+  const { previewId, slug } = await searchParams
+
+  if (!previewId) return notFound()
+
+  const event = await getProgramEventPreview(previewId)
 
   if (!event) return notFound()
 
@@ -84,12 +75,17 @@ export default async function EventPage({ params }: Props) {
 
   if (!layouts.length) return notFound()
 
+  // For child events we need programType — get it from the event data
+  const programType = event.event?.programType?.nodes?.[0]?.slug ?? ''
+  const eventSlug = slug ?? event.slug ?? ''
+
   const hasChildEvents = layouts.some(
     (l) => l.__typename === 'FlexibleLayoutsLayoutsChildProgramEventsLayout',
   )
-  const childEvents = hasChildEvents
-    ? await getChildProgramEvents(slug, programType)
-    : []
+  const childEvents =
+    hasChildEvents && eventSlug
+      ? await getChildProgramEvents(eventSlug, programType)
+      : []
 
   return (
     <main>
@@ -168,7 +164,7 @@ export default async function EventPage({ params }: Props) {
                 key={index}
                 data={layout as ChildProgramEventsLayout}
                 childEvents={childEvents}
-                parentSlug={slug}
+                parentSlug={eventSlug}
                 parentProgramType={programType}
               />
             )

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -6,6 +7,7 @@ import {
   getAllSeenArticleSlugs,
   getRelatedSeenArticles,
 } from '@/app/lib/queries'
+import { getSeenArticlePreview } from '@/app/lib/previewQueries'
 import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import type {
   SeenArticleLayout,
@@ -33,7 +35,8 @@ export async function generateStaticParams() {
 
 export default async function SeenArticlePage({ params }: Props) {
   const { slug, issue } = await params
-  const article = await getSeenArticle(slug)
+  const { isEnabled: isPreview } = await draftMode()
+  const article = isPreview ? await getSeenArticlePreview(slug) : await getSeenArticle(slug)
 
   if (!article) return notFound()
 

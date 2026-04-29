@@ -1,7 +1,13 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getPressReleasePost, getAllPressReleaseSlugs, getRelatedPosts } from '@/app/lib/queries'
+import {
+  getPressReleasePost,
+  getAllPressReleaseSlugs,
+  getRelatedPosts,
+} from '@/app/lib/queries'
+import { getPressReleasePostPreview } from '@/app/lib/previewQueries'
 import { WPPost } from '@/app/lib/types'
 import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import PostCard from '@/app/ui/components/postCard'
@@ -21,11 +27,15 @@ export async function generateStaticParams() {
 
 export default async function PressReleasePage({ params }: Props) {
   const { slug } = await params
-  const post = await getPressReleasePost(slug)
+  const { isEnabled: isPreview } = await draftMode()
+  const post = isPreview
+    ? await getPressReleasePostPreview(slug)
+    : await getPressReleasePost(slug)
 
   if (!post) return notFound()
 
-  const coverImage = post.blogSettings?.coverImage?.node ?? post.featuredImage?.node
+  const coverImage =
+    post.blogSettings?.coverImage?.node ?? post.featuredImage?.node
   const mobileCoverImage = post.blogSettings?.mobileCoverImage?.node
   const coverVideo = post.blogSettings?.coverVideo?.node
   const guestAuthor = post.blogSettings?.guestAuthor

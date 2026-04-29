@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import { getFestivalEvent, getAllFestivalEventSlugs } from '@/app/lib/queries'
+import { getFestivalEventPreview } from '@/app/lib/previewQueries'
 import FestivalEventPage from '@/app/ui/components/festival/festivalEventPage'
 
 export const revalidate = 3600
@@ -15,7 +17,8 @@ export async function generateStaticParams() {
 
 export default async function FestivalEventRoute({ params }: Props) {
   const { slug, year } = await params
-  const event = await getFestivalEvent(slug)
+  const { isEnabled: isPreview } = await draftMode()
+  const event = isPreview ? await getFestivalEventPreview(slug) : await getFestivalEvent(slug)
   if (!event) return notFound()
 
   return (
