@@ -6,7 +6,7 @@ import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import styles from './page.module.css'
 import { getOpportunityPreview } from '@/app/lib/previewQueries'
 
-export const dynamicParams = false
+export const dynamicParams = true
 export const revalidate = 3600
 
 type Props = {

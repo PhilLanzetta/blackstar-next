@@ -24,7 +24,7 @@ import SeenList from '@/app/ui/components/seen/seenList'
 import SeenIssueCredits from '@/app/ui/components/seen/seenIssueCredits'
 import styles from './page.module.css'
 
-export const dynamicParams = false
+export const dynamicParams = true
 export const revalidate = 3600
 
 type Props = {

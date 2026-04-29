@@ -13,7 +13,7 @@ import { cleanHtml } from '@/app/lib/utils/cleanHtml'
 import PostCard from '@/app/ui/components/postCard'
 import styles from './page.module.css'
 
-export const dynamicParams = false
+export const dynamicParams = true
 export const revalidate = 3600
 
 type Props = {

@@ -21,7 +21,7 @@ import styles from './page.module.css'
 import SeenRelated from '@/app/ui/components/seen/seenRelated'
 import SeenShare from '@/app/ui/components/seen/seenShare'
 
-export const dynamicParams = false
+export const dynamicParams = true
 export const revalidate = 3600
 
 type Props = {
@@ -36,7 +36,9 @@ export async function generateStaticParams() {
 export default async function SeenArticlePage({ params }: Props) {
   const { slug, issue } = await params
   const { isEnabled: isPreview } = await draftMode()
-  const article = isPreview ? await getSeenArticlePreview(slug) : await getSeenArticle(slug)
+  const article = isPreview
+    ? await getSeenArticlePreview(slug)
+    : await getSeenArticle(slug)
 
   if (!article) return notFound()
 

@@ -14,7 +14,7 @@ import LumenDropdown from '@/app/ui/components/lumenDropdown'
 import styles from './page.module.css'
 import type { LumenEpisode } from '@/app/lib/types'
 
-export const dynamicParams = false
+export const dynamicParams = true
 export const revalidate = 3600
 
 type Props = {

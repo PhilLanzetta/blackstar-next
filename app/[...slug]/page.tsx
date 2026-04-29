@@ -45,7 +45,7 @@ import EventDetails from '../ui/components/eventDetails'
 import ContentLayout from '../ui/components/contentLayout'
 
 export const revalidate = 3600
-export const dynamicParams = false
+export const dynamicParams = true
 
 type Props = {
   params: Promise<{ slug: string[] }>

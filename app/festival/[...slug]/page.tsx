@@ -82,7 +82,7 @@ import FilmGuidePage from './filmGuidePage'
 import EventGuidePage from './eventGuidePage'
 
 export const revalidate = 3600
-export const dynamicParams = false
+export const dynamicParams = true
 
 type Props = {
   params: Promise<{ slug: string[] }>

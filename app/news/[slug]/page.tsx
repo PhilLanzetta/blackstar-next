@@ -13,7 +13,7 @@ import PostCard from '@/app/ui/components/postCard'
 import styles from '@/app/press/[slug]/page.module.css'
 import type { WPPost } from '@/app/lib/types'
 
-export const dynamicParams = false
+export const dynamicParams = true
 export const revalidate = 3600
 
 type Props = {
