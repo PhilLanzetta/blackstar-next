@@ -106,7 +106,7 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
           {heading1 && (
             <div
               className={styles.heroBoxHeading}
-              dangerouslySetInnerHTML={{ __html: { heading1 } }}
+              dangerouslySetInnerHTML={{ __html: heading1 }}
             ></div>
           )}
           {links && links.length > 0 && (
