@@ -103,7 +103,12 @@ export default function SpotlightHero({ data }: { data: SpotlightHeroLayout }) {
       {/* Info box */}
       {showInfoBox && (
         <div className={styles.heroInfoBox}>
-          {heading1 && <p className={styles.heroBoxHeading}>{heading1}</p>}
+          {heading1 && (
+            <div
+              className={styles.heroBoxHeading}
+              dangerouslySetInnerHTML={{ __html: { heading1 } }}
+            ></div>
+          )}
           {links && links.length > 0 && (
             <div className={styles.heroBoxLinkContainer}>
               {links.map((item, i) => (
