@@ -7,14 +7,14 @@ import type {
   SpotlightTextImageLayout,
   SponsorsCarouselLayout,
 } from '@/app/lib/types'
-
-// Components
 import SpotlightHero from '@/app/ui/components/spotlightHero'
 import PostsCarousel from '@/app/ui/components/postsCarousel'
 import SpotlightTextImage from './ui/components/spotlightTextImage'
 import SponsorsCarousel from './ui/components/sponsorsCarousel'
 
+export const dynamic = 'force-static'
 export const revalidate = 3600
+
 type Props = {
   searchParams: Promise<{ previewId?: string }>
 }
@@ -36,12 +36,10 @@ export default async function HomePage({ searchParams }: Props) {
             return (
               <SpotlightHero key={index} data={layout as SpotlightHeroLayout} />
             )
-
           case 'FlexibleLayoutsLayoutsPostsCarouselLayout':
             return (
               <PostsCarousel key={index} data={layout as PostsCarouselLayout} />
             )
-
           case 'FlexibleLayoutsLayoutsSpotlightTextImageLayout':
             return (
               <SpotlightTextImage
@@ -49,7 +47,6 @@ export default async function HomePage({ searchParams }: Props) {
                 data={layout as SpotlightTextImageLayout}
               />
             )
-
           case 'FlexibleLayoutsLayoutsSponsorsCarouselLayout':
             return (
               <SponsorsCarousel
@@ -57,7 +54,6 @@ export default async function HomePage({ searchParams }: Props) {
                 data={layout as SponsorsCarouselLayout}
               />
             )
-
           default:
             return null
         }

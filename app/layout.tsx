@@ -3,6 +3,7 @@ import { gtFlexaExpanded, gtFlexaMono, swissTime } from './ui/fonts'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
 import { getMegaNav, getFooterNav, getFestivalMenus } from './lib/queries'
+import { unstable_cache } from 'next/cache'
 import { HeaderWrapper } from './ui/headerWrapper'
 import { FooterWrapper } from './ui/footerWrapper'
 import { headers } from 'next/headers'
@@ -24,6 +25,24 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+// ── Cache layout data for 1 hour ─────────────────────────────────────────────
+// These queries run on every page load. Caching them means WordPress is only
+// called once per hour regardless of traffic, cutting layout latency to ~0.
+const getCachedMegaNav = unstable_cache(getMegaNav, ['mega-nav'], {
+  revalidate: 3600,
+})
+
+const getCachedFooterNav = unstable_cache(getFooterNav, ['footer-nav'], {
+  revalidate: 3600,
+})
+
+const getCachedFestivalMenus = unstable_cache(
+  getFestivalMenus,
+  ['festival-menus'],
+  { revalidate: 3600 },
+)
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const metadata: Metadata = {
   title: 'BlackStar',
   description:
@@ -36,9 +55,9 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const [megaNavs, footerNav, festivalMenus] = await Promise.all([
-    getMegaNav(),
-    getFooterNav(),
-    getFestivalMenus(),
+    getCachedMegaNav(),
+    getCachedFooterNav(),
+    getCachedFestivalMenus(),
   ])
 
   const headersList = await headers()
