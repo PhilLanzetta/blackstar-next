@@ -1,15 +1,16 @@
 import { NextRequest } from 'next/server'
 
 const EVENTIVE_API_KEY = process.env.NEXT_PUBLIC_EVENTIVE_API_KEY
-const EVENTIVE_BUCKET_ID = process.env.NEXT_PUBLIC_EVENTIVE_BUCKET_ID
 const BASE_URL = 'https://api.eventive.org'
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
-  if (!token) return Response.json({ error: 'No token' }, { status: 401 })
+  const bucketId = request.nextUrl.searchParams.get('bucketId')
+  if (!token || !bucketId)
+    return Response.json({ error: 'Missing params' }, { status: 401 })
 
   const res = await fetch(
-    `${BASE_URL}/event_buckets/${EVENTIVE_BUCKET_ID}/wishlist?token=${token}`,
+    `${BASE_URL}/event_buckets/${bucketId}/wishlist?token=${token}`,
     {
       headers: {
         Authorization: `Basic ${Buffer.from(`${EVENTIVE_API_KEY}:`).toString('base64')}`,
@@ -24,12 +25,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
-  if (!token) return Response.json({ error: 'No token' }, { status: 401 })
+  const bucketId = request.nextUrl.searchParams.get('bucketId')
+  if (!token || !bucketId)
+    return Response.json({ error: 'Missing params' }, { status: 401 })
 
   const body = await request.json()
 
   const res = await fetch(
-    `${BASE_URL}/event_buckets/${EVENTIVE_BUCKET_ID}/wishlist?token=${token}`,
+    `${BASE_URL}/event_buckets/${bucketId}/wishlist?token=${token}`,
     {
       method: 'POST',
       headers: {

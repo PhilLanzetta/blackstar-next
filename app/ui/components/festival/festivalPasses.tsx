@@ -39,19 +39,13 @@ export default function FestivalPasses({ title, passes }: Props) {
             </div>
 
             <p className={styles.description}>{pass.description}</p>
-
             <div className={styles.cardFooter}>
-              {pass.buttonLabelOverride ? (
-                <span className={styles.unavailable}>
-                  {pass.buttonLabelOverride}
-                </span>
-              ) : (
-                <div
-                  className='eventive-button'
-                  data-event={pass.eventiveId}
-                  data-universal='true'
-                />
-              )}
+              <div
+                className='eventive-button'
+                data-pass-bucket={pass.eventiveId}
+                data-buy-label={pass.buttonLabelOverride ?? 'Buy Now'}
+                data-quantity='1'
+              />
             </div>
           </div>
         ))}

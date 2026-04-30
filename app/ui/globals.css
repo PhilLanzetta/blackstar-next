@@ -64,3 +64,65 @@ main {
   fill: #0704a5;
   transition: all 400ms;
 }
+
+/* ── Eventive Everywhere button overrides ──────────────────────────────────── */
+.eventive__pass-button__button button {
+  background-color: var(--color-festival) !important;
+  border: 1px solid var(--color-festival) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  height: 38px !important;
+  line-height: 36px !important;
+  border-color: var(--color-festival) !important;
+  color: var(--background-festival) !important;
+  transition: background-color 400ms ease, color 400ms ease !important;
+}
+
+.eventive__pass-button__button button div,
+.eventive__pass-button__button button span {
+  color: var(--background-festival) !important;
+  transition: color 400ms ease !important;
+}
+
+.eventive__pass-button__button button:hover {
+  background-color: var(--background-festival) !important;
+  border: 1px solid var(--color-festival) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: var(--color-festival) !important;
+  box-shadow: none !important;
+  color: var(--color-festival) !important;
+  transition: all 400ms ease !important;
+}
+
+.eventive__pass-button__button button:hover div,
+.eventive__pass-button__button button:hover span {
+  background-color: var(--background-festival) !important;
+  color: var(--color-festival) !important;
+  transition: all 400ms ease !important;
+}
+
+/* Event ticket buttons */
+.eventive-widget-container button {
+  background-color: var(--color-festival) !important;
+  border-color: var(--color-festival) !important;
+  color: var(--background-festival) !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.eventive-widget-container button div,
+.eventive-widget-container button span {
+  color: var(--background-festival) !important;
+  transition: color 0.15s ease !important;
+}
+
+.eventive-widget-container button:hover {
+  background-color: var(--background-festival) !important;
+  border-color: var(--color-festival) !important;
+  color: var(--color-festival) !important;
+}
+
+.eventive-widget-container button:hover div,
+.eventive-widget-container button:hover span {
+  color: var(--color-festival) !important;
+}

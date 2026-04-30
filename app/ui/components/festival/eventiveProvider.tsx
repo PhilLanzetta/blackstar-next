@@ -6,8 +6,12 @@ import type { ReactNode } from 'react'
 
 export default function EventiveProvider({
   children,
+  loaderUrl,
+  bucketId,
 }: {
   children: ReactNode
+  loaderUrl: string
+  bucketId: string
 }) {
   const pathname = usePathname()
   const isFestival = pathname.startsWith('/festival')
@@ -25,7 +29,7 @@ export default function EventiveProvider({
       document.head.appendChild(stripe)
 
       const eventive = document.createElement('script')
-      eventive.src = 'https://festival.blackstarfest.org/loader.js'
+      eventive.src = loaderUrl
       eventive.async = true
       eventive.defer = true
       eventive.setAttribute('data-eventive', 'true')

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { gtFlexaExpanded, gtFlexaMono, swissTime } from './ui/fonts'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './ui/globals.css'
-import { getMegaNav, getFooterNav, getFestivalMenus } from './lib/queries'
+import { getMegaNav, getFooterNav, getFestivalMenus, getEventiveSettings } from './lib/queries'
 import { unstable_cache } from 'next/cache'
 import { HeaderWrapper } from './ui/headerWrapper'
 import { FooterWrapper } from './ui/footerWrapper'
@@ -41,6 +41,13 @@ const getCachedFestivalMenus = unstable_cache(
   ['festival-menus'],
   { revalidate: 3600 },
 )
+
+const getCachedEventiveSettings = unstable_cache(
+  getEventiveSettings,
+  ['eventive-settings'],
+  { revalidate: 3600 },
+)
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
@@ -54,10 +61,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [megaNavs, footerNav, festivalMenus] = await Promise.all([
+  const [megaNavs, footerNav, festivalMenus, eventiveSettings ] = await Promise.all([
     getCachedMegaNav(),
     getCachedFooterNav(),
     getCachedFestivalMenus(),
+    getEventiveSettings()
   ])
 
   const headersList = await headers()
@@ -78,7 +86,12 @@ export default async function RootLayout({
         <Breadcrumb />
         <HeaderWrapper megaNavs={megaNavs} festivalMenus={festivalMenus} />
         {isFestival ? (
-          <EventiveProvider>{children}</EventiveProvider>
+          <EventiveProvider
+            loaderUrl={`https://${eventiveSettings.eventiveSubdomain}/loader.js`}
+            bucketId={eventiveSettings.festivalEventBucketId}
+          >
+            {children}
+          </EventiveProvider>
         ) : (
           <>{children}</>
         )}

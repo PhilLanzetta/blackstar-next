@@ -5352,3 +5352,32 @@ export const SEARCH_QUERY = `
     }
   }
 `;
+
+// In queries.ts
+export async function getEventiveSettings() {
+  try {
+    const data = await client.request<{
+      siteSettings: {
+        siteSettingsAcf: {
+          eventiveSubdomain: string
+          festivalEventBucketId: string
+        }
+      }
+    }>(gql`
+      query getEventiveSettings {
+        siteSettings {
+          siteSettingsAcf {
+            eventiveSubdomain
+            festivalEventBucketId
+          }
+        }
+      }
+    `)
+    return data.siteSettings.siteSettingsAcf
+  } catch {
+    return {
+      eventiveSubdomain: 'festival.blackstarfest.org',
+      festivalEventBucketId: process.env.NEXT_PUBLIC_EVENTIVE_BUCKET_ID ?? '',
+    }
+  }
+}

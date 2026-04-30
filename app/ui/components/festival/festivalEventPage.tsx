@@ -309,7 +309,7 @@ export default function FestivalEventPage({
         {/* Right: tickets box */}
         <div className={styles.ticketsCol}>
           <div className={styles.ticketsBox}>
-            <h2 className={styles.ticketsHeading}>Screenings</h2>
+            <h2 className={styles.ticketsHeading}>Tickets</h2>
 
             {allInPersonInstances.length > 0 && (
               <div className={styles.instanceGroup}>
